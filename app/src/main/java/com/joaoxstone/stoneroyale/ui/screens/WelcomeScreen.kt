@@ -5,8 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,8 +16,14 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.ShoppingCart
+import androidx.compose.material.icons.outlined.ThumbUp
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -59,29 +65,89 @@ class WelcomeScreen : ComponentActivity() {
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MyCompose() {
-    val brush = Brush.horizontalGradient(listOf(Color(0XFF1650b5), Color.Blue))
+    val strokeBorder = BorderStroke(
+        0.5.dp, Brush.horizontalGradient(
+            listOf(MaterialTheme.colorScheme.onPrimary, Color.Transparent)
+        )
+    )
+    val strokeBorderTroph = BorderStroke(
+        0.5.dp, Brush.horizontalGradient(
+            listOf( Color.Transparent, MaterialTheme.colorScheme.onPrimary)
+        )
+    )
+    val brush = Brush.horizontalGradient(listOf(Color(0XFF1650b5), Color(0XFF1f6af2)))
     var input by rememberSaveable { mutableStateOf("") }
     StoneRoyaleTheme {
         Box(modifier = Modifier
             .fillMaxSize()
             .drawBehind {
-                drawRect(brush = brush) // will allocate a shader to occupy the 200 x 200 dp drawing area
+                drawRect(brush = brush)
                 inset(10f) {
-                    /* Will allocate a shader to occupy the 180 x 180 dp drawing area as the
-                     inset scope reduces the drawing  area by 10 pixels on the left, top, right,
-                    bottom sides */
                     drawRect(brush = brush)
                     inset(5f) {
-                        /* will allocate a shader to occupy the 170 x 170 dp drawing area as the
-                         inset scope reduces the  drawing area by 5 pixels on the left, top,
-                         right, bottom sides */
                         drawRect(brush = brush)
                     }
                 }
             }) {
-            Image(painter = painterResource(id = R.drawable.king), contentDescription = "", modifier = Modifier
-                .align(Alignment.TopCenter)
-                .size(230.dp))
+            Surface(modifier = Modifier.padding(8.dp), color = Color.Transparent) {
+                Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    IconButton(
+                        onClick = { /*TODO*/ }, modifier = Modifier.border(
+                            strokeBorder,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                    ) {
+                        Image(
+                            modifier = Modifier.padding(4.dp),
+                            painter = painterResource(id = R.drawable.cardicon),
+                            contentDescription = null,
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }, modifier = Modifier.border(
+                        strokeBorder,
+                        shape = MaterialTheme.shapes.medium
+                    )) {
+                        Image(
+                            modifier = Modifier.padding(4.dp),
+                            painter = painterResource(id = R.drawable.clanicon),
+                            contentDescription = null,
+                        )
+                    }
+                    IconButton(onClick = { /*TODO*/ }, modifier = Modifier.border(
+                        strokeBorder,
+                        shape = MaterialTheme.shapes.medium
+                    )) {
+                        Image(
+                            modifier = Modifier.padding(4.dp),
+                            painter = painterResource(id = R.drawable.player),
+                            contentDescription = null,
+                        )
+                    }
+                }
+            }
+            Image(
+                painter = painterResource(id = R.drawable.king),
+                contentDescription = "",
+                modifier = Modifier
+                    .align(Alignment.TopCenter)
+                    .size(230.dp)
+            )
+
+            Surface(color = Color.Transparent,modifier = Modifier
+                .padding(8.dp)
+                .align(Alignment.TopEnd)
+                .border(
+                    strokeBorderTroph,
+                    shape = MaterialTheme.shapes.medium
+                )) {
+                IconButton(onClick = { /*TODO*/ }) {
+                    Image(
+                        modifier = Modifier.padding(4.dp),
+                        painter = painterResource(id = R.drawable.github),
+                        contentDescription = null,
+                    )
+                }
+            }
 
             Surface(
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
@@ -98,7 +164,7 @@ fun MyCompose() {
                         }, modifier = Modifier.fillMaxWidth(),
                         shape = MaterialTheme.shapes.medium,
                         prefix = { Text(text = "#") },
-                        supportingText = { Text(text = "Exemplo: #890UYLVV")}
+                        supportingText = { Text(text = "Exemplo: #890UYLVV") }
                     )
                     Spacer(modifier = Modifier.padding(8.dp))
                     Button(
