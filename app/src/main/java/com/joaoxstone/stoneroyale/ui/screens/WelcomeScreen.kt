@@ -66,6 +66,11 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -98,7 +103,6 @@ fun MyCompose(strokeBorder: BorderStroke) {
         )
     )
     val brush = Brush.horizontalGradient(listOf(Color(0XFF1650b5), Color(0XFF1f6af2)))
-    var input by rememberSaveable { mutableStateOf("") }
     StoneRoyaleTheme {
 
         Box(modifier = Modifier
@@ -112,7 +116,7 @@ fun MyCompose(strokeBorder: BorderStroke) {
                     }
                 }
             }) {
-            Surface(modifier = Modifier.padding(8.dp), color = Color.Transparent) {
+            /*Surface(modifier = Modifier.padding(8.dp), color = Color.Transparent) {
                 Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     IconButton(
                         onClick = { /*TODO*/ }, modifier = Modifier.border(
@@ -151,7 +155,7 @@ fun MyCompose(strokeBorder: BorderStroke) {
                         )
                     }
                 }
-            }
+            }*/
             Image(
                 painter = painterResource(id = R.drawable.king),
                 contentDescription = "",
@@ -160,24 +164,11 @@ fun MyCompose(strokeBorder: BorderStroke) {
                     .size(230.dp)
             )
 
-            Surface(
-                color = Color.Transparent, modifier = Modifier
+            GitHubButton(
+                Modifier
                     .padding(8.dp)
                     .align(Alignment.TopEnd)
-            ) {
-                IconButton(
-                    onClick = { /*TODO*/ },
-                    colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Color.Black,
-                    )
-                ) {
-                    Image(
-                        modifier = Modifier.padding(4.dp),
-                        painter = painterResource(id = R.drawable.github),
-                        contentDescription = null,
-                    )
-                }
-            }
+            )
 
             Surface(
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
@@ -187,44 +178,17 @@ fun MyCompose(strokeBorder: BorderStroke) {
             ) {
                 ConstraintLayout {
                     val (column, navigation, barb) = createRefs()
-                    Column(modifier = Modifier
+                    SearchContainer(modifier = Modifier
                         .padding(16.dp)
                         .constrainAs(column) {
                             top.linkTo(parent.top, margin = 16.dp)
-                        }) {
-                        OutlinedTextField(
-                            value = input,
-                            label = { Text(text = "Player TAG") },
-                            onValueChange = {
-                                input = it
-                            }, modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.medium,
-                            prefix = { Text(text = "#") },
-                            supportingText = { Text(text = "Exemplo: #890UYLVV") }
-                        )
-                        Spacer(modifier = Modifier.padding(8.dp))
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.fillMaxWidth(),
-                            shape = MaterialTheme.shapes.medium
-                        ) {
-                            Text(text = "Buscar", modifier = Modifier.padding(end = 8.dp))
-                            Icon(
-                                painter = painterResource(id = R.drawable.magnifying_glass),
-                                contentDescription = ""
-                            )
-                        }
-                    }
-                    Image(
-                        modifier = Modifier.constrainAs(barb) {
-                            top.linkTo(column.bottom)
-                            bottom.linkTo(navigation.top)
-                            end.linkTo(column.end)
-                            start.linkTo(column.start)
-                        },
-                        painter = painterResource(id = R.drawable.barb),
-                        contentDescription = null
-                    )
+                        })
+                    EmptyData(modifier = Modifier.constrainAs(barb) {
+                        top.linkTo(column.bottom)
+                        bottom.linkTo(navigation.top)
+                        end.linkTo(column.end)
+                        start.linkTo(column.start)
+                    })
                     BottomNavigation(modifier = Modifier.constrainAs(navigation) {
                         bottom.linkTo(parent.bottom)
                         end.linkTo(parent.end)
@@ -293,3 +257,77 @@ fun BottomNavigation(modifier: Modifier = Modifier, strokeBorder: BorderStroke) 
     }
 }
 
+@Composable
+fun EmptyData(modifier: Modifier = Modifier) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.barb),
+            contentDescription = null
+        )
+
+        Text(
+            modifier = Modifier.width(180.dp),
+            fontWeight = FontWeight.Medium,
+            textAlign = TextAlign.Center,
+            text = buildAnnotatedString {
+                append("Digite uma ")
+                withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
+                    append("TAG")
+                }
+                append(" para buscar o perfil.")
+            }
+        )
+    }
+}
+
+@Composable
+fun SearchContainer(modifier: Modifier = Modifier) {
+    var input by rememberSaveable { mutableStateOf("") }
+    Column(modifier = modifier) {
+        OutlinedTextField(
+            value = input,
+            label = { Text(text = "Player TAG") },
+            onValueChange = {
+                input = it
+            }, modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium,
+            prefix = { Text(text = "#") },
+            supportingText = { Text(text = "Exemplo: #890UYLVV") }
+        )
+        Spacer(modifier = Modifier.padding(8.dp))
+        Button(
+            onClick = { /*TODO*/ },
+            modifier = Modifier.fillMaxWidth(),
+            shape = MaterialTheme.shapes.medium
+        ) {
+            Text(text = "Buscar", modifier = Modifier.padding(end = 8.dp))
+            Icon(
+                painter = painterResource(id = R.drawable.magnifying_glass),
+                contentDescription = ""
+            )
+        }
+    }
+}
+
+@Composable
+fun GitHubButton(modifier: Modifier = Modifier) {
+    Surface(
+        color = Color.Transparent, modifier = modifier
+    ) {
+        IconButton(
+            onClick = { /*TODO*/ },
+            colors = IconButtonDefaults.iconButtonColors(
+                containerColor = Color.Black,
+            )
+        ) {
+            Image(
+                modifier = Modifier.padding(4.dp),
+                painter = painterResource(id = R.drawable.github),
+                contentDescription = null,
+            )
+        }
+    }
+}
