@@ -1,0 +1,11 @@
+package com.joaoxstone.stoneroyale.data.model.player
+
+import com.google.gson.annotations.SerializedName
+
+
+data class IconUrls(
+
+    @SerializedName("medium") var medium: String? = null,
+    @SerializedName("evolutionMedium") var evolutionMedium: String? = null
+
+)
