@@ -15,7 +15,6 @@ class RetrofitClient private constructor() {
 
         private lateinit var INSTANCE: Retrofit
         private var token: String = BuildConfig.TOKEN_CR
-        private var personKey: String = ""
         private var URL = "https://proxy.royaleapi.dev/v1/"
 
         private fun getRetrofitClient(): Retrofit {

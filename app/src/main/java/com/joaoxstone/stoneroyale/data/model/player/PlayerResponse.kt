@@ -4,7 +4,6 @@ import com.google.gson.annotations.SerializedName
 
 
 data class PlayerResponse(
-
     @SerializedName("tag") var tag: String? = null,
     @SerializedName("name") var name: String? = null,
     @SerializedName("expLevel") var expLevel: Int? = null,
