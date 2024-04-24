@@ -2,9 +2,12 @@ package com.joaoxstone.stoneroyale.data.constants
 
 import com.joaoxstone.stoneroyale.R
 
-class ClashConstants {
+class ClashConstants private constructor() {
     companion object {
-        fun getIconArena(arenaId: Int): Int? {
+        fun getIconArena(arenaId: Int, isUltimateChampion: Boolean): Int? {
+            if (isUltimateChampion) {
+                return R.drawable.arena24
+            }
             val arenas = mutableMapOf(
                 54000000 to R.drawable.arena0,
                 54000001 to R.drawable.arena1,
@@ -30,7 +33,6 @@ class ClashConstants {
                 54000018 to R.drawable.arena21,
                 54000019 to R.drawable.arena22,
                 54000020 to R.drawable.arena23,
-                54000031 to R.drawable.arena24
             )
 
             return arenas[arenaId]
