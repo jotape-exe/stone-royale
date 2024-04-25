@@ -29,6 +29,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -60,15 +61,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             StoneRoyaleTheme {
+
                 var loading by remember { mutableStateOf(false) }
                 var player by remember {
                     mutableStateOf(PlayerResponse())
                 }
+
                 var playerTag by remember { mutableStateOf("") }
                 var hasPlayer by remember { mutableStateOf(false) }
 
+                val scope = rememberCoroutineScope()
 
-                // A surface container using the 'background' color from the theme
+
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -89,7 +93,9 @@ class MainActivity : ComponentActivity() {
                             Text(text = "Welcome")
                         }
                         OutlinedTextField(
-                            modifier = Modifier.fillMaxWidth().padding(top = 20.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 20.dp),
                             value = playerTag,
                             prefix = {
                                 Text(text = "#")
@@ -97,17 +103,21 @@ class MainActivity : ComponentActivity() {
                             onValueChange = {
                                 playerTag = it
                             })
-                        LaunchedEffect(player) {
 
-                        }
+
                         Button(
                             colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
-                                runBlocking {
-                                    if (playerTag.contains("#")){
-                                        Toast.makeText(this@MainActivity, "Não utilize caracteres especiais", Toast.LENGTH_SHORT).show()
-                                        return@runBlocking
+                                scope.launch {
+                                    loading = true
+                                    if (playerTag.contains("#")) {
+                                        Toast.makeText(
+                                            this@MainActivity,
+                                            "Não utilize caracteres especiais",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        return@launch
                                     }
                                     val (response, hasPlayerC) = getPlayer(
                                         "#${playerTag.uppercase().replace("O", "0").trim()}"
@@ -116,6 +126,7 @@ class MainActivity : ComponentActivity() {
                                     if (hasPlayer) {
                                         player = response
                                     }
+                                    loading = false
                                 }
                             }) {
                             Text(text = "Buscar")
@@ -127,7 +138,9 @@ class MainActivity : ComponentActivity() {
 
                         if (loading) {
                             CircularProgressIndicator(
-                                modifier = Modifier.width(64.dp),
+                                modifier = Modifier
+                                    .width(64.dp)
+                                    .fillMaxWidth(),
                                 color = MaterialTheme.colorScheme.primary,
                                 trackColor = MaterialTheme.colorScheme.surfaceVariant,
                             )
@@ -137,6 +150,7 @@ class MainActivity : ComponentActivity() {
                                 playerName = player.name!!,
                                 playerTag = player.tag!!,
                                 arenaId = player.arena?.id!!,
+                                trophies = player.trophies!!,
                                 UCtrophies = player.currentPathOfLegendSeasonResult?.trophies!!
                             )
                         }
