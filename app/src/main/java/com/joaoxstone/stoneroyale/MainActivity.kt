@@ -7,49 +7,37 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.sharp.KeyboardArrowRight
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
 import com.joaoxstone.stoneroyale.data.repository.PlayerRepository
-import com.joaoxstone.stoneroyale.data.repository.remote.RetrofitClient
-import com.joaoxstone.stoneroyale.data.repository.remote.network.ClashRoyaleService
+import com.joaoxstone.stoneroyale.ui.components.CardPlayerContent
+import com.joaoxstone.stoneroyale.ui.components.CardPlayerHead
 import com.joaoxstone.stoneroyale.ui.components.PlayerSimpleCard
 import com.joaoxstone.stoneroyale.ui.screens.WelcomeScreen
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 
 val api = PlayerRepository()
@@ -136,23 +124,36 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        if (loading) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .width(64.dp)
-                                    .fillMaxWidth(),
-                                color = MaterialTheme.colorScheme.primary,
-                                trackColor = MaterialTheme.colorScheme.surfaceVariant,
-                            )
-                        }
-                        AnimatedVisibility(player.tag != null) {
-                            PlayerSimpleCard(
-                                playerName = player.name!!,
-                                playerTag = player.tag!!,
-                                arenaId = player.arena?.id!!,
-                                trophies = player.trophies!!,
-                                UCtrophies = player.currentPathOfLegendSeasonResult?.trophies!!
-                            )
+                        Column {
+                            if (loading) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .width(64.dp).align(Alignment.CenterHorizontally)
+                                        .fillMaxWidth(),
+                                    color = MaterialTheme.colorScheme.primary,
+                                    trackColor = MaterialTheme.colorScheme.surfaceVariant,
+                                )
+                            }
+                            AnimatedVisibility(player.tag != null) {
+                                PlayerSimpleCard(
+                                    cardHeader = {
+                                        CardPlayerHead(
+                                            playerName = player.name!!,
+                                            playerTag = player.tag!!,
+                                            arenaId = player.arena?.id!!,
+                                            trophies = player.trophies!!,
+                                            UCtrophies = player.currentPathOfLegendSeasonResult?.trophies!!
+                                        )
+                                    },
+                                    cardPlayerContent = {
+                                        CardPlayerContent(
+                                            exp = player.expLevel!!,
+                                            clanName = player.clan?.name!!,
+                                            clanTag = player.clan?.tag!!
+                                        )
+                                    }
+                                )
+                            }
                         }
                     }
                 }
