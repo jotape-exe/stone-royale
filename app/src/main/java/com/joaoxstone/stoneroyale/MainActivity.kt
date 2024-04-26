@@ -17,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -81,6 +82,7 @@ class MainActivity : ComponentActivity() {
                             Text(text = "Welcome")
                         }
                         OutlinedTextField(
+                            shape = MaterialTheme.shapes.medium,
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 20.dp),
@@ -93,8 +95,8 @@ class MainActivity : ComponentActivity() {
                             })
 
 
-                        Button(
-                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary),
+                        OutlinedButton(
+                            shape = MaterialTheme.shapes.medium,
                             modifier = Modifier.fillMaxWidth(),
                             onClick = {
                                 scope.launch {
@@ -128,7 +130,8 @@ class MainActivity : ComponentActivity() {
                             if (loading) {
                                 CircularProgressIndicator(
                                     modifier = Modifier
-                                        .width(64.dp).align(Alignment.CenterHorizontally)
+                                        .width(64.dp)
+                                        .align(Alignment.CenterHorizontally)
                                         .fillMaxWidth(),
                                     color = MaterialTheme.colorScheme.primary,
                                     trackColor = MaterialTheme.colorScheme.surfaceVariant,
@@ -148,8 +151,8 @@ class MainActivity : ComponentActivity() {
                                     cardPlayerContent = {
                                         CardPlayerContent(
                                             exp = player.expLevel!!,
-                                            clanName = player.clan?.name!!,
-                                            clanTag = player.clan?.tag!!
+                                            clanName = player.clan?.name ?: "",
+                                            clanTag = player.clan?.tag ?: ""
                                         )
                                     }
                                 )

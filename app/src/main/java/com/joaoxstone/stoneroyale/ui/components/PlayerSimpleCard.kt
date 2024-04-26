@@ -1,54 +1,52 @@
 package com.joaoxstone.stoneroyale.ui.components
 
+import android.graphics.BlurMaskFilter
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.composed
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Paint
+import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.layout.HorizontalAlignmentLine
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Density
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
-import java.lang.StringBuilder
 
 @Composable
 fun PlayerSimpleCard(
@@ -69,7 +67,12 @@ fun PlayerSimpleCard(
         shadowElevation = 8.dp,
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxWidth().shadowCustom(
+                color = Color(0x540091ff),
+                offsetX = 2.dp,
+                offsetY = 2.dp,
+                blurRadius = 12.dp,
+            )
     ) {
         Column(modifier = modifier
             .fillMaxWidth()
@@ -227,3 +230,56 @@ fun PreviewCP(){
         }
     )
 }
+
+
+fun Modifier.shadowCustom(
+    color: Color = Color.Black,
+    offsetX: Dp = 0.dp,
+    offsetY: Dp = 0.dp,
+    blurRadius: Dp = 0.dp,
+    shapeRadius: Dp = 0.dp,
+) = composed {
+    val paint: Paint = remember { Paint() }
+    val blurRadiusPx = blurRadius.px(LocalDensity.current)
+    val maskFilter = remember {
+        BlurMaskFilter(blurRadiusPx, BlurMaskFilter.Blur.NORMAL)
+    }
+    drawBehind {
+        drawIntoCanvas { canvas ->
+            val frameworkPaint = paint.asFrameworkPaint()
+            if (blurRadius != 0.dp) {
+                frameworkPaint.maskFilter = maskFilter
+            }
+            frameworkPaint.color = color.toArgb()
+
+            val leftPixel = offsetX.toPx()
+            val topPixel = offsetY.toPx()
+            val rightPixel = size.width + leftPixel
+            val bottomPixel = size.height + topPixel
+
+            if (shapeRadius > 0.dp) {
+                val radiusPx = shapeRadius.toPx()
+                canvas.drawRoundRect(
+                    left = leftPixel,
+                    top = topPixel,
+                    right = rightPixel,
+                    bottom = bottomPixel,
+                    radiusX = radiusPx,
+                    radiusY = radiusPx,
+                    paint = paint,
+                )
+            } else {
+                canvas.drawRect(
+                    left = leftPixel,
+                    top = topPixel,
+                    right = rightPixel,
+                    bottom = bottomPixel,
+                    paint = paint,
+                )
+            }
+        }
+    }
+}
+
+private fun Dp.px(density: Density): Float =
+    with(density) { toPx() }
