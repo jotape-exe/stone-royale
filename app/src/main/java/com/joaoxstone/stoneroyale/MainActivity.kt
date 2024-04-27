@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -32,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
 import com.joaoxstone.stoneroyale.data.repository.PlayerRepository
+import com.joaoxstone.stoneroyale.ui.components.CardPlayerBottom
 import com.joaoxstone.stoneroyale.ui.components.CardPlayerContent
 import com.joaoxstone.stoneroyale.ui.components.CardPlayerHead
 import com.joaoxstone.stoneroyale.ui.components.PlayerSimpleCard
@@ -95,9 +97,9 @@ class MainActivity : ComponentActivity() {
                             })
 
 
-                        OutlinedButton(
+                        FilledTonalButton(
                             shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
                             onClick = {
                                 scope.launch {
                                     loading = true
@@ -154,6 +156,9 @@ class MainActivity : ComponentActivity() {
                                             clanName = player.clan?.name ?: "",
                                             clanTag = player.clan?.tag ?: ""
                                         )
+                                    },
+                                    cardPlayerBottom = {
+                                        CardPlayerBottom()
                                     }
                                 )
                             }

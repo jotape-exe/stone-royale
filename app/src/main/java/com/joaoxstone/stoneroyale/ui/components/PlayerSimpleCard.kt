@@ -18,6 +18,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -52,6 +55,7 @@ import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 fun PlayerSimpleCard(
     cardHeader: @Composable () -> Unit,
     cardPlayerContent: @Composable () -> Unit,
+    cardPlayerBottom: @Composable () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isExpanded by remember {
@@ -67,7 +71,8 @@ fun PlayerSimpleCard(
         shadowElevation = 8.dp,
         shape = MaterialTheme.shapes.medium,
         modifier = modifier
-            .fillMaxWidth().shadowCustom(
+            .fillMaxWidth()
+            .shadowCustom(
                 color = Color(0x540091ff),
                 offsetX = 2.dp,
                 offsetY = 2.dp,
@@ -92,15 +97,21 @@ fun PlayerSimpleCard(
             AnimatedVisibility(visible = isExpanded) {
                 cardPlayerContent()
             }
-            Row(modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-                IconButton(
-                    modifier = modifier.graphicsLayer(rotationZ = angle),
-                    onClick = { isExpanded = !isExpanded }) {
-                    Icon(
-                        imageVector = Icons.Default.KeyboardArrowDown,
-                        contentDescription = "Arrow expand content"
-                    )
+            Row {
+                Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
+                    IconButton(
+                        modifier = modifier.graphicsLayer(rotationZ = angle),
+                        onClick = { isExpanded = !isExpanded }) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Arrow expand content"
+                        )
+                    }
+                    AnimatedVisibility(visible = isExpanded) {
+                        cardPlayerBottom()
+                    }
                 }
+
             }
         }
     }
@@ -193,11 +204,28 @@ fun CardPlayerHead(
 }
 
 @Composable
-fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String, clanTag: String){
-    Surface(color = MaterialTheme.colorScheme.primary, shape = MaterialTheme.shapes.medium, modifier = modifier.padding(top = 16.dp)) {
+fun CardPlayerBottom(modifier: Modifier = Modifier) {
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        FilledTonalIconButton(onClick = { }) {
+            Icon(painter = painterResource(id = R.drawable.dots_three), contentDescription = "More")
+        }
+    }
+}
+
+@Composable
+fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String, clanTag: String) {
+    Surface(
+        color = MaterialTheme.colorScheme.primary,
+        shape = MaterialTheme.shapes.medium,
+        modifier = modifier.padding(top = 16.dp)
+    ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {
             Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                Image(modifier = modifier.size(30.dp), painter = painterResource(id = R.drawable.experience), contentDescription = "experience icon")
+                Image(
+                    modifier = modifier.size(30.dp),
+                    painter = painterResource(id = R.drawable.experience),
+                    contentDescription = "experience icon"
+                )
                 Text(
                     modifier = modifier.padding(bottom = 6.dp),
                     text = "$exp",
@@ -206,7 +234,11 @@ fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String,
                     fontWeight = FontWeight.ExtraBold
                 )
             }
-            Text(modifier = modifier.padding(start = 4.dp), text = "EXP Level", fontWeight = FontWeight.Bold)
+            Text(
+                modifier = modifier.padding(start = 4.dp),
+                text = "EXP Level",
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 
@@ -214,7 +246,7 @@ fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String,
 
 @Preview(showSystemUi = true)
 @Composable
-fun PreviewCP(){
+fun PreviewCP() {
     PlayerSimpleCard(
         cardHeader = {
             CardPlayerHead(
@@ -227,6 +259,9 @@ fun PreviewCP(){
         },
         cardPlayerContent = {
             CardPlayerContent(exp = 56, clanName = "STUNNA", clanTag = "#89asd2")
+        },
+        cardPlayerBottom = {
+            CardPlayerBottom()
         }
     )
 }
