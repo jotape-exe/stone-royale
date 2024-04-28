@@ -99,7 +99,9 @@ class MainActivity : ComponentActivity() {
 
                         FilledTonalButton(
                             shape = MaterialTheme.shapes.medium,
-                            modifier = Modifier.fillMaxWidth().padding(bottom = 20.dp),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(bottom = 20.dp),
                             onClick = {
                                 scope.launch {
                                     loading = true
@@ -147,7 +149,7 @@ class MainActivity : ComponentActivity() {
                                             playerTag = player.tag!!,
                                             arenaId = player.arena?.id!!,
                                             trophies = player.trophies!!,
-                                            UCtrophies = player.currentPathOfLegendSeasonResult?.trophies!!
+                                            UCtrophies = player.currentPathOfLegendSeasonResult?.trophies
                                         )
                                     },
                                     cardPlayerContent = {

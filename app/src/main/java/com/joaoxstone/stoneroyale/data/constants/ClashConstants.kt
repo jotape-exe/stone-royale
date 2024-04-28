@@ -4,10 +4,7 @@ import com.joaoxstone.stoneroyale.R
 
 class ClashConstants private constructor() {
     companion object {
-        fun getIconArena(arenaId: Int, isUltimateChampion: Boolean): Int? {
-            if (isUltimateChampion) {
-                return R.drawable.arena24
-            }
+        fun getIconArena(arenaId: Int): Int? {
             val arenas = mutableMapOf(
                 54000000 to R.drawable.arena0,
                 54000001 to R.drawable.arena1,
@@ -32,10 +29,28 @@ class ClashConstants private constructor() {
                 54000017 to R.drawable.arena20,
                 54000018 to R.drawable.arena21,
                 54000019 to R.drawable.arena22,
-                54000020 to R.drawable.arena23,
+                54000020 to R.drawable.legendary,
             )
 
             return arenas[arenaId]
+        }
+
+        fun getIconLeague(leageNumber: Int): Int? {
+
+            val leages = mutableMapOf(
+                1 to R.drawable.league1,
+                2 to R.drawable.league2,
+                3 to R.drawable.league3,
+                4 to R.drawable.league4,
+                5 to R.drawable.league5,
+                6 to R.drawable.league6,
+                7 to R.drawable.league7,
+                8 to R.drawable.league8,
+                9 to R.drawable.league9,
+                10 to R.drawable.league10
+            )
+
+            return leages[leageNumber]
         }
     }
 

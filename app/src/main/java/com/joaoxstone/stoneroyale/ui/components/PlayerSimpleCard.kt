@@ -121,7 +121,7 @@ fun PlayerSimpleCard(
 fun RoadAndRankRow(
     modifier: Modifier = Modifier,
     icon: Int,
-    actualTrophy: Int,
+    actualTrophy: Int?,
     isUltimateChampion: Boolean
 ) {
     Row(
@@ -151,7 +151,7 @@ fun RoadAndRankRow(
 fun CardPlayerHead(
     modifier: Modifier = Modifier,
     arenaId: Int,
-    UCtrophies: Int,
+    UCtrophies: Int?,
     trophies: Int,
     playerName: String,
     playerTag: String
@@ -168,7 +168,6 @@ fun CardPlayerHead(
                     painter = painterResource(
                         ClashConstants.getIconArena(
                             arenaId,
-                            UCtrophies > 0
                         )!!
                     ),
                     contentDescription = "arena"
@@ -179,11 +178,15 @@ fun CardPlayerHead(
                         actualTrophy = trophies,
                         isUltimateChampion = false
                     )
-                    RoadAndRankRow(
-                        icon = R.drawable.rating,
-                        actualTrophy = UCtrophies,
-                        isUltimateChampion = true
-                    )
+                    if (UCtrophies !== null && UCtrophies > 0) {
+                        RoadAndRankRow(
+                            icon = R.drawable.rating,
+                            actualTrophy = UCtrophies,
+                            isUltimateChampion = true
+                        )
+                    }
+
+
                 }
             }
             Text(
