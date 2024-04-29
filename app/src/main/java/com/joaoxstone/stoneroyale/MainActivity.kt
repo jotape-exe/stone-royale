@@ -149,7 +149,8 @@ class MainActivity : ComponentActivity() {
                                             playerTag = player.tag!!,
                                             arenaId = player.arena?.id!!,
                                             trophies = player.trophies!!,
-                                            UCtrophies = player.currentPathOfLegendSeasonResult?.trophies
+                                            UCtrophies = player.currentPathOfLegendSeasonResult?.trophies,
+                                            leagueNumber = player.currentPathOfLegendSeasonResult?.leagueNumber
                                         )
                                     },
                                     cardPlayerContent = {

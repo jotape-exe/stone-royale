@@ -151,6 +151,7 @@ fun RoadAndRankRow(
 fun CardPlayerHead(
     modifier: Modifier = Modifier,
     arenaId: Int,
+    leagueNumber: Int?,
     UCtrophies: Int?,
     trophies: Int,
     playerName: String,
@@ -163,15 +164,25 @@ fun CardPlayerHead(
     ) {
         Column {
             Row {
-                Image(
-                    modifier = modifier.size(42.dp),
-                    painter = painterResource(
-                        ClashConstants.getIconArena(
-                            arenaId,
-                        )!!
-                    ),
-                    contentDescription = "arena"
-                )
+                Box(modifier = modifier, contentAlignment = Alignment.Center){
+                    Surface(color = Color.Transparent, modifier = modifier.size(50.dp).shadowCustom(
+                        Color(0x540091ff),
+                        blurRadius = 30.dp,
+                        shapeRadius = 20.dp
+                    )) {
+                    }
+
+                    val resource = if(leagueNumber != null) ClashConstants.getIconLeague(leagueNumber) else ClashConstants.getIconArena(arenaId)
+
+
+                    Image(
+                        modifier = modifier
+                            .size(62.dp),
+                        painter = painterResource(resource!!),
+                        contentDescription = "arena"
+                    )
+                }
+
                 Column {
                     RoadAndRankRow(
                         icon = R.drawable.trophy,
@@ -255,9 +266,10 @@ fun PreviewCP() {
             CardPlayerHead(
                 playerName = "João Pedro",
                 playerTag = "#89GOUYLVV",
-                arenaId = 18,
+                arenaId = 54000000,
                 trophies = 9000,
-                UCtrophies = 2490
+                UCtrophies = 2490,
+                leagueNumber = 9
             )
         },
         cardPlayerContent = {
