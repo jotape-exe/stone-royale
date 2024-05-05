@@ -2,10 +2,15 @@ package com.joaoxstone.stoneroyale.ui.components
 
 import android.graphics.BlurMaskFilter
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,8 +23,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -43,7 +46,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -147,89 +149,117 @@ fun RoadAndRankRow(
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun CardPlayerHead(
+fun SharedTransitionScope.CardPlayerHead(
     modifier: Modifier = Modifier,
     arenaId: Int,
     leagueNumber: Int?,
     UCtrophies: Int?,
     trophies: Int,
     playerName: String,
-    playerTag: String
+    playerTag: String,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
-    Row(
-        modifier = modifier.fillMaxWidth(),
-        verticalAlignment = Alignment.Top,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Column {
-            Row {
-                Box(modifier = modifier, contentAlignment = Alignment.Center){
-                    Surface(color = Color.Transparent, modifier = modifier
-                        .size(50.dp)
-                        .shadowCustom(
-                            Color(0x540091ff),
-                            blurRadius = 30.dp,
-                            shapeRadius = 20.dp
-                        )) {
-                    }
+    SharedTransitionLayout {
+        Row(
+            modifier = modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Column {
+                Row {
+                    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+                        Surface(
+                            color = Color.Transparent, modifier = modifier
+                                .size(50.dp)
+                                .shadowCustom(
+                                    Color(0x540091ff),
+                                    blurRadius = 30.dp,
+                                    shapeRadius = 20.dp
+                                )
+                        ) {
+                        }
 
-                    val resource = if(leagueNumber != null) ClashConstants.getIconLeague(leagueNumber) else ClashConstants.getIconArena(arenaId)
+                        val resource =
+                            if (leagueNumber != null) ClashConstants.getIconLeague(leagueNumber) else ClashConstants.getIconArena(
+                                arenaId
+                            )
 
-
-                    Image(
-                        modifier = modifier
-                            .size(62.dp),
-                        painter = painterResource(resource!!),
-                        contentDescription = "arena"
-                    )
-                }
-
-                Column {
-                    RoadAndRankRow(
-                        icon = R.drawable.trophy,
-                        actualTrophy = trophies,
-                        isUltimateChampion = false
-                    )
-                    if (UCtrophies !== null && UCtrophies > 0) {
-                        RoadAndRankRow(
-                            icon = R.drawable.rating,
-                            actualTrophy = UCtrophies,
-                            isUltimateChampion = true
+                        Image(
+                            modifier = modifier
+                                .size(62.dp)
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = "image/$resource"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = 600)
+                                    }
+                                ),
+                            painter = painterResource(resource!!),
+                            contentDescription = "arena"
                         )
                     }
 
+                    Column {
+                        RoadAndRankRow(
+                            icon = R.drawable.trophy,
+                            actualTrophy = trophies,
+                            isUltimateChampion = false
+                        )
+                        if (UCtrophies !== null && UCtrophies > 0) {
+                            RoadAndRankRow(
+                                icon = R.drawable.rating,
+                                actualTrophy = UCtrophies,
+                                isUltimateChampion = true
+                            )
+                        }
 
+
+                    }
                 }
+                Text(
+                    modifier = modifier
+                        .padding(top = 8.dp)
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "image/$playerName"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 600)
+                            }
+                        ),
+                    text = playerName,
+                    fontSize = 20.sp,
+                    fontWeight = FontWeight.Bold
+                )
+
             }
-            Text(
-                modifier = modifier.padding(top = 8.dp),
-                text = playerName,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
-            )
-
-        }
-        Column(
-            verticalArrangement = Arrangement.SpaceBetween,
-            horizontalAlignment = Alignment.End
-        ) {
-            Text(modifier = modifier.width(100.dp), fontSize = 14.sp, text = playerTag)
+            Column(
+                verticalArrangement = Arrangement.SpaceBetween,
+                horizontalAlignment = Alignment.End
+            ) {
+                Text(modifier = modifier.width(100.dp), fontSize = 14.sp, text = playerTag)
+            }
         }
     }
+
 }
 
 @Composable
-fun CardPlayerBottom(modifier: Modifier = Modifier) {
-    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        FilledTonalIconButton(onClick = { }) {
-            Icon(painter = painterResource(id = R.drawable.dots_three), contentDescription = "More")
-        }
-    }
+fun CardPlayerBottom(
+    rightSlot: @Composable () -> Unit,
+) {
+    rightSlot()
 }
 
 @Composable
-fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String, clanTag: String, clanIconId: Int? = null) {
+fun CardPlayerContent(
+    modifier: Modifier = Modifier,
+    exp: Int,
+    clanName: String,
+    clanTag: String,
+    clanIconId: Int? = null
+) {
     Column {
         ExpBadge(exp = exp)
         Surface(
@@ -237,10 +267,11 @@ fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String,
         ) {
             Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {
                 Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                    val clanIcon = if(clanIconId !== null) ClashConstants.getIconClan(clanIconId) else ClashConstants.getIconClan(null)
+                    val clanIcon = ClashConstants.getIconClan(clanIconId)
                     clanIcon?.let {
                         Image(
-                            modifier = modifier.size(30.dp),
+                            modifier = modifier
+                                .size(30.dp),
                             painter = painterResource(id = it),
                             contentDescription = "experience icon"
                         )
@@ -256,31 +287,8 @@ fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String,
     }
 }
 
-@Preview(showSystemUi = true)
 @Composable
-fun PreviewCP() {
-    PlayerSimpleCard(
-        cardHeader = {
-            CardPlayerHead(
-                playerName = "João Pedro",
-                playerTag = "#89GOUYLVV",
-                arenaId = 54000000,
-                trophies = 9000,
-                UCtrophies = 2490,
-                leagueNumber = 9
-            )
-        },
-        cardPlayerContent = {
-            CardPlayerContent(exp = 56, clanName = "STUNNA", clanTag = "#89asd2", clanIconId = 16000014)
-        },
-        cardPlayerBottom = {
-            CardPlayerBottom()
-        }
-    )
-}
-
-@Composable
-fun ExpBadge(modifier: Modifier = Modifier, exp: Int){
+fun ExpBadge(modifier: Modifier = Modifier, exp: Int) {
     Surface(
         color = MaterialTheme.colorScheme.primary,
         shape = MaterialTheme.shapes.medium,
@@ -305,6 +313,14 @@ fun ExpBadge(modifier: Modifier = Modifier, exp: Int){
     }
 }
 
+@Composable
+fun ProfileAction(modifier: Modifier = Modifier, onclick: () -> Unit) {
+    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
+        FilledTonalIconButton(onClick = { onclick() }) {
+            Icon(painter = painterResource(id = R.drawable.dots_three), contentDescription = "More")
+        }
+    }
+}
 
 fun Modifier.shadowCustom(
     color: Color = Color.Black,

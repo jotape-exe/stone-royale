@@ -90,7 +90,7 @@ fun MyCompose() {
     }
 
     val bottomNavOptions = mapOf(
-        0 to   ScreenContent(
+        0 to  ScreenContent(
             Color(0XFF1f6af2),
             Color(0XFF1650b5),
             R.drawable.player
