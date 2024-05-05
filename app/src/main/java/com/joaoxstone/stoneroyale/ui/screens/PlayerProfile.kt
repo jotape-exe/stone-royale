@@ -7,6 +7,7 @@ import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -40,9 +41,17 @@ fun SharedTransitionScope.PlayerProfileScreen(
     animatedVisibilityScope: AnimatedVisibilityScope
 ) {
     Surface(
-        shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
-        color = Color(0xFF5F06DB),
-        contentColor = Color(0xFF5F06DB)
+        color = Color.Transparent,
+        modifier = Modifier.background(
+            Brush.horizontalGradient(
+                listOf(
+                    Color(0xFF5F06DB),
+                    Color(0xFF9B06DB),
+                    Color(0xFFB808A1)
+                )
+            ),
+            shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
+        ),
     ) {
         Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
             Box(modifier = modifier.size(162.dp), contentAlignment = Alignment.Center) {
@@ -80,10 +89,10 @@ fun SharedTransitionScope.PlayerProfileScreen(
                 modifier = modifier
                     .padding(top = 14.dp)
                     .sharedElement(
-                        state = rememberSharedContentState(key = "image/$title"),
+                        rememberSharedContentState(key = "image/$title"),
                         animatedVisibilityScope = animatedVisibilityScope,
                         boundsTransform = { _, _ ->
-                            tween(durationMillis = 600)
+                            tween(durationMillis = 1000)
                         }
                     ),
                 text = title,

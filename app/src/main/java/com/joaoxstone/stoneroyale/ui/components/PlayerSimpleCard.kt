@@ -190,11 +190,8 @@ fun SharedTransitionScope.CardPlayerHead(
                             modifier = modifier
                                 .size(62.dp)
                                 .sharedElement(
-                                    state = rememberSharedContentState(key = "image/$resource"),
+                                    rememberSharedContentState(key = "image/$resource"),
                                     animatedVisibilityScope = animatedVisibilityScope,
-                                    boundsTransform = { _, _ ->
-                                        tween(durationMillis = 600)
-                                    }
                                 ),
                             painter = painterResource(resource!!),
                             contentDescription = "arena"
@@ -222,11 +219,8 @@ fun SharedTransitionScope.CardPlayerHead(
                     modifier = modifier
                         .padding(top = 8.dp)
                         .sharedElement(
-                            state = rememberSharedContentState(key = "image/$playerName"),
+                            rememberSharedContentState(key = "image/$playerName"),
                             animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween(durationMillis = 600)
-                            }
                         ),
                     text = playerName,
                     fontSize = 20.sp,

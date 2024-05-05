@@ -156,7 +156,7 @@ fun HomeScreen(
                         cardPlayerContent = {
                             CardPlayerContent(
                                 exp = player.expLevel!!,
-                                clanName = player.clan?.name ?: "Sem Clan",
+                                clanName = player.clan?.name ?: "Sem Clã",
                                 clanTag = player.clan?.tag ?: "",
                                 clanIconId = player.clan?.badgeId
                             )

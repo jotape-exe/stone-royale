@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                                 navClick = { leagueId, arenaId, title ->
                                     navController.navigate("profile/${leagueId ?: arenaId}/$title")
                                 },
-                                animatedVisibilityScope = this
+                                animatedVisibilityScope = this@composable
                             )
 
                         }
@@ -52,7 +52,12 @@ class MainActivity : ComponentActivity() {
                         ) {
                             val leagueId = it.arguments?.getInt("leagueId") ?: 1
                             val title = it.arguments?.getString("title") ?: "Jogador"
-                            PlayerProfileScreen(leagueId = leagueId, arenaId  = leagueId, title = title, animatedVisibilityScope = this)
+                            PlayerProfileScreen(
+                                leagueId = leagueId,
+                                arenaId = leagueId,
+                                title = title,
+                                animatedVisibilityScope = this@composable
+                            )
                         }
                     }
                 }
