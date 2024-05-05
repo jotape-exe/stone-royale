@@ -165,11 +165,13 @@ fun CardPlayerHead(
         Column {
             Row {
                 Box(modifier = modifier, contentAlignment = Alignment.Center){
-                    Surface(color = Color.Transparent, modifier = modifier.size(50.dp).shadowCustom(
-                        Color(0x540091ff),
-                        blurRadius = 30.dp,
-                        shapeRadius = 20.dp
-                    )) {
+                    Surface(color = Color.Transparent, modifier = modifier
+                        .size(50.dp)
+                        .shadowCustom(
+                            Color(0x540091ff),
+                            blurRadius = 30.dp,
+                            shapeRadius = 20.dp
+                        )) {
                     }
 
                     val resource = if(leagueNumber != null) ClashConstants.getIconLeague(leagueNumber) else ClashConstants.getIconArena(arenaId)
@@ -227,7 +229,58 @@ fun CardPlayerBottom(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String, clanTag: String) {
+fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String, clanTag: String, clanIconId: Int? = null) {
+    Column {
+        ExpBadge(exp = exp)
+        Surface(
+            modifier = modifier.padding(top = 16.dp)
+        ) {
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {
+                Box(modifier = modifier, contentAlignment = Alignment.Center) {
+                    val clanIcon = if(clanIconId !== null) ClashConstants.getIconClan(clanIconId) else ClashConstants.getIconClan(null)
+                    clanIcon?.let {
+                        Image(
+                            modifier = modifier.size(30.dp),
+                            painter = painterResource(id = it),
+                            contentDescription = "experience icon"
+                        )
+                    }
+                }
+                Text(
+                    modifier = modifier.padding(start = 4.dp),
+                    text = clanName,
+                    fontWeight = FontWeight.Bold
+                )
+            }
+        }
+    }
+}
+
+@Preview(showSystemUi = true)
+@Composable
+fun PreviewCP() {
+    PlayerSimpleCard(
+        cardHeader = {
+            CardPlayerHead(
+                playerName = "João Pedro",
+                playerTag = "#89GOUYLVV",
+                arenaId = 54000000,
+                trophies = 9000,
+                UCtrophies = 2490,
+                leagueNumber = 9
+            )
+        },
+        cardPlayerContent = {
+            CardPlayerContent(exp = 56, clanName = "STUNNA", clanTag = "#89asd2", clanIconId = 16000014)
+        },
+        cardPlayerBottom = {
+            CardPlayerBottom()
+        }
+    )
+}
+
+@Composable
+fun ExpBadge(modifier: Modifier = Modifier, exp: Int){
     Surface(
         color = MaterialTheme.colorScheme.primary,
         shape = MaterialTheme.shapes.medium,
@@ -248,37 +301,8 @@ fun CardPlayerContent(modifier: Modifier = Modifier, exp: Int, clanName: String,
                     fontWeight = FontWeight.ExtraBold
                 )
             }
-            Text(
-                modifier = modifier.padding(start = 4.dp),
-                text = "EXP Level",
-                fontWeight = FontWeight.Bold
-            )
         }
     }
-
-}
-
-@Preview(showSystemUi = true)
-@Composable
-fun PreviewCP() {
-    PlayerSimpleCard(
-        cardHeader = {
-            CardPlayerHead(
-                playerName = "João Pedro",
-                playerTag = "#89GOUYLVV",
-                arenaId = 54000000,
-                trophies = 9000,
-                UCtrophies = 2490,
-                leagueNumber = 9
-            )
-        },
-        cardPlayerContent = {
-            CardPlayerContent(exp = 56, clanName = "STUNNA", clanTag = "#89asd2")
-        },
-        cardPlayerBottom = {
-            CardPlayerBottom()
-        }
-    )
 }
 
 

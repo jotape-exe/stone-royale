@@ -156,8 +156,9 @@ class MainActivity : ComponentActivity() {
                                     cardPlayerContent = {
                                         CardPlayerContent(
                                             exp = player.expLevel!!,
-                                            clanName = player.clan?.name ?: "",
-                                            clanTag = player.clan?.tag ?: ""
+                                            clanName = player.clan?.name ?: "Sem Clan",
+                                            clanTag = player.clan?.tag ?: "",
+                                            clanIconId = player.clan?.badgeId
                                         )
                                     },
                                     cardPlayerBottom = {

@@ -78,11 +78,8 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 
-
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.8.0")
     runtimeOnly("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.3")
-
-
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -91,4 +88,7 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.navigation.compose)
 }
