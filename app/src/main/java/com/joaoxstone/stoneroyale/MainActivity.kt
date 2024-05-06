@@ -5,7 +5,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
-import androidx.compose.animation.SharedTransitionScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -33,30 +32,31 @@ class MainActivity : ComponentActivity() {
                         composable("home") {
                             HomeScreen(
                                 applicationContext = this@MainActivity.applicationContext,
-                                navClick = { leagueId, arenaId, title ->
-                                    navController.navigate("profile/${leagueId ?: arenaId}/$title")
+                                navClick = { leagueId, arenaId, playerName ->
+                                    navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
                                 },
-                                animatedVisibilityScope = this@composable
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this@composable
                             )
-
                         }
-                        composable(route = "profile/{leagueId}/{title}",
+                        composable(route = "profile/{leagueId}/{playerName}",
                             arguments = listOf(
                                 navArgument("leagueId") {
                                     type = NavType.IntType
                                 },
-                                navArgument("title") {
+                                navArgument("playerName") {
                                     type = NavType.StringType
                                 }
                             )
                         ) {
                             val leagueId = it.arguments?.getInt("leagueId") ?: 1
-                            val title = it.arguments?.getString("title") ?: "Jogador"
+                            val playerName = it.arguments?.getString("playerName") ?: "Jogador"
                             PlayerProfileScreen(
                                 leagueId = leagueId,
                                 arenaId = leagueId,
-                                title = title,
-                                animatedVisibilityScope = this@composable
+                                playerName = playerName,
+                                animatedVisibilityScope = this@composable,
+                                sharedTransitionScope = this@SharedTransitionLayout
                             )
                         }
                     }

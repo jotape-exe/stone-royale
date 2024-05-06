@@ -1,6 +1,8 @@
 package com.joaoxstone.stoneroyale.ui.components
 
 import android.graphics.BlurMaskFilter
+import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -12,6 +14,7 @@ import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -21,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.FilledTonalIconButton
@@ -34,10 +38,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
@@ -46,6 +52,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -71,7 +79,7 @@ fun PlayerSimpleCard(
 
     Surface(
         shadowElevation = 8.dp,
-        shape = MaterialTheme.shapes.medium,
+        shape = MaterialTheme.shapes.extraLarge,
         modifier = modifier
             .fillMaxWidth()
             .shadowCustom(
@@ -119,39 +127,9 @@ fun PlayerSimpleCard(
     }
 }
 
-@Composable
-fun RoadAndRankRow(
-    modifier: Modifier = Modifier,
-    icon: Int,
-    actualTrophy: Int?,
-    isUltimateChampion: Boolean
-) {
-    Row(
-        modifier = modifier
-            .padding(2.dp)
-            .padding(start = 8.dp)
-    ) {
-        val finalString = StringBuilder()
-        finalString.append(actualTrophy)
-
-        Image(
-            modifier = modifier.size(22.dp),
-            painter = painterResource(icon),
-            contentDescription = "arena"
-        )
-
-        if (!isUltimateChampion) {
-            finalString.append("/9000")
-        }
-
-        Text(text = finalString.toString())
-
-    }
-}
-
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun SharedTransitionScope.CardPlayerHead(
+fun CardPlayerHead(
     modifier: Modifier = Modifier,
     arenaId: Int,
     leagueNumber: Int?,
@@ -159,9 +137,10 @@ fun SharedTransitionScope.CardPlayerHead(
     trophies: Int,
     playerName: String,
     playerTag: String,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope
 ) {
-    SharedTransitionLayout {
+    with(sharedTransitionScope) {
         Row(
             modifier = modifier.fillMaxWidth(),
             verticalAlignment = Alignment.Top,
@@ -187,11 +166,14 @@ fun SharedTransitionScope.CardPlayerHead(
                             )
 
                         Image(
-                            modifier = modifier
+                            modifier = Modifier.Companion
                                 .size(62.dp)
-                                .sharedElement(
-                                    rememberSharedContentState(key = "image/$resource"),
+                                .sharedBounds(
+                                    rememberSharedContentState(key = "leagueId/$resource"),
                                     animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = 1000)
+                                    }
                                 ),
                             painter = painterResource(resource!!),
                             contentDescription = "arena"
@@ -199,28 +181,29 @@ fun SharedTransitionScope.CardPlayerHead(
                     }
 
                     Column {
-                        RoadAndRankRow(
-                            icon = R.drawable.trophy,
-                            actualTrophy = trophies,
-                            isUltimateChampion = false
+                        Badge(
+                            text = "$trophies/9000",
+                            imageResoure = R.drawable.trophy,
+                            color = Color(0xFFE99A00)
                         )
                         if (UCtrophies !== null && UCtrophies > 0) {
-                            RoadAndRankRow(
-                                icon = R.drawable.rating,
-                                actualTrophy = UCtrophies,
-                                isUltimateChampion = true
+                            Badge(
+                                text = "$UCtrophies",
+                                imageResoure = R.drawable.rating,
+                                color = Color(0xFF6B00BE)
                             )
                         }
-
-
                     }
                 }
                 Text(
                     modifier = modifier
                         .padding(top = 8.dp)
-                        .sharedElement(
-                            rememberSharedContentState(key = "image/$playerName"),
+                        .sharedBounds(
+                            rememberSharedContentState(key = "playerName/$playerName"),
                             animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            }
                         ),
                     text = playerName,
                     fontSize = 20.sp,
@@ -240,6 +223,174 @@ fun SharedTransitionScope.CardPlayerHead(
 }
 
 @Composable
+fun PlayerCard(
+    modifier: Modifier = Modifier,
+    cardHeader: @Composable () -> Unit,
+    cardContent: @Composable () -> Unit,
+    cardBottom: @Composable () -> Unit,
+    arenaLeagueImg: @Composable () -> Unit
+) {
+    var isExpanded by remember {
+        mutableStateOf(false)
+    }
+
+    val angle: Float by animateFloatAsState(
+        if (isExpanded) 180f else 0f,
+        label = "Animation rotation"
+    )
+
+    Box(modifier = modifier) {
+        Surface(
+            modifier = modifier.padding(top = 18.dp),
+            shadowElevation = 8.dp,
+            color = MaterialTheme.colorScheme.primaryContainer,
+            shape = MaterialTheme.shapes.extraLarge
+        ) {
+            Column(modifier = modifier
+                .fillMaxWidth()
+                .clickable {
+                    isExpanded = !isExpanded
+                }
+                .animateContentSize(
+                    animationSpec = spring(
+                        dampingRatio = Spring.DampingRatioMediumBouncy,
+                        stiffness = Spring.StiffnessLow
+                    )
+                )
+            ) {
+
+                cardHeader()
+
+                AnimatedVisibility(visible = isExpanded) {
+                    cardContent()
+                }
+                Row {
+                    Column(
+                        modifier = modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.End
+                    ) {
+                        IconButton(
+                            modifier = modifier.graphicsLayer(rotationZ = angle),
+                            onClick = { isExpanded = !isExpanded }) {
+                            Icon(
+                                imageVector = Icons.Default.KeyboardArrowDown,
+                                contentDescription = "Arrow expand content"
+                            )
+                        }
+                        AnimatedVisibility(visible = isExpanded) {
+                            cardBottom()
+                        }
+                    }
+
+                }
+            }
+        }
+        arenaLeagueImg()
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+@Preview(showSystemUi = true)
+fun PlayerCardPV() {
+    PlayerCard(
+        cardHeader = {
+            SharedTransitionScope {
+                newCardHeader(
+                    arenaId = 54000003,
+                    leagueNumber = 9,
+                    UCtrophies = null,
+                    trophies = 6890,
+                    playerName = "zé Da pitomba",
+                    playerTag = "#YUKNVY54",
+                    animatedVisibilityScope = null,
+                    sharedTransitionScope = this
+                )
+            }
+
+        },
+        cardContent = {
+
+        },
+        cardBottom = {
+
+        },
+        arenaLeagueImg = {
+            Image(
+                modifier = Modifier.Companion
+                    .size(98.dp)
+                /*.sharedBounds(
+                    rememberSharedContentState(key = "leagueId/$resource"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 1000)
+                    }
+                )*/,
+                painter = painterResource(R.drawable.league9),
+                contentDescription = "arena"
+            )
+        }
+    )
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun newCardHeader(
+    modifier: Modifier = Modifier,
+    arenaId: Int,
+    leagueNumber: Int?,
+    UCtrophies: Int?,
+    trophies: Int,
+    playerName: String,
+    playerTag: String,
+    animatedVisibilityScope: AnimatedVisibilityScope?,
+    sharedTransitionScope: SharedTransitionScope
+) {
+    with(sharedTransitionScope) {
+        Column(horizontalAlignment = Alignment.End) {
+            Surface(
+                color = Color.Transparent,
+                shape = MaterialTheme.shapes.extraLarge,
+                modifier = modifier
+                    .fillMaxWidth()
+                    .padding(start = 20.dp)
+                    .background(
+                        shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
+                        brush = Brush.horizontalGradient(
+                            ClashConstants.getBackgroundByLeague(leagueNumber)
+                        )
+                    )
+            ) {
+                Text(
+                    modifier = modifier
+                        .padding(8.dp)
+                        .sharedBounds(
+                            rememberSharedContentState(key = "playerName/$playerName"),
+                            animatedVisibilityScope = animatedVisibilityScope!!,
+                            boundsTransform = { _, _ ->
+                                tween(durationMillis = 1000)
+                            }
+                        ),
+                    text = playerName,
+                    color = Color.White,
+                    textAlign = TextAlign.End,
+                    fontSize = 30.sp
+                )
+            }
+            Text(
+                modifier = modifier.padding(8.dp),
+                text = playerTag,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.End,
+                fontSize = 20.sp
+            )
+        }
+    }
+
+}
+
+
+@Composable
 fun CardPlayerBottom(
     rightSlot: @Composable () -> Unit,
 ) {
@@ -251,7 +402,6 @@ fun CardPlayerContent(
     modifier: Modifier = Modifier,
     exp: Int,
     clanName: String,
-    clanTag: String,
     clanIconId: Int? = null
 ) {
     Column {
@@ -305,6 +455,46 @@ fun ExpBadge(modifier: Modifier = Modifier, exp: Int) {
             }
         }
     }
+}
+
+@Composable
+fun Badge(
+    modifier: Modifier = Modifier,
+    text: String?,
+    @DrawableRes imageResoure: Int,
+    color: Color
+) {
+    Box(contentAlignment = Alignment.CenterStart) {
+        Surface(
+            color = color,
+            shape = MaterialTheme.shapes.extraLarge,
+            modifier = modifier.padding(start = 8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = modifier.padding(start = 30.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
+            ) {
+                Text(
+                    text = "$text",
+                    color = Color.White,
+                    fontSize = 12.sp,
+                )
+            }
+        }
+        Image(
+            modifier = modifier
+                .size(30.dp)
+                .align(Alignment.CenterStart),
+            painter = painterResource(id = imageResoure),
+            contentDescription = "experience icon"
+        )
+    }
+}
+
+//@Preview(showSystemUi = true)
+@Composable
+fun BadgePV() {
+    Badge(text = "120x", imageResoure = R.drawable.win20, color = Color.Blue)
 }
 
 @Composable

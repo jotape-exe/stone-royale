@@ -1,5 +1,6 @@
 package com.joaoxstone.stoneroyale.data.constants
 
+import androidx.compose.ui.graphics.Color
 import com.joaoxstone.stoneroyale.R
 
 class ClashConstants private constructor() {
@@ -51,6 +52,71 @@ class ClashConstants private constructor() {
             )
 
             return leages[leageNumber]
+        }
+
+        fun getBackgroundByLeague(leageNumber: Int?): List<Color> {
+
+            if (leageNumber === null) {
+                return listOf(
+                    Color(0xFF0027AD),
+                    Color(0xFF860B40),
+                    Color(0xFFCC0101)
+                )
+            }
+            val colorsBrush = mapOf(
+                1 to listOf(
+                    Color(0xFF411B02),
+                    Color(0xFF6F2F05),
+                    Color(0xFF965107)
+                ),
+                2 to listOf(
+                    Color(0xFF5A5A5A),
+                    Color(0xFF7E7D7D),
+                    Color(0xFF9E9E9E)
+                ),
+                3 to listOf(
+                    Color(0xFFD69107),
+                    Color(0xFFD58D10),
+                    Color(0xFFF5DB33)
+                ),
+                4 to listOf(
+                    Color(0xFFA00000),
+                    Color(0xFFA31717),
+                    Color(0xFF9E2F2F)
+                ),
+                5 to listOf(
+                    Color(0xFF474757),
+                    Color(0xFF45455F),
+                    Color(0xFF5D5D85)
+                ),
+                6 to listOf(
+                    Color(0xFF121286),
+                    Color(0xFF2424B3),
+                    Color(0xFF3636F0)
+                ),
+                7 to listOf(
+                    Color(0xFF2B71A0),
+                    Color(0xFF6BAEDB),
+                    Color(0xFFBBBE61)
+                ),
+                8 to listOf(
+                    Color(0xFF6F072B),
+                    Color(0xFF5A1E33),
+                    Color(0xFF792323)
+                ),
+                9 to listOf(
+                    Color(0xFF003E99),
+                    Color(0xFF1767DB),
+                    Color(0xFF91BEFF)
+                ),
+                10 to listOf(
+                    Color(0xFF5F06DB),
+                    Color(0xFF9B06DB),
+                    Color(0xFFB808A1)
+                )
+            )
+
+            return  colorsBrush[leageNumber]!!
         }
 
         fun getIconClan(clanId: Int?): Int? {

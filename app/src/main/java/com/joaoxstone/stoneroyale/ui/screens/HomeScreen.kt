@@ -4,8 +4,8 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.layout.Column
@@ -47,7 +47,8 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     applicationContext: Context,
     navClick: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
-    animatedVisibilityScope: AnimatedVisibilityScope
+    animatedContentScope: AnimatedContentScope,
+    sharedTransitionScope: SharedTransitionScope
 ) {
     Surface(
         modifier = Modifier.fillMaxSize(),
@@ -141,23 +142,21 @@ fun HomeScreen(
                 AnimatedVisibility(player.tag != null) {
                     PlayerSimpleCard(
                         cardHeader = {
-                            SharedTransitionScope {
-                                CardPlayerHead(
-                                    playerName = player.name!!,
-                                    playerTag = player.tag!!,
-                                    arenaId = player.arena?.id!!,
-                                    trophies = player.trophies!!,
-                                    UCtrophies = player.currentPathOfLegendSeasonResult?.trophies,
-                                    leagueNumber = player.currentPathOfLegendSeasonResult?.leagueNumber,
-                                    animatedVisibilityScope = animatedVisibilityScope
-                                )
-                            }
+                            CardPlayerHead(
+                                playerName = player.name!!,
+                                playerTag = player.tag!!,
+                                arenaId = player.arena?.id!!,
+                                trophies = player.trophies!!,
+                                UCtrophies = player.currentPathOfLegendSeasonResult?.trophies,
+                                leagueNumber = player.currentPathOfLegendSeasonResult?.leagueNumber,
+                                sharedTransitionScope = sharedTransitionScope,
+                                animatedVisibilityScope = animatedContentScope
+                            )
                         },
                         cardPlayerContent = {
                             CardPlayerContent(
                                 exp = player.expLevel!!,
                                 clanName = player.clan?.name ?: "Sem Clã",
-                                clanTag = player.clan?.tag ?: "",
                                 clanIconId = player.clan?.badgeId
                             )
                         },
@@ -174,20 +173,21 @@ fun HomeScreen(
                         }
                     )
                 }
+
             }
         }
     }
 }
 
 suspend fun getPlayer(playerTag: String): Pair<PlayerResponse, Boolean> {
-    var response: PlayerResponse = PlayerResponse()
+    var response = PlayerResponse()
     var hasPlayerC = false
     try {
         delay(450)
         response = api.getPlayer(playerTag)
         hasPlayerC = true
     } catch (error: Exception) {
-        Log.d("TEM PLAYER: ", error.message.toString())
+        Log.d("Error: ", error.message.toString())
     }
     return response to hasPlayerC
 }
