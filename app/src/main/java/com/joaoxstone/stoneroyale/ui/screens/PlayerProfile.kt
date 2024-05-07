@@ -36,64 +36,71 @@ fun PlayerProfileScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope
 ) {
-    with(sharedTransitionScope){
-        Surface(
-            color = Color.Transparent,
-            modifier = Modifier.background(
-                Brush.horizontalGradient(
-                    ClashConstants.getBackgroundByLeague(leagueId)
+    with(sharedTransitionScope) {
+        Row {
+            Surface(
+                color = Color.Transparent,
+                modifier = Modifier.background(
+                    Brush.horizontalGradient(
+                        ClashConstants.getBackgroundByLeague(leagueId)
+                    ),
+                    shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
                 ),
-                shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
-            ),
-        ) {
-            Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-                Box(modifier = modifier.size(162.dp), contentAlignment = Alignment.Center) {
-                    Surface(
-                        color = Color.Transparent, modifier = modifier
-                            .size(50.dp)
-                            .shadowCustom(
-                                Color(0x744400FF),
-                                blurRadius = 30.dp,
-                                shapeRadius = 20.dp
+            ) {
+                Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+                    Box(modifier = modifier.size(162.dp), contentAlignment = Alignment.Center) {
+                        Surface(
+                            color = Color.Transparent, modifier = modifier
+                                .size(50.dp)
+                                .shadowCustom(
+                                    Color(0x744400FF),
+                                    blurRadius = 30.dp,
+                                    shapeRadius = 20.dp
+                                )
+                        ) {
+
+                        }
+                        val resource =
+                            if (leagueId != null) ClashConstants.getIconLeague(leagueId) else ClashConstants.getIconArena(
+                                arenaId
                             )
-                    ) {
 
-                    }
-                    val resource =
-                        if (leagueId != null) ClashConstants.getIconLeague(leagueId) else ClashConstants.getIconArena(
-                            arenaId
+                        Image(
+                            modifier = modifier
+                                .size(162.dp)
+                                .sharedBounds(
+                                    rememberSharedContentState(key = "leagueId/$resource"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+                                        tween(durationMillis = 1000)
+                                    }
+                                ),
+                            painter = painterResource(resource!!),
+                            contentDescription = "arena"
                         )
-
-                    Image(
+                    }
+                    Text(
                         modifier = modifier
-                            .size(162.dp)
+                            .padding(top = 14.dp)
                             .sharedBounds(
-                                rememberSharedContentState(key = "leagueId/$resource"),
+                                rememberSharedContentState(key = "playerName/$playerName"),
                                 animatedVisibilityScope = animatedVisibilityScope,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = 1000)
                                 }
                             ),
-                        painter = painterResource(resource!!),
-                        contentDescription = "arena"
+                        text = playerName,
+                        color = Color.White,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold
                     )
                 }
-                Text(
-                    modifier = modifier
-                        .padding(top = 14.dp)
-                        .sharedBounds(
-                            rememberSharedContentState(key = "playerName/$playerName"),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween(durationMillis = 1000)
-                            }
-                        ),
-                    text = playerName,
-                    color = Color.White,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
-                )
             }
+            Text(
+                text = "Work In Progress ....",
+                modifier = modifier.padding(top = 10.dp),
+                fontSize = 26.sp
+            )
         }
     }
 }

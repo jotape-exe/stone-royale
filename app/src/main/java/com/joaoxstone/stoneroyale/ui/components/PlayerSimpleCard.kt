@@ -21,11 +21,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.FilledTonalIconButton
+import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -101,7 +100,9 @@ fun PlayerCard(
                 }
                 Row {
                     Column(
-                        modifier = modifier.fillMaxWidth(),
+                        modifier = modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
                         horizontalAlignment = Alignment.End
                     ) {
                         IconButton(
@@ -112,7 +113,9 @@ fun PlayerCard(
                                 contentDescription = "Arrow expand content"
                             )
                         }
-                        AnimatedVisibility(visible = isExpanded) {
+                        AnimatedVisibility(
+                            visible = isExpanded,
+                        ) {
                             cardBottom()
                         }
                     }
@@ -211,31 +214,35 @@ fun CardPlayerContent(
     modifier: Modifier = Modifier,
     exp: Int,
     clanName: String,
+    classicChallengWins: Int?,
+    grandChallengWins: Int?,
     clanIconId: Int? = null
 ) {
-    Column {
-        ExpBadge(exp = exp)
-        Surface(
-            modifier = modifier.padding(top = 16.dp)
-        ) {
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {
-                Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                    val clanIcon = ClashConstants.getIconClan(clanIconId)
-                    clanIcon?.let {
-                        Image(
-                            modifier = modifier
-                                .size(30.dp),
-                            painter = painterResource(id = it),
-                            contentDescription = "experience icon"
-                        )
-                    }
-                }
-                Text(
-                    modifier = modifier.padding(start = 4.dp),
-                    text = clanName,
-                    fontWeight = FontWeight.Bold
+    Column(modifier = modifier.padding(8.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            ExpBadge(exp = exp)
+            classicChallengWins?.let {
+                Badge(text = "$it x ", imageResoure = R.drawable.cg, color = Color(0XFF59C931))
+            }
+            grandChallengWins?.let {
+                Badge(text = "$it x ", imageResoure = R.drawable.gc, color = Color(0XFFDFAC29))
+            }
+        }
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {
+            val clanIcon = ClashConstants.getIconClan(clanIconId)
+            clanIcon?.let {
+                Image(
+                    modifier = modifier
+                        .size(30.dp),
+                    painter = painterResource(id = it),
+                    contentDescription = "experience icon"
                 )
             }
+            Text(
+                modifier = modifier.padding(start = 4.dp),
+                text = clanName,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }
@@ -245,12 +252,11 @@ fun ExpBadge(modifier: Modifier = Modifier, exp: Int) {
     Surface(
         color = MaterialTheme.colorScheme.primary,
         shape = MaterialTheme.shapes.medium,
-        modifier = modifier.padding(top = 16.dp)
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {
+        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(4.dp)) {
             Box(modifier = modifier, contentAlignment = Alignment.Center) {
                 Image(
-                    modifier = modifier.size(30.dp),
+                    modifier = modifier.size(28.dp),
                     painter = painterResource(id = R.drawable.experience),
                     contentDescription = "experience icon"
                 )
@@ -258,7 +264,7 @@ fun ExpBadge(modifier: Modifier = Modifier, exp: Int) {
                     modifier = modifier.padding(bottom = 6.dp),
                     text = "$exp",
                     color = Color.White,
-                    fontSize = 12.sp,
+                    fontSize = 10.sp,
                     fontWeight = FontWeight.ExtraBold
                 )
             }
@@ -303,7 +309,7 @@ fun Badge(
 @Composable
 fun ProfileAction(modifier: Modifier = Modifier, onclick: () -> Unit) {
     Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        FilledTonalIconButton(onClick = { onclick() }) {
+        FilledIconButton(onClick = { onclick() }) {
             Icon(painter = painterResource(id = R.drawable.dots_three), contentDescription = "More")
         }
     }

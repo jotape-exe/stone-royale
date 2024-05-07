@@ -166,10 +166,14 @@ fun HomeScreen(
                             )
                         },
                         cardContent = {
+                            val classicChallengeWins = player.badges.find { badge -> badge.name?.lowercase().equals("classic12wins")  }
+                            val grandChallengeWins = player.badges.find { badge -> badge.name?.lowercase().equals("grand12wins")  }
                             CardPlayerContent(
                                 exp = player.expLevel!!,
                                 clanName = player.clan?.name ?: "Sem Clã",
-                                clanIconId = player.clan?.badgeId
+                                clanIconId = player.clan?.badgeId,
+                                classicChallengWins = classicChallengeWins?.progress,
+                                grandChallengWins = grandChallengeWins?.progress
                             )
                         },
                         cardBottom = {
