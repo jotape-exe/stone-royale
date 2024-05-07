@@ -2,11 +2,9 @@ package com.joaoxstone.stoneroyale.ui.components
 
 import android.graphics.BlurMaskFilter
 import androidx.annotation.DrawableRes
-import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
-import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -38,7 +36,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.AbsoluteAlignment
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
@@ -53,7 +50,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -62,173 +58,12 @@ import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 
 @Composable
-fun PlayerSimpleCard(
-    cardHeader: @Composable () -> Unit,
-    cardPlayerContent: @Composable () -> Unit,
-    cardPlayerBottom: @Composable () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var isExpanded by remember {
-        mutableStateOf(false)
-    }
-
-    val angle: Float by animateFloatAsState(
-        if (isExpanded) 180f else 0f,
-        label = "Animation rotation"
-    )
-
-    Surface(
-        shadowElevation = 8.dp,
-        shape = MaterialTheme.shapes.extraLarge,
-        modifier = modifier
-            .fillMaxWidth()
-            .shadowCustom(
-                color = Color(0x540091ff),
-                offsetX = 2.dp,
-                offsetY = 2.dp,
-                blurRadius = 12.dp,
-            )
-    ) {
-        Column(modifier = modifier
-            .fillMaxWidth()
-            .clickable {
-                isExpanded = !isExpanded
-            }
-            .animateContentSize(
-                animationSpec = spring(
-                    dampingRatio = Spring.DampingRatioMediumBouncy,
-                    stiffness = Spring.StiffnessLow
-                )
-            )
-            .padding(14.dp)) {
-
-            cardHeader()
-
-            AnimatedVisibility(visible = isExpanded) {
-                cardPlayerContent()
-            }
-            Row {
-                Column(modifier = modifier.fillMaxWidth(), horizontalAlignment = Alignment.End) {
-                    IconButton(
-                        modifier = modifier.graphicsLayer(rotationZ = angle),
-                        onClick = { isExpanded = !isExpanded }) {
-                        Icon(
-                            imageVector = Icons.Default.KeyboardArrowDown,
-                            contentDescription = "Arrow expand content"
-                        )
-                    }
-                    AnimatedVisibility(visible = isExpanded) {
-                        cardPlayerBottom()
-                    }
-                }
-
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-fun CardPlayerHead(
-    modifier: Modifier = Modifier,
-    arenaId: Int,
-    leagueNumber: Int?,
-    UCtrophies: Int?,
-    trophies: Int,
-    playerName: String,
-    playerTag: String,
-    animatedVisibilityScope: AnimatedVisibilityScope,
-    sharedTransitionScope: SharedTransitionScope
-) {
-    with(sharedTransitionScope) {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.Top,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column {
-                Row {
-                    Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                        Surface(
-                            color = Color.Transparent, modifier = modifier
-                                .size(50.dp)
-                                .shadowCustom(
-                                    Color(0x540091ff),
-                                    blurRadius = 30.dp,
-                                    shapeRadius = 20.dp
-                                )
-                        ) {
-                        }
-
-                        val resource =
-                            if (leagueNumber != null) ClashConstants.getIconLeague(leagueNumber) else ClashConstants.getIconArena(
-                                arenaId
-                            )
-
-                        Image(
-                            modifier = Modifier.Companion
-                                .size(62.dp)
-                                .sharedBounds(
-                                    rememberSharedContentState(key = "leagueId/$resource"),
-                                    animatedVisibilityScope = animatedVisibilityScope,
-                                    boundsTransform = { _, _ ->
-                                        tween(durationMillis = 1000)
-                                    }
-                                ),
-                            painter = painterResource(resource!!),
-                            contentDescription = "arena"
-                        )
-                    }
-
-                    Column {
-                        Badge(
-                            text = "$trophies/9000",
-                            imageResoure = R.drawable.trophy,
-                            color = Color(0xFFE99A00)
-                        )
-                        if (UCtrophies !== null && UCtrophies > 0) {
-                            Badge(
-                                text = "$UCtrophies",
-                                imageResoure = R.drawable.rating,
-                                color = Color(0xFF6B00BE)
-                            )
-                        }
-                    }
-                }
-                Text(
-                    modifier = modifier
-                        .padding(top = 8.dp)
-                        .sharedBounds(
-                            rememberSharedContentState(key = "playerName/$playerName"),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween(durationMillis = 1000)
-                            }
-                        ),
-                    text = playerName,
-                    fontSize = 20.sp,
-                    fontWeight = FontWeight.Bold
-                )
-
-            }
-            Column(
-                verticalArrangement = Arrangement.SpaceBetween,
-                horizontalAlignment = Alignment.End
-            ) {
-                Text(modifier = modifier.width(100.dp), fontSize = 14.sp, text = playerTag)
-            }
-        }
-    }
-
-}
-
-@Composable
 fun PlayerCard(
     modifier: Modifier = Modifier,
     cardHeader: @Composable () -> Unit,
     cardContent: @Composable () -> Unit,
     cardBottom: @Composable () -> Unit,
-    arenaLeagueImg: @Composable () -> Unit
+    imageSlot: @Composable () -> Unit
 ) {
     var isExpanded by remember {
         mutableStateOf(false)
@@ -285,105 +120,79 @@ fun PlayerCard(
                 }
             }
         }
-        arenaLeagueImg()
+        imageSlot()
     }
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-@Preview(showSystemUi = true)
-fun PlayerCardPV() {
-    PlayerCard(
-        cardHeader = {
-            SharedTransitionScope {
-                newCardHeader(
-                    arenaId = 54000003,
-                    leagueNumber = 9,
-                    UCtrophies = null,
-                    trophies = 6890,
-                    playerName = "zé Da pitomba",
-                    playerTag = "#YUKNVY54",
-                    animatedVisibilityScope = null,
-                    sharedTransitionScope = this
-                )
-            }
-
-        },
-        cardContent = {
-
-        },
-        cardBottom = {
-
-        },
-        arenaLeagueImg = {
-            Image(
-                modifier = Modifier.Companion
-                    .size(98.dp)
-                /*.sharedBounds(
-                    rememberSharedContentState(key = "leagueId/$resource"),
-                    animatedVisibilityScope = animatedVisibilityScope,
-                    boundsTransform = { _, _ ->
-                        tween(durationMillis = 1000)
-                    }
-                )*/,
-                painter = painterResource(R.drawable.league9),
-                contentDescription = "arena"
-            )
-        }
-    )
-}
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-fun newCardHeader(
+fun CardHeader(
     modifier: Modifier = Modifier,
-    arenaId: Int,
     leagueNumber: Int?,
     UCtrophies: Int?,
     trophies: Int,
     playerName: String,
     playerTag: String,
-    animatedVisibilityScope: AnimatedVisibilityScope?,
+    animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope
 ) {
     with(sharedTransitionScope) {
-        Column(horizontalAlignment = Alignment.End) {
-            Surface(
-                color = Color.Transparent,
-                shape = MaterialTheme.shapes.extraLarge,
-                modifier = modifier
-                    .fillMaxWidth()
-                    .padding(start = 20.dp)
-                    .background(
-                        shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
-                        brush = Brush.horizontalGradient(
-                            ClashConstants.getBackgroundByLeague(leagueNumber)
-                        )
-                    )
-            ) {
-                Text(
+        Column {
+            Column(horizontalAlignment = Alignment.End) {
+                Surface(
+                    color = Color.Transparent,
+                    shape = MaterialTheme.shapes.extraLarge,
                     modifier = modifier
-                        .padding(8.dp)
-                        .sharedBounds(
-                            rememberSharedContentState(key = "playerName/$playerName"),
-                            animatedVisibilityScope = animatedVisibilityScope!!,
-                            boundsTransform = { _, _ ->
-                                tween(durationMillis = 1000)
-                            }
-                        ),
-                    text = playerName,
-                    color = Color.White,
+                        .fillMaxWidth()
+                        .padding(start = 20.dp)
+                        .background(
+                            shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
+                            brush = Brush.horizontalGradient(
+                                ClashConstants.getBackgroundByLeague(leagueNumber)
+                            )
+                        )
+                ) {
+                    Text(
+                        modifier = modifier
+                            .padding(8.dp)
+                            .sharedBounds(
+                                rememberSharedContentState(key = "playerName/$playerName"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                boundsTransform = { _, _ ->
+                                    tween(durationMillis = 1000)
+                                }
+                            ),
+                        text = playerName,
+                        color = Color.White,
+                        textAlign = TextAlign.End,
+                        fontSize = 30.sp
+                    )
+                }
+                Text(
+                    modifier = modifier.padding(8.dp),
+                    text = playerTag,
+                    fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.End,
-                    fontSize = 30.sp
+                    fontSize = 20.sp
                 )
             }
-            Text(
+            Row(
                 modifier = modifier.padding(8.dp),
-                text = playerTag,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.End,
-                fontSize = 20.sp
-            )
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Badge(
+                    text = "$trophies/9000",
+                    imageResoure = R.drawable.trophy,
+                    color = Color(0xFFE99A00)
+                )
+                if (UCtrophies !== null && UCtrophies > 0) {
+                    Badge(
+                        text = "$UCtrophies",
+                        imageResoure = R.drawable.rating,
+                        color = Color(0xFF6B00BE)
+                    )
+                }
+            }
         }
     }
 
@@ -477,24 +286,18 @@ fun Badge(
                 Text(
                     text = "$text",
                     color = Color.White,
-                    fontSize = 12.sp,
+                    fontSize = 18.sp,
                 )
             }
         }
         Image(
             modifier = modifier
-                .size(30.dp)
+                .size(36.dp)
                 .align(Alignment.CenterStart),
             painter = painterResource(id = imageResoure),
             contentDescription = "experience icon"
         )
     }
-}
-
-//@Preview(showSystemUi = true)
-@Composable
-fun BadgePV() {
-    Badge(text = "120x", imageResoure = R.drawable.win20, color = Color.Blue)
 }
 
 @Composable
@@ -504,6 +307,31 @@ fun ProfileAction(modifier: Modifier = Modifier, onclick: () -> Unit) {
             Icon(painter = painterResource(id = R.drawable.dots_three), contentDescription = "More")
         }
     }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun ImageArenaLeague(
+    @DrawableRes resource: Int,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+    sharedTransitionScope: SharedTransitionScope
+) {
+    with(sharedTransitionScope) {
+        Image(
+            modifier = Modifier
+                .size(98.dp)
+                .sharedBounds(
+                    rememberSharedContentState(key = "leagueId/$resource"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                    boundsTransform = { _, _ ->
+                        tween(durationMillis = 1000)
+                    }
+                ),
+            painter = painterResource(resource),
+            contentDescription = "arena"
+        )
+    }
+
 }
 
 fun Modifier.shadowCustom(

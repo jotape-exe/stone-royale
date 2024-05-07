@@ -33,11 +33,13 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.api
+import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
+import com.joaoxstone.stoneroyale.ui.components.CardHeader
 import com.joaoxstone.stoneroyale.ui.components.CardPlayerBottom
 import com.joaoxstone.stoneroyale.ui.components.CardPlayerContent
-import com.joaoxstone.stoneroyale.ui.components.CardPlayerHead
-import com.joaoxstone.stoneroyale.ui.components.PlayerSimpleCard
+import com.joaoxstone.stoneroyale.ui.components.ImageArenaLeague
+import com.joaoxstone.stoneroyale.ui.components.PlayerCard
 import com.joaoxstone.stoneroyale.ui.components.ProfileAction
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -124,7 +126,6 @@ fun HomeScreen(
                     contentDescription = "simbol"
                 )
             }
-
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -140,12 +141,23 @@ fun HomeScreen(
                     )
                 }
                 AnimatedVisibility(player.tag != null) {
-                    PlayerSimpleCard(
+                    PlayerCard(
+                        imageSlot = {
+                            val league = player.currentPathOfLegendSeasonResult?.leagueNumber
+                            val imageResourceArenaLeague =
+                                if (league !== null) ClashConstants.getIconLeague(league) else ClashConstants.getIconArena(
+                                    player.arena!!.id!!
+                                )
+                            ImageArenaLeague(
+                                imageResourceArenaLeague!!,
+                                sharedTransitionScope = sharedTransitionScope,
+                                animatedVisibilityScope = animatedContentScope
+                            )
+                        },
                         cardHeader = {
-                            CardPlayerHead(
+                            CardHeader(
                                 playerName = player.name!!,
                                 playerTag = player.tag!!,
-                                arenaId = player.arena?.id!!,
                                 trophies = player.trophies!!,
                                 UCtrophies = player.currentPathOfLegendSeasonResult?.trophies,
                                 leagueNumber = player.currentPathOfLegendSeasonResult?.leagueNumber,
@@ -153,14 +165,14 @@ fun HomeScreen(
                                 animatedVisibilityScope = animatedContentScope
                             )
                         },
-                        cardPlayerContent = {
+                        cardContent = {
                             CardPlayerContent(
                                 exp = player.expLevel!!,
                                 clanName = player.clan?.name ?: "Sem Clã",
                                 clanIconId = player.clan?.badgeId
                             )
                         },
-                        cardPlayerBottom = {
+                        cardBottom = {
                             CardPlayerBottom(rightSlot = {
                                 ProfileAction(onclick = {
                                     navClick(
