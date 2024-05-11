@@ -96,7 +96,6 @@ fun PlayerCard(
                 )
             ) {
                 cardHeader()
-                //TODO
                 AnimatedVisibility(visible = isExpanded) {
                     cardContent()
                 }
