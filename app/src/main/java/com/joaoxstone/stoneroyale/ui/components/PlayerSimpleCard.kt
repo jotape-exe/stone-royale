@@ -5,6 +5,7 @@ import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.Spring
@@ -18,6 +19,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -49,6 +51,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -92,32 +95,33 @@ fun PlayerCard(
                     )
                 )
             ) {
-
                 cardHeader()
-
+                //TODO
                 AnimatedVisibility(visible = isExpanded) {
                     cardContent()
                 }
-                Row {
-                    Column(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        horizontalAlignment = Alignment.End
+                Row(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.End
+                ) {
+
+                    AnimatedVisibility(
+                        visible = isExpanded,
                     ) {
-                        IconButton(
-                            modifier = modifier.graphicsLayer(rotationZ = angle),
-                            onClick = { isExpanded = !isExpanded }) {
-                            Icon(
-                                imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = "Arrow expand content"
-                            )
-                        }
-                        AnimatedVisibility(
-                            visible = isExpanded,
-                        ) {
+                        Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                             cardBottom()
                         }
+                    }
+
+                    IconButton(
+                        modifier = modifier.graphicsLayer(rotationZ = angle),
+                        onClick = { isExpanded = !isExpanded }) {
+                        Icon(
+                            imageVector = Icons.Default.KeyboardArrowDown,
+                            contentDescription = "Arrow expand content"
+                        )
                     }
 
                 }
@@ -203,13 +207,6 @@ fun CardHeader(
 
 
 @Composable
-fun CardPlayerBottom(
-    rightSlot: @Composable () -> Unit,
-) {
-    rightSlot()
-}
-
-@Composable
 fun CardPlayerContent(
     modifier: Modifier = Modifier,
     exp: Int,
@@ -229,12 +226,17 @@ fun CardPlayerContent(
                 Badge(text = "$it x ", imageResoure = R.drawable.gc, color = Color(0XFFDFAC29))
             }
             challengeWins?.let {
-                if(it > 17){
-                    Badge(text = "$it x ", imageResoure = R.drawable.win20, color = Color(0XFF2946DF))
+                if (it > 16) {
+                    Badge(
+                        text = "$it x ",
+                        imageResoure = R.drawable.win20,
+                        color = Color(0XFF2946DF)
+                    )
                 }
             }
         }
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {
+        Spacer(modifier = modifier.padding(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {
             val clanIcon = ClashConstants.getIconClan(clanIconId)
             clanIcon?.let {
                 Image(
@@ -243,12 +245,12 @@ fun CardPlayerContent(
                     painter = painterResource(id = it),
                     contentDescription = "experience icon"
                 )
+                Text(
+                    modifier = modifier.padding(start = 4.dp),
+                    text = clanName,
+                    fontWeight = FontWeight.Bold
+                )
             }
-            Text(
-                modifier = modifier.padding(start = 4.dp),
-                text = clanName,
-                fontWeight = FontWeight.Bold
-            )
         }
     }
 }
@@ -314,10 +316,11 @@ fun Badge(
 
 @Composable
 fun ProfileAction(modifier: Modifier = Modifier, onclick: () -> Unit) {
-    Row(modifier = modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        FilledIconButton(onClick = { onclick() }) {
-            Icon(painter = painterResource(id = R.drawable.dots_three), contentDescription = "More")
-        }
+    FilledIconButton(onClick = { onclick() }) {
+        Icon(
+            painter = painterResource(id = R.drawable.baseline_person_24),
+            contentDescription = "More"
+        )
     }
 }
 
@@ -397,3 +400,31 @@ fun Modifier.shadowCustom(
 
 private fun Dp.px(density: Density): Float =
     with(density) { toPx() }
+
+@Preview(showBackground = true)
+@Composable
+fun PlayerCardPV() {
+    PlayerCard(
+        imageSlot = {
+            val league = 8
+            val imageResourceArenaLeague = ClashConstants.getIconLeague(league)
+        },
+        cardHeader = {
+
+        },
+        cardContent = {
+            CardPlayerContent(
+                exp = 99,
+                clanName = "Sem Clã",
+                clanIconId = null,
+                classicChallengWins = 23,
+                grandChallengWins = 340,
+                challengeWins = 17
+            )
+        },
+        cardBottom = {
+            ProfileAction(onclick = {
+            })
+        }
+    )
+}

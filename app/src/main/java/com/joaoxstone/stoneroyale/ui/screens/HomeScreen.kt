@@ -36,7 +36,6 @@ import com.joaoxstone.stoneroyale.api
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
 import com.joaoxstone.stoneroyale.ui.components.CardHeader
-import com.joaoxstone.stoneroyale.ui.components.CardPlayerBottom
 import com.joaoxstone.stoneroyale.ui.components.CardPlayerContent
 import com.joaoxstone.stoneroyale.ui.components.ImageArenaLeague
 import com.joaoxstone.stoneroyale.ui.components.PlayerCard
@@ -92,7 +91,6 @@ fun HomeScreen(
                 onValueChange = {
                     playerTag = it
                 })
-
 
             FilledTonalButton(
                 shape = MaterialTheme.shapes.medium,
@@ -166,8 +164,12 @@ fun HomeScreen(
                             )
                         },
                         cardContent = {
-                            val classicChallengeWins = player.badges.find { badge -> badge.name?.lowercase().equals("classic12wins")  }
-                            val grandChallengeWins = player.badges.find { badge -> badge.name?.lowercase().equals("grand12wins")  }
+                            val classicChallengeWins = player.badges.find { badge ->
+                                badge.name?.lowercase().equals("classic12wins")
+                            }
+                            val grandChallengeWins = player.badges.find { badge ->
+                                badge.name?.lowercase().equals("grand12wins")
+                            }
                             CardPlayerContent(
                                 exp = player.expLevel!!,
                                 clanName = player.clan?.name ?: "Sem Clã",
@@ -178,14 +180,12 @@ fun HomeScreen(
                             )
                         },
                         cardBottom = {
-                            CardPlayerBottom(rightSlot = {
-                                ProfileAction(onclick = {
-                                    navClick(
-                                        player.currentPathOfLegendSeasonResult?.leagueNumber,
-                                        player.arena!!.id!!,
-                                        player.name!!
-                                    )
-                                })
+                            ProfileAction(onclick = {
+                                navClick(
+                                    player.currentPathOfLegendSeasonResult?.leagueNumber,
+                                    player.arena!!.id!!,
+                                    player.name!!
+                                )
                             })
                         }
                     )
