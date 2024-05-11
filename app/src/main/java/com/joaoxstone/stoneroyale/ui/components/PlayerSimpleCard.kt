@@ -216,6 +216,7 @@ fun CardPlayerContent(
     clanName: String,
     classicChallengWins: Int?,
     grandChallengWins: Int?,
+    challengeWins: Int?,
     clanIconId: Int? = null
 ) {
     Column(modifier = modifier.padding(8.dp)) {
@@ -226,6 +227,11 @@ fun CardPlayerContent(
             }
             grandChallengWins?.let {
                 Badge(text = "$it x ", imageResoure = R.drawable.gc, color = Color(0XFFDFAC29))
+            }
+            challengeWins?.let {
+                if(it > 17){
+                    Badge(text = "$it x ", imageResoure = R.drawable.win20, color = Color(0XFF2946DF))
+                }
             }
         }
         Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {

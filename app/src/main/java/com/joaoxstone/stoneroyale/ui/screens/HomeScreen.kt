@@ -173,7 +173,8 @@ fun HomeScreen(
                                 clanName = player.clan?.name ?: "Sem Clã",
                                 clanIconId = player.clan?.badgeId,
                                 classicChallengWins = classicChallengeWins?.progress,
-                                grandChallengWins = grandChallengeWins?.progress
+                                grandChallengWins = grandChallengeWins?.progress,
+                                challengeWins = player.challengeMaxWins
                             )
                         },
                         cardBottom = {
