@@ -8,19 +8,25 @@ import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -30,6 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.api
@@ -46,7 +53,7 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeScreen(
-    applicationContext: Context,
+    navigationAction: () -> Unit,
     navClick: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
     animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope
@@ -67,12 +74,7 @@ fun HomeScreen(
         Column(modifier = Modifier.padding(16.dp)) {
             Button(
                 onClick = {
-                    applicationContext.startActivity(
-                        Intent(
-                            applicationContext,
-                            WelcomeScreen::class.java
-                        )
-                    )
+                    navigationAction()
                 },
                 modifier = Modifier.fillMaxWidth(),
                 shape = MaterialTheme.shapes.medium
@@ -100,14 +102,6 @@ fun HomeScreen(
                 onClick = {
                     scope.launch {
                         loading = true
-                        if (playerTag.contains("#")) {
-                            Toast.makeText(
-                                applicationContext,
-                                "Não utilize caracteres especiais",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            return@launch
-                        }
                         val (response, hasPlayerC) = getPlayer(
                             "#${playerTag.uppercase().replace("O", "0").trim()}"
                         )
@@ -172,14 +166,39 @@ fun HomeScreen(
                             }
                             CardPlayerContent(
                                 exp = player.expLevel!!,
-                                clanName = player.clan?.name ?: "Sem Clã",
-                                clanIconId = player.clan?.badgeId,
                                 classicChallengWins = classicChallengeWins?.progress,
                                 grandChallengWins = grandChallengeWins?.progress,
                                 challengeWins = player.challengeMaxWins
                             )
                         },
                         cardBottom = {
+                            val clanIcon = ClashConstants.getIconClan(player.clan?.badgeId)
+                            val clanContent = @Composable {
+                                Image(
+                                    modifier = Modifier
+                                        .size(30.dp),
+                                    painter = painterResource(id = clanIcon!!),
+                                    contentDescription = "experience icon"
+                                )
+                                Text(
+                                    modifier = Modifier.padding(start = 4.dp),
+                                    text = player.clan?.name ?: "Sem clã",
+                                    fontWeight = FontWeight.Bold
+                                )
+                            }
+
+                            player.clan?.let { clan ->
+                                if (clan.name.isNullOrEmpty()) {
+                                    TextButton(onClick = { }, enabled = false) {
+                                        clanContent()
+                                    }
+                                } else {
+                                    OutlinedButton(onClick = { }) {
+                                        clanContent()
+                                    }
+                                }
+                            }
+
                             ProfileAction(onclick = {
                                 navClick(
                                     player.currentPathOfLegendSeasonResult?.leagueNumber,

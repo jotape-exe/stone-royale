@@ -1,5 +1,6 @@
 package com.joaoxstone.stoneroyale
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -13,6 +14,7 @@ import androidx.navigation.navArgument
 import com.joaoxstone.stoneroyale.data.repository.PlayerRepository
 import com.joaoxstone.stoneroyale.ui.screens.HomeScreen
 import com.joaoxstone.stoneroyale.ui.screens.PlayerProfileScreen
+import com.joaoxstone.stoneroyale.ui.screens.WelcomeScreen
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
 
 
@@ -31,7 +33,9 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "home") {
                         composable("home") {
                             HomeScreen(
-                                applicationContext = this@MainActivity.applicationContext,
+                                navigationAction = {
+                                      startActivity(Intent(applicationContext, WelcomeScreen::class.java))
+                                },
                                 navClick = { leagueId, arenaId, playerName ->
                                     navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
                                 },

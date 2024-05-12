@@ -26,10 +26,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Button
 import androidx.compose.material3.FilledIconButton
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -209,11 +212,9 @@ fun CardHeader(
 fun CardPlayerContent(
     modifier: Modifier = Modifier,
     exp: Int,
-    clanName: String,
     classicChallengWins: Int?,
     grandChallengWins: Int?,
     challengeWins: Int?,
-    clanIconId: Int? = null
 ) {
     Column(modifier = modifier.padding(8.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
@@ -232,23 +233,6 @@ fun CardPlayerContent(
                         color = Color(0XFF2946DF)
                     )
                 }
-            }
-        }
-        Spacer(modifier = modifier.padding(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(6.dp)) {
-            val clanIcon = ClashConstants.getIconClan(clanIconId)
-            clanIcon?.let {
-                Image(
-                    modifier = modifier
-                        .size(30.dp),
-                    painter = painterResource(id = it),
-                    contentDescription = "experience icon"
-                )
-                Text(
-                    modifier = modifier.padding(start = 4.dp),
-                    text = clanName,
-                    fontWeight = FontWeight.Bold
-                )
             }
         }
     }
@@ -314,7 +298,7 @@ fun Badge(
 }
 
 @Composable
-fun ProfileAction(modifier: Modifier = Modifier, onclick: () -> Unit) {
+fun ProfileAction(onclick: () -> Unit) {
     FilledIconButton(onClick = { onclick() }) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_person_24),
@@ -345,7 +329,6 @@ fun ImageArenaLeague(
             contentDescription = "arena"
         )
     }
-
 }
 
 fun Modifier.shadowCustom(
@@ -399,31 +382,3 @@ fun Modifier.shadowCustom(
 
 private fun Dp.px(density: Density): Float =
     with(density) { toPx() }
-
-@Preview(showBackground = true)
-@Composable
-fun PlayerCardPV() {
-    PlayerCard(
-        imageSlot = {
-            val league = 8
-            val imageResourceArenaLeague = ClashConstants.getIconLeague(league)
-        },
-        cardHeader = {
-
-        },
-        cardContent = {
-            CardPlayerContent(
-                exp = 99,
-                clanName = "Sem Clã",
-                clanIconId = null,
-                classicChallengWins = 23,
-                grandChallengWins = 340,
-                challengeWins = 17
-            )
-        },
-        cardBottom = {
-            ProfileAction(onclick = {
-            })
-        }
-    )
-}
