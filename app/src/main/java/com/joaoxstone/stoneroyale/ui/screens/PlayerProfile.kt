@@ -2,11 +2,13 @@ package com.joaoxstone.stoneroyale.ui.screens
 
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -37,7 +39,8 @@ fun PlayerProfileScreen(
     sharedTransitionScope: SharedTransitionScope
 ) {
     with(sharedTransitionScope) {
-        Row {
+
+        Column {
             Surface(
                 color = Color.Transparent,
                 modifier = Modifier.background(
@@ -96,11 +99,14 @@ fun PlayerProfileScreen(
                     )
                 }
             }
-            Text(
-                text = "Work In Progress ....",
-                modifier = modifier.padding(top = 10.dp),
-                fontSize = 26.sp
-            )
+            Text(text = "#89G0YLVV")
         }
+        
     }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun PlayerProfileScreenPV() {
+
 }
