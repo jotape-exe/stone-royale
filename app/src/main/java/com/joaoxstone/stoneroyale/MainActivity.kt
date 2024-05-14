@@ -6,6 +6,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -16,6 +19,7 @@ import com.joaoxstone.stoneroyale.ui.screens.HomeScreen
 import com.joaoxstone.stoneroyale.ui.screens.PlayerProfileScreen
 import com.joaoxstone.stoneroyale.ui.screens.WelcomeScreen
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
+import com.joaoxstone.stoneroyale.ui.viewmodel.AppViewModel
 
 
 val api = PlayerRepository()
@@ -30,9 +34,13 @@ class MainActivity : ComponentActivity() {
             StoneRoyaleTheme {
                 SharedTransitionLayout {
                     val navController = rememberNavController()
+                    val viewModel: AppViewModel = viewModel()
+                    val uiState by viewModel.uiState.collectAsState()
+
                     NavHost(navController = navController, startDestination = "home") {
                         composable("home") {
                             HomeScreen(
+                                uiState = uiState,
                                 navigationAction = {
                                       startActivity(Intent(applicationContext, WelcomeScreen::class.java))
                                 },
@@ -56,6 +64,7 @@ class MainActivity : ComponentActivity() {
                             val leagueId = it.arguments?.getInt("leagueId") ?: 1
                             val playerName = it.arguments?.getString("playerName") ?: "Jogador"
                             PlayerProfileScreen(
+                                uiState = uiState,
                                 leagueId = leagueId,
                                 arenaId = leagueId,
                                 playerName = playerName,

@@ -23,6 +23,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -33,6 +34,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.api
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
@@ -42,6 +44,8 @@ import com.joaoxstone.stoneroyale.ui.components.CardPlayerContent
 import com.joaoxstone.stoneroyale.ui.components.ImageArenaLeague
 import com.joaoxstone.stoneroyale.ui.components.PlayerCard
 import com.joaoxstone.stoneroyale.ui.components.ProfileAction
+import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.AppViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -51,21 +55,22 @@ fun HomeScreen(
     navigationAction: () -> Unit,
     navClick: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
     animatedContentScope: AnimatedContentScope,
-    sharedTransitionScope: SharedTransitionScope
+    sharedTransitionScope: SharedTransitionScope,
+    uiState: AppUiState
 ) {
+
+    val player = uiState.player
+
+    var loading by remember { mutableStateOf(false) }
+    var playerTag by remember { mutableStateOf("") }
+    var hasPlayer by remember { mutableStateOf(false) }
+
+    val scope = rememberCoroutineScope()
+
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        var loading by remember { mutableStateOf(false) }
-        var player by remember {
-            mutableStateOf(PlayerResponse())
-        }
-
-        var playerTag by remember { mutableStateOf("") }
-        var hasPlayer by remember { mutableStateOf(false) }
-
-        val scope = rememberCoroutineScope()
         Column(modifier = Modifier.padding(16.dp)) {
             Button(
                 onClick = {
@@ -98,11 +103,14 @@ fun HomeScreen(
                     scope.launch {
                         loading = true
                         val (response, hasPlayerC) = getPlayer(
-                            "#${playerTag.uppercase().replace("O", "0").trim()}"
+                            "#${
+                                playerTag.uppercase().replace("O", "0").trim()
+                            }",
                         )
-                        hasPlayer = hasPlayerC
-                        if (hasPlayer) {
-                            player = response
+                        if (hasPlayerC) {
+                            uiState.onPlayerChange(response)
+                            Log.d("response", "$response")
+                            Log.d("player from ui-state", "$player")
                         }
                         loading = false
                     }
