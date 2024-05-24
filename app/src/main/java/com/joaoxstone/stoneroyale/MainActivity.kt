@@ -61,13 +61,8 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) {
-                            val leagueId = it.arguments?.getInt("leagueId") ?: 1
-                            val playerName = it.arguments?.getString("playerName") ?: "Jogador"
                             PlayerProfileScreen(
                                 uiState = uiState,
-                                leagueId = leagueId,
-                                arenaId = leagueId,
-                                playerName = playerName,
                                 animatedVisibilityScope = this@composable,
                                 sharedTransitionScope = this@SharedTransitionLayout
                             )

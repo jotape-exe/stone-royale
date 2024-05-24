@@ -62,7 +62,7 @@ fun HomeScreen(
     val player = uiState.player
 
     var loading by remember { mutableStateOf(false) }
-    var playerTag by remember { mutableStateOf("") }
+    var playerTag by remember { mutableStateOf("G9YV9GR8R") }
     var hasPlayer by remember { mutableStateOf(false) }
 
     val scope = rememberCoroutineScope()
