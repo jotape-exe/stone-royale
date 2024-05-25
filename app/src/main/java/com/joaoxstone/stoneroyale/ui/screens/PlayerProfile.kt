@@ -3,6 +3,11 @@ package com.joaoxstone.stoneroyale.ui.screens
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -12,6 +17,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -23,6 +29,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -65,7 +72,8 @@ fun PlayerProfileScreen(
     Column(
         modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)) {
+            .background(MaterialTheme.colorScheme.surface)
+    ) {
         ProfileHeader(
             playerName = player.name!!,
             leagueId = player.currentPathOfLegendSeasonResult?.leagueNumber,
@@ -212,26 +220,52 @@ fun PlayerProfileContent(content: @Composable () -> Unit) {
 
 @Composable
 fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentDeck>) {
+    val evoPositios = listOf(0, 1)
     Column {
         Text(text = "Ultimo Deck utilizado", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        ProBadge()
 
-        Card(modifier = modifier.padding(8.dp), shape = MaterialTheme.shapes.extraLarge) {
+        Card(modifier = modifier.padding(12.dp), shape = MaterialTheme.shapes.large) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
-                verticalArrangement = Arrangement.spacedBy(
-                    8.dp
-                ),
-                horizontalArrangement = Arrangement.spacedBy(
-                    8.dp
-                )
             ) {
                 items(currentDeck) { card ->
-                    AsyncImage(
-                        model = card.iconUrls!!.medium,
-                        contentDescription = card.name
-                    )
+                    if (evoPositios.contains(currentDeck.indexOf(card))) {
+                        AsyncImage(
+                            model = card.iconUrls?.evolutionMedium ?: card.iconUrls!!.medium,
+                            contentDescription = card.name
+                        )
+                    } else {
+                        AsyncImage(
+                            model = card.iconUrls!!.medium,
+                            contentDescription = card.name
+                        )
+                    }
                 }
             }
         }
+    }
+}
+
+
+@Composable
+fun ProBadge(){
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+
+    val color = infiniteTransition.animateColor(
+        initialValue = Color(0xFF4232a8),
+        targetValue = Color(0xFFa85532),
+        animationSpec = infiniteRepeatable(
+            animation = tween(2000, easing = LinearEasing),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp)
+            .background(color.value)
+    ){
+        Text("PRO")
     }
 }
