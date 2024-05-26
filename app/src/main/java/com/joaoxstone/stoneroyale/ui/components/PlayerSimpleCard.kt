@@ -53,6 +53,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 
@@ -287,6 +288,40 @@ fun Badge(
                 .align(Alignment.CenterStart),
             painter = painterResource(id = imageResoure),
             contentDescription = "experience icon"
+        )
+    }
+}
+
+@Composable
+fun AsyncBadge(
+    modifier: Modifier = Modifier,
+    text: String?,
+    imageURL: String,
+    color: Color
+) {
+    Box(contentAlignment = Alignment.CenterStart) {
+        Surface(
+            color = color,
+            shape = MaterialTheme.shapes.extraLarge,
+            modifier = modifier.padding(start = 16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = modifier.padding(start = 30.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
+            ) {
+                Text(
+                    text = "$text",
+                    color = Color.White,
+                    fontSize = 18.sp,
+                )
+            }
+        }
+        AsyncImage(
+            modifier = modifier
+            .size(56.dp)
+            .align(Alignment.CenterStart),
+            model = imageURL,
+            contentDescription = text
         )
     }
 }

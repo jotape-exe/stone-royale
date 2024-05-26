@@ -1,5 +1,6 @@
 package com.joaoxstone.stoneroyale.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -15,9 +16,9 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -29,7 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -41,8 +42,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
-import com.joaoxstone.stoneroyale.data.model.player.Cards
 import com.joaoxstone.stoneroyale.data.model.player.CurrentDeck
+import com.joaoxstone.stoneroyale.ui.components.AsyncBadge
 import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.ExpBadge
 import com.joaoxstone.stoneroyale.ui.components.shadowCustom
@@ -69,6 +70,14 @@ fun PlayerProfileScreen(
     }
     val challengeWins = player.challengeMaxWins
 
+    val isPro = player.badges.find { badge ->
+        badge.name!!.lowercase() == "crl20wins2022"
+    }
+
+    val isCreator = player.badges.find { badge ->
+        badge.name!!.lowercase() == "creator"
+    }
+
     Column(
         modifier
             .fillMaxSize()
@@ -76,11 +85,20 @@ fun PlayerProfileScreen(
     ) {
         ProfileHeader(
             playerName = player.name!!,
+            playerTag = player.tag!!,
+            isPro = isPro?.name != null,
             leagueId = player.currentPathOfLegendSeasonResult?.leagueNumber,
             arenaId = player.arena!!.id!!,
             animatedVisibilityScope = animatedVisibilityScope,
             sharedTransitionScope = sharedTransitionScope
         )
+        isCreator?.let {
+            AsyncBadge(
+                text = "Creator",
+                imageURL = "https://api-assets.clashroyale.com/playerbadges/512/Gx7gSrp4LwTmOnxUQdo8z3kBHpp8sZmHtb1sHMQrqYo.png",
+                color = Color(0xFF01971C)
+            )
+        }
         Row(
             modifier = modifier.padding(8.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -128,15 +146,9 @@ fun PlayerProfileScreen(
             }
         }
         PlayerProfileContent {
-            DeckContainer(currentDeck = player.currentDeck!!)
+            DeckContainer(currentDeck = player.currentDeck)
         }
     }
-}
-
-@OptIn(ExperimentalSharedTransitionApi::class)
-@Composable
-fun PlayerProfileScreenPV() {
-
 }
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -144,11 +156,14 @@ fun PlayerProfileScreenPV() {
 fun ProfileHeader(
     modifier: Modifier = Modifier,
     playerName: String,
+    playerTag: String,
     leagueId: Int?,
     arenaId: Int,
+    isPro: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope
 ) {
+    Log.d("OXE", "$isPro Rapaz")
     with(sharedTransitionScope) {
         Surface(
             color = Color.Transparent,
@@ -191,21 +206,33 @@ fun ProfileHeader(
                         contentDescription = "arena"
                     )
                 }
-                Text(
-                    modifier = modifier
-                        .padding(top = 14.dp)
-                        .sharedBounds(
-                            rememberSharedContentState(key = "playerName/$playerName"),
-                            animatedVisibilityScope = animatedVisibilityScope,
-                            boundsTransform = { _, _ ->
-                                tween(durationMillis = 1000)
-                            }
-                        ),
-                    text = playerName,
-                    color = Color.White,
-                    fontSize = 28.sp,
-                    fontWeight = FontWeight.Bold
-                )
+
+                Column {
+                    Text(
+                        modifier = modifier
+                            .padding(top = 14.dp)
+                            .sharedBounds(
+                                rememberSharedContentState(key = "playerName/$playerName"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                boundsTransform = { _, _ ->
+                                    tween(durationMillis = 1000)
+                                }
+                            ),
+                        text = playerName,
+                        color = Color.White,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Spacer(modifier = modifier.padding(4.dp))
+                    Row {
+                        TagBadge(tag = playerTag)
+                        Spacer(modifier = modifier.padding(2.dp))
+                        if (isPro) {
+                            ProBadge()
+                        }
+                    }
+                }
+
             }
         }
     }
@@ -221,9 +248,8 @@ fun PlayerProfileContent(content: @Composable () -> Unit) {
 @Composable
 fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentDeck>) {
     val evoPositios = listOf(0, 1)
-    Column {
-        Text(text = "Ultimo Deck utilizado", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-        ProBadge()
+    Column(modifier.padding(8.dp)) {
+        Text(text = "Último Deck utilizado", fontSize = 24.sp, fontWeight = FontWeight.Bold)
 
         Card(modifier = modifier.padding(12.dp), shape = MaterialTheme.shapes.large) {
             LazyVerticalGrid(
@@ -247,25 +273,40 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
     }
 }
 
-
 @Composable
-fun ProBadge(){
+fun ProBadge(modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "")
-
     val color = infiniteTransition.animateColor(
-        initialValue = Color(0xFF4232a8),
-        targetValue = Color(0xFFa85532),
+        initialValue = Color(0xFFffd000),
+        targetValue = Color(0xFFff00e1),
         animationSpec = infiniteRepeatable(
-            animation = tween(2000, easing = LinearEasing),
+            animation = tween(1000, easing = LinearEasing),
             repeatMode = RepeatMode.Reverse
         ), label = ""
     )
-    Box(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp)
-            .background(color.value)
-    ){
-        Text("PRO")
+    Surface(
+        color = color.value,
+
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Text(
+            fontWeight = FontWeight.ExtraBold,
+            modifier = modifier
+                .padding(8.dp), text = "PRO", color = Color.White
+        )
+    }
+}
+
+@Composable
+fun TagBadge(modifier: Modifier = Modifier, tag: String) {
+    Surface(
+        color = Color(0xBF050031),
+        shape = MaterialTheme.shapes.medium
+    ) {
+        Text(
+            fontWeight = FontWeight.ExtraBold,
+            modifier = modifier
+                .padding(8.dp), text = tag, color = Color.White
+        )
     }
 }
