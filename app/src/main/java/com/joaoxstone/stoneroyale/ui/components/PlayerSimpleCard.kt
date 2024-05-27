@@ -235,26 +235,24 @@ fun CardPlayerContent(
 
 @Composable
 fun ExpBadge(modifier: Modifier = Modifier, exp: Int) {
-    Surface(
-        color = MaterialTheme.colorScheme.primary,
-        shape = MaterialTheme.shapes.medium,
-    ) {
-        Row(verticalAlignment = Alignment.CenterVertically, modifier = modifier.padding(4.dp)) {
-            Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                Image(
-                    modifier = modifier.size(28.dp),
-                    painter = painterResource(id = R.drawable.experience),
-                    contentDescription = "experience icon"
-                )
-                Text(
-                    modifier = modifier.padding(bottom = 6.dp),
-                    text = "$exp",
-                    color = Color.White,
-                    fontSize = 10.sp,
-                    fontWeight = FontWeight.ExtraBold
-                )
-            }
+    Box(modifier = modifier, contentAlignment = Alignment.Center) {
+        Surface(
+            color = MaterialTheme.colorScheme.primary,
+            shape = MaterialTheme.shapes.medium,
+        ) {
+            Image(
+                modifier = modifier.size(38.dp),
+                painter = painterResource(id = R.drawable.experience),
+                contentDescription = "experience icon"
+            )
         }
+        Text(
+            modifier = modifier.padding(bottom = 6.dp),
+            text = "$exp",
+            color = Color.White,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold
+        )
     }
 }
 
