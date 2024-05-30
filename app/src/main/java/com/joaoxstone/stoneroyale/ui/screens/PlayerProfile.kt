@@ -36,6 +36,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -53,6 +54,7 @@ import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.ExpBadge
 import com.joaoxstone.stoneroyale.ui.components.shadowCustom
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -72,15 +74,16 @@ fun PlayerProfileScreen(
     val classicChallengeWins = player.badges.find { badge ->
         badge.name?.lowercase().equals("classic12wins")
     }
+
+    val scope = rememberCoroutineScope()
+
     val grandChallengeWins = player.badges.find { badge ->
         badge.name?.lowercase().equals("grand12wins")
     }
     val challengeWins = player.challengeMaxWins
-
     val isPro = player.badges.find { badge ->
         badge.name!!.lowercase() == "crl20wins2022"
     }
-
     val isCreator = player.badges.find { badge ->
         badge.name!!.lowercase() == "creator"
     }
@@ -161,7 +164,9 @@ fun PlayerProfileScreen(
                 clanName = player.clan?.name,
                 clanRole = player.role,
                 onOpenClan = {
-                    onOpenClan()
+                    scope.launch {
+                        onOpenClan()
+                    }
                 })
             MasteryContainer(onOpenMasteries = { onOpenMasteries() })
         }

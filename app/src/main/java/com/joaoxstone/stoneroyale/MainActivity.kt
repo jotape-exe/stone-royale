@@ -80,9 +80,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("badges") {
-                            BadgesScreen(uiState) {
-                                navController.navigate("home")
-                            }
+                            BadgesScreen(uiState, onClose = { leagueId, arenaId, playerName ->
+                                navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
+                            })
                         }
                     }
                 }
