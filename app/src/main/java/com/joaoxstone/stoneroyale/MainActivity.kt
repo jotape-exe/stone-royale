@@ -15,6 +15,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.joaoxstone.stoneroyale.data.repository.PlayerRepository
+import com.joaoxstone.stoneroyale.ui.screens.BadgesScreen
 import com.joaoxstone.stoneroyale.ui.screens.HomeScreen
 import com.joaoxstone.stoneroyale.ui.screens.PlayerProfileScreen
 import com.joaoxstone.stoneroyale.ui.screens.WelcomeScreen
@@ -33,6 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             StoneRoyaleTheme {
                 SharedTransitionLayout {
+
                     val navController = rememberNavController()
                     val viewModel: AppViewModel = viewModel()
                     val uiState by viewModel.uiState.collectAsState()
@@ -42,7 +44,12 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(
                                 uiState = uiState,
                                 navigationAction = {
-                                      startActivity(Intent(applicationContext, WelcomeScreen::class.java))
+                                    startActivity(
+                                        Intent(
+                                            applicationContext,
+                                            WelcomeScreen::class.java
+                                        )
+                                    )
                                 },
                                 navClick = { leagueId, arenaId, playerName ->
                                     navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
@@ -64,8 +71,18 @@ class MainActivity : ComponentActivity() {
                             PlayerProfileScreen(
                                 uiState = uiState,
                                 animatedVisibilityScope = this@composable,
-                                sharedTransitionScope = this@SharedTransitionLayout
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                onOpenClan = {
+                                },
+                                onOpenMasteries ={
+                                    navController.navigate("badges")
+                                }
                             )
+                        }
+                        composable("badges") {
+                            BadgesScreen(uiState) {
+                                navController.navigate("home")
+                            }
                         }
                     }
                 }

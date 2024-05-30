@@ -34,6 +34,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -65,7 +66,7 @@ fun PlayerCard(
     cardBottom: @Composable () -> Unit,
     imageSlot: @Composable () -> Unit
 ) {
-    var isExpanded by remember {
+    var isExpanded by rememberSaveable {
         mutableStateOf(false)
     }
 
@@ -316,8 +317,8 @@ fun AsyncBadge(
         }
         AsyncImage(
             modifier = modifier
-            .size(56.dp)
-            .align(Alignment.CenterStart),
+                .size(56.dp)
+                .align(Alignment.CenterStart),
             model = imageURL,
             contentDescription = text
         )

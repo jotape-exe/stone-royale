@@ -26,7 +26,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -55,7 +60,9 @@ fun PlayerProfileScreen(
     modifier: Modifier = Modifier,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
-    uiState: AppUiState
+    uiState: AppUiState,
+    onOpenClan: () -> Unit,
+    onOpenMasteries: () -> Unit
 ) {
     val player = uiState.player
 
@@ -147,6 +154,16 @@ fun PlayerProfileScreen(
         }
         PlayerProfileContent {
             DeckContainer(currentDeck = player.currentDeck)
+        }
+        PlayerProfileBottom(modifier.fillMaxWidth()) {
+            ClanContainer(
+                badgeClan = player.clan?.badgeId,
+                clanName = player.clan?.name,
+                clanRole = player.role,
+                onOpenClan = {
+                    onOpenClan()
+                })
+            MasteryContainer(onOpenMasteries = { onOpenMasteries() })
         }
     }
 }
@@ -246,6 +263,18 @@ fun PlayerProfileContent(content: @Composable () -> Unit) {
 }
 
 @Composable
+fun PlayerProfileBottom(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(14.dp),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        content()
+    }
+}
+
+@Composable
 fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentDeck>) {
     val evoPositios = listOf(0, 1)
     Column(modifier.padding(8.dp)) {
@@ -307,6 +336,59 @@ fun TagBadge(modifier: Modifier = Modifier, tag: String) {
             fontWeight = FontWeight.ExtraBold,
             modifier = modifier
                 .padding(8.dp), text = tag, color = Color.White
+        )
+    }
+}
+
+@Composable
+fun ClanContainer(
+    modifier: Modifier = Modifier,
+    badgeClan: Int?,
+    clanName: String?,
+    clanRole: String?,
+    onOpenClan: () -> Unit
+) {
+    val clanIcon = ClashConstants.getIconClan(badgeClan)
+    Column {
+        Row {
+            Image(
+                modifier = Modifier
+                    .size(30.dp),
+                painter = painterResource(id = clanIcon!!),
+                contentDescription = "experience icon"
+            )
+            Text(
+                modifier = modifier.padding(start = 8.dp),
+                text = clanName ?: "Sem clã",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.ExtraBold
+            )
+        }
+        if (badgeClan != null) {
+            Text(modifier = modifier.padding(8.dp), text = clanRole ?: "")
+            FilledTonalButton(shape = MaterialTheme.shapes.small, onClick = {
+                onOpenClan()
+            }) {
+                Text(modifier = modifier.padding(end = 4.dp), text = "Ver membros")
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_baseline_groups),
+                    contentDescription = ""
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MasteryContainer(
+    modifier: Modifier = Modifier,
+    onOpenMasteries: () -> Unit
+) {
+    IconButton(modifier = modifier.size(90.dp), onClick = { onOpenMasteries() }) {
+        Image(
+            modifier = modifier.size(66.dp),
+            painter = painterResource(id = R.drawable.mastery),
+            contentDescription = "Mastery"
         )
     }
 }
