@@ -141,7 +141,7 @@ fun BadgesScreen(
                 )
             }
         }
-        LazyVerticalGrid(modifier = modifier.padding(innerPadding), columns = GridCells.Fixed(4)) {
+        LazyVerticalGrid(modifier = modifier.padding(innerPadding), columns = GridCells.Fixed(3)) {
             items(masteryList) { badge ->
                 Surface(
                     shape = MaterialTheme.shapes.extraLarge,
@@ -182,28 +182,32 @@ fun ModalBadgeContent(
     badgeTarget: Int?,
 ) {
 
-    Column(modifier = modifier.padding(8.dp)) {
-        Row {
-            SubcomposeAsyncImage(
-                modifier = modifier.size(104.dp),
-                model = badgeImage,
-                contentDescription = badgeName
-            )
+    Row(modifier = modifier.padding(8.dp)) {
+        SubcomposeAsyncImage(
+            modifier = modifier.size(104.dp),
+            model = badgeImage,
+            contentDescription = badgeName
+        )
+        Column {
             Text(
                 modifier = modifier.padding(top = 14.dp),
                 text = badgeName,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
-        }
-        if (badgeProgress != null && badgeTarget != null) {
-            AnimatedLinearProgressIndicator(
-                progressBadge = badgeProgress.toFloat(),
-                target = badgeTarget.toFloat()
-            )
+
+            Surface(
+                color = MaterialTheme.colorScheme.primary,
+                shape = MaterialTheme.shapes.medium
+            ) {
+                Text(
+                    modifier = modifier.padding(10.dp),
+                    text = "$badgeLevel / $badgeMaxLevel",
+                    fontSize = 12.sp,
+                )
+            }
         }
     }
-
 }
 
 @Composable
