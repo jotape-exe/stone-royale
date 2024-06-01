@@ -1,6 +1,7 @@
 package com.joaoxstone.stoneroyale.ui.viewmodel
 
 import androidx.lifecycle.ViewModel
+import com.joaoxstone.stoneroyale.data.model.player.Badges
 import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -9,7 +10,8 @@ import kotlinx.coroutines.flow.update
 
 data class AppUiState(
     val player: PlayerResponse = PlayerResponse(),
-    val onPlayerChange: (PlayerResponse) -> Unit = {}
+    val onPlayerChange: (PlayerResponse) -> Unit = {},
+    val onPlayerBagdeChange: (List<Badges>) -> Unit = {},
 )
 
 class AppViewModel : ViewModel() {
@@ -22,6 +24,11 @@ class AppViewModel : ViewModel() {
                 onPlayerChange = { player ->
                     _uiState.update { playerState ->
                         playerState.copy(player = player)
+                    }
+                },
+                onPlayerBagdeChange = {
+                    _uiState.update { playerState ->
+                        playerState.copy(player = playerState.player.copy(badges = it))
                     }
                 }
             )

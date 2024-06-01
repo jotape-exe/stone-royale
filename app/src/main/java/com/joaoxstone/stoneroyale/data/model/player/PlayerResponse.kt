@@ -26,7 +26,7 @@ data class PlayerResponse(
     @SerializedName("clan") var clan: Clan? = Clan(),
     @SerializedName("arena") var arena: Arena? = Arena(),
     @SerializedName("leagueStatistics") var leagueStatistics: LeagueStatistics? = LeagueStatistics(),
-    @SerializedName("badges") var badges: ArrayList<Badges> = arrayListOf(),
+    @SerializedName("badges") var badges: List<Badges> = arrayListOf(),
     @SerializedName("achievements") var achievements: ArrayList<Achievements> = arrayListOf(),
     @SerializedName("cards") var cards: ArrayList<Cards> = arrayListOf(),
     @SerializedName("supportCards") var supportCards: ArrayList<SupportCards> = arrayListOf(),

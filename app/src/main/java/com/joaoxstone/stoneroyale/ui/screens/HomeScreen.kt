@@ -23,7 +23,6 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -34,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.api
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
@@ -45,7 +43,6 @@ import com.joaoxstone.stoneroyale.ui.components.ImageArenaLeague
 import com.joaoxstone.stoneroyale.ui.components.PlayerCard
 import com.joaoxstone.stoneroyale.ui.components.ProfileAction
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
-import com.joaoxstone.stoneroyale.ui.viewmodel.AppViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

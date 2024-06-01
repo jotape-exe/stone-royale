@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Stone Royale</string>
     <string name="title_activity_welcome_screen">WelcomeScreen</string>
+    <string name="title_activity_badges_screen">BadgesScreen</string>
 </resources>

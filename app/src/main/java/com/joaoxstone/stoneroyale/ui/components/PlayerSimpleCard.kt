@@ -46,6 +46,7 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -302,7 +303,6 @@ fun AsyncBadge(
         Surface(
             color = color,
             shape = MaterialTheme.shapes.extraLarge,
-            modifier = modifier.padding(start = 16.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -317,9 +317,11 @@ fun AsyncBadge(
         }
         AsyncImage(
             modifier = modifier
-                .size(56.dp)
+                .size(52.dp)
+                .padding(end = 20.dp)
                 .align(Alignment.CenterStart),
             model = imageURL,
+            contentScale = ContentScale.Crop,
             contentDescription = text
         )
     }
@@ -327,7 +329,9 @@ fun AsyncBadge(
 
 @Composable
 fun ProfileAction(onclick: () -> Unit) {
-    FilledIconButton(onClick = { onclick() }) {
+    FilledIconButton(
+        shape = MaterialTheme.shapes.medium,
+        onClick = { onclick() }) {
         Icon(
             painter = painterResource(id = R.drawable.baseline_person_24),
             contentDescription = "More"

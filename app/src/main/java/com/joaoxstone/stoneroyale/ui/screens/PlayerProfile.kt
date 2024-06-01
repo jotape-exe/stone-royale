@@ -3,6 +3,7 @@ package com.joaoxstone.stoneroyale.ui.screens
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
+import android.widget.Space
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -27,21 +28,16 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -109,58 +105,59 @@ fun PlayerProfileScreen(
             leagueId = player.currentPathOfLegendSeasonResult?.leagueNumber,
             arenaId = player.arena!!.id!!,
             animatedVisibilityScope = animatedVisibilityScope,
-            sharedTransitionScope = sharedTransitionScope
+            sharedTransitionScope = sharedTransitionScope,
+            isCreator = isCreator?.name != null
         )
-        isCreator?.let {
-            AsyncBadge(
-                text = "Creator",
-                imageURL = "https://api-assets.clashroyale.com/playerbadges/512/Gx7gSrp4LwTmOnxUQdo8z3kBHpp8sZmHtb1sHMQrqYo.png",
-                color = Color(0xFF01971C)
-            )
-        }
-        Row(
-            modifier = modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            ExpBadge(exp = exp)
-            Badge(
-                text = "$trophies/9000",
-                imageResoure = R.drawable.trophy,
-                color = Color(0xFFE99A00)
-            )
-            if (UCtrophies !== null && UCtrophies > 0) {
+        Card(modifier = modifier.padding(8.dp), shape = MaterialTheme.shapes.large) {
+
+            Row(
+                modifier = modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                ExpBadge(exp = exp)
                 Badge(
-                    text = "$UCtrophies",
-                    imageResoure = R.drawable.rating,
-                    color = Color(0xFF6B00BE)
+                    text = "$trophies/9000",
+                    imageResoure = R.drawable.trophy,
+                    color = Color(0xFFE99A00)
                 )
-            }
-        }
-        Row(
-            modifier = modifier.padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            classicChallengeWins?.let {
-                Badge(
-                    text = "${it.progress} x ",
-                    imageResoure = R.drawable.cg,
-                    color = Color(0XFF59C931)
-                )
-            }
-            grandChallengeWins?.let {
-                Badge(
-                    text = "${it.progress} x ",
-                    imageResoure = R.drawable.gc,
-                    color = Color(0XFFDFAC29)
-                )
-            }
-            challengeWins?.let {
-                if (it > 16) {
+                if (UCtrophies !== null && UCtrophies > 0) {
                     Badge(
-                        text = "$it x ",
-                        imageResoure = R.drawable.win20,
-                        color = Color(0XFF2946DF)
+                        text = "$UCtrophies",
+                        imageResoure = R.drawable.rating,
+                        color = Color(0xFF6B00BE)
                     )
+                }
+            }
+            Row(
+                modifier = modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                classicChallengeWins?.let {
+                    Badge(
+                        text = "${it.progress} x ",
+                        imageResoure = R.drawable.cg,
+                        color = Color(0XFF59C931)
+                    )
+                }
+                grandChallengeWins?.let {
+                    Badge(
+                        text = "${it.progress} x ",
+                        imageResoure = R.drawable.gc,
+                        color = Color(0XFFDFAC29)
+                    )
+                }
+                challengeWins?.let {
+                    if (it > 16) {
+                        Badge(
+                            text = "$it x ",
+                            imageResoure = R.drawable.win20,
+                            color = Color(0XFF2946DF)
+                        )
+                    }
                 }
             }
         }
@@ -192,7 +189,8 @@ fun ProfileHeader(
     arenaId: Int,
     isPro: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    sharedTransitionScope: SharedTransitionScope
+    sharedTransitionScope: SharedTransitionScope,
+    isCreator: Boolean
 ) {
     Log.d("OXE", "$isPro Rapaz")
     with(sharedTransitionScope) {
@@ -262,6 +260,13 @@ fun ProfileHeader(
                             ProBadge()
                         }
                     }
+                    if (isCreator) {
+                        AsyncBadge(
+                            text = "Creator",
+                            imageURL = "https://api-assets.clashroyale.com/playerbadges/512/Gx7gSrp4LwTmOnxUQdo8z3kBHpp8sZmHtb1sHMQrqYo.png",
+                            color = Color(0xFF01971C)
+                        )
+                    }
                 }
 
             }
@@ -278,19 +283,21 @@ fun PlayerProfileContent(content: @Composable () -> Unit) {
 
 @Composable
 fun PlayerProfileBottom(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(14.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        content()
+    Card(modifier = modifier.padding(8.dp), shape = MaterialTheme.shapes.large) {
+        Row(
+            modifier = modifier
+                .fillMaxWidth()
+                .padding(14.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            content()
+        }
     }
+
 }
 
 @Composable
 fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentDeck>) {
-
     val evoPositios = listOf(0, 1)
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
@@ -299,42 +306,47 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
         modifier
             .padding(8.dp)
     ) {
-        Row(
-            modifier = modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "Último Deck utilizado",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = MaterialTheme.colorScheme.onSurface
-            )
-            FilledIconButton(onClick = {
-                scope.launch {
-                    val URI = onCopyDeck(currentDeck)
-                    val intent = Intent(Intent.ACTION_VIEW, URI)
-                    context.startActivity(intent)
+        Card(shape = MaterialTheme.shapes.large) {
+            Surface(
+                modifier = modifier.padding(4.dp),
+                shape = MaterialTheme.shapes.medium,
+                color = MaterialTheme.colorScheme.secondaryContainer
+            ) {
+                Row(
+                    modifier = modifier
+                        .fillMaxWidth()
+                        .padding(2.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Último Deck utilizado",
+                        fontSize = 20.sp,
+                        fontWeight = FontWeight.SemiBold,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
+                    FilledIconButton(
+                        shape = MaterialTheme.shapes.medium,
+                        onClick = {
+                            scope.launch {
+                                val URI = onCopyDeck(currentDeck)
+                                val intent = Intent(Intent.ACTION_VIEW, URI)
+                                context.startActivity(intent)
+                            }
+                        }) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_baseline_content_copy),
+                            contentDescription = "copy"
+                        )
+                    }
                 }
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_baseline_content_copy),
-                    contentDescription = "copy"
-                )
             }
-        }
-        Card(modifier = modifier.padding(12.dp), shape = MaterialTheme.shapes.large) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(4),
             ) {
                 items(currentDeck) { card ->
                     if (evoPositios.contains(currentDeck.indexOf(card))) {
                         SubcomposeAsyncImage(
-                            modifier = modifier.shadowCustom(
-                                color = Color(0x744400FF),
-                                blurRadius = 4.dp,
-                                shapeRadius = 20.dp
-                            ),
                             model = card.iconUrls?.evolutionMedium ?: card.iconUrls!!.medium,
                             contentDescription = card.name,
                             contentScale = ContentScale.Crop,

@@ -1,9 +1,8 @@
 package com.joaoxstone.stoneroyale.ui.screens
 
-import androidx.compose.animation.AnimatedContent
+import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,14 +11,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -36,31 +38,23 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.StrokeCap
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.drawText
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
-import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.LineHeightStyle
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
+import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.model.player.Badges
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -68,42 +62,40 @@ import kotlinx.coroutines.launch
 @Composable
 fun BadgesScreen(
     uiState: AppUiState,
-    onClose: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+    val scrollBehavior =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
     val sheetState = rememberModalBottomSheetState()
-    val scope = rememberCoroutineScope()
     val currentBadge = remember { mutableStateOf(Badges()) }
     var showBottomSheet by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(false) }
 
     val player = uiState.player
     val masteryList = player.badges
     val playerName = player.name
 
     Scaffold(
-        modifier = Modifier,
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    titleContentColor = MaterialTheme.colorScheme.primary,
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 ),
                 title = {
                     Text(
-                        playerName ?: "Badges",
+                        "Emblemas de ${playerName!!}",
                         maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                        overflow = TextOverflow.Ellipsis,
+                        fontSize = 18.sp
                     )
                 },
                 navigationIcon = {
                     IconButton(onClick = {
-                        onClose(
-                            player.currentPathOfLegendSeasonResult?.leagueNumber,
-                            player.arena!!.id!!,
-                            player.name!!
-                        )
+                        onClose()
                     }) {
                         Icon(
                             imageVector = Icons.Filled.ArrowBack,
@@ -112,11 +104,31 @@ fun BadgesScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = { /* do something */ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Menu,
-                            contentDescription = "Localized description"
-                        )
+                    Box {
+                        IconButton(onClick = { expanded = !expanded }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.ic_baseline_filter_list),
+                                contentDescription = "More"
+                            )
+                        }
+
+                        DropdownMenu(
+                            expanded = expanded,
+                            onDismissRequest = { expanded = false }
+                        ) {
+                            DropdownMenuItem(
+                                text = { Text("Ordenar por nome") },
+                                onClick = {
+                                    uiState.onPlayerBagdeChange(uiState.player.badges.sortedBy { it.name })
+                                }
+                            )
+                            DropdownMenuItem(
+                                text = { Text("Ornedar por nível") },
+                                onClick = {
+                                    uiState.onPlayerBagdeChange(uiState.player.badges.sortedBy { it.level })
+                                }
+                            )
+                        }
                     }
                 },
                 scrollBehavior = scrollBehavior
@@ -160,7 +172,7 @@ fun BadgesScreen(
                             CircularProgressIndicator(
                                 modifier = Modifier
                                     .size(10.dp)
-                                    .padding(24.dp)
+                                    .padding(14.dp)
                             )
                         }
                     )
@@ -195,65 +207,19 @@ fun ModalBadgeContent(
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
             )
-
-            Surface(
-                color = MaterialTheme.colorScheme.primary,
-                shape = MaterialTheme.shapes.medium
-            ) {
-                Text(
-                    modifier = modifier.padding(10.dp),
-                    text = "$badgeLevel / $badgeMaxLevel",
-                    fontSize = 12.sp,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-fun AnimatedLinearProgressIndicator(
-    progressBadge: Float, target: Float,
-    animationDuration: Int = 1500,
-    animationDelay: Int = 200
-) {
-    var progress by remember { mutableStateOf(0f) }
-    val coroutineScope = rememberCoroutineScope()
-
-    val animatedProgress by animateFloatAsState(
-        targetValue = progress,
-        animationSpec = tween(
-            durationMillis = animationDuration,
-            delayMillis = animationDelay
-        ), label = ""
-    )
-
-    LaunchedEffect(Unit) {
-        coroutineScope.launch {
-            while (progress < target) {
-                println("$progress === $progressBadge")
-                println(target)
-
-                if (progress > progressBadge) {
-                    println("caiu no breack")
-                    break
+            if (badgeLevel != null) {
+                Surface(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = MaterialTheme.shapes.medium
+                ) {
+                    Text(
+                        modifier = modifier.padding(10.dp),
+                        text = "$badgeLevel / $badgeMaxLevel",
+                        fontSize = 12.sp,
+                    )
                 }
-
-                progress += (progressBadge * 0.01f)
-                delay(100)
-
             }
+
         }
     }
-
-    Surface(shape = MaterialTheme.shapes.medium) {
-        LinearProgressIndicator(
-            progress = progress,
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(16.dp)
-        )
-
-    }
-
-
 }

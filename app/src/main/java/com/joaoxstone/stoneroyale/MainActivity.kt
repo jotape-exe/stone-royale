@@ -80,8 +80,8 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("badges") {
-                            BadgesScreen(uiState, onClose = { leagueId, arenaId, playerName ->
-                                navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
+                            BadgesScreen(uiState, onClose = {
+                                navController.popBackStack()
                             })
                         }
                     }
