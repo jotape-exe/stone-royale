@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import com.joaoxstone.stoneroyale.R
 
 @Composable
-fun SearchContainer(modifier: Modifier = Modifier) {
+fun SearchContainer(modifier: Modifier = Modifier, onSearch: (term: String) -> Unit) {
     var input by rememberSaveable { mutableStateOf("") }
     Column(modifier = modifier) {
         OutlinedTextField(
@@ -35,7 +35,7 @@ fun SearchContainer(modifier: Modifier = Modifier) {
         )
         Spacer(modifier = Modifier.padding(8.dp))
         Button(
-            onClick = { /*TODO*/ },
+            onClick = { onSearch(input) },
             modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium
         ) {

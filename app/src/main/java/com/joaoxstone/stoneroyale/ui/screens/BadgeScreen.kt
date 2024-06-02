@@ -3,6 +3,7 @@ package com.joaoxstone.stoneroyale.ui.screens
 import android.widget.Toast
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -155,29 +156,25 @@ fun BadgesScreen(
         }
         LazyVerticalGrid(modifier = modifier.padding(innerPadding), columns = GridCells.Fixed(3)) {
             items(masteryList) { badge ->
-                Surface(
-                    shape = MaterialTheme.shapes.extraLarge,
-                    modifier = modifier
-                ) {
-                    SubcomposeAsyncImage(
-                        modifier = modifier.clickable(
-                            onClick = {
-                                showBottomSheet = true
-                                currentBadge.value = badge
-                            }
-                        ),
-                        model = badge.iconUrls?.large,
-                        contentDescription = badge.name,
-                        loading = {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .size(10.dp)
-                                    .padding(14.dp)
-                            )
+                SubcomposeAsyncImage(
+                    modifier = modifier.clickable(
+                        onClick = {
+                            showBottomSheet = true
+                            currentBadge.value = badge
                         }
-                    )
-                }
+                    ),
+                    model = badge.iconUrls?.large,
+                    contentDescription = badge.name,
+                    loading = {
+                        CircularProgressIndicator(
+                            modifier = modifier
+                                .size(10.dp)
+                                .padding(18.dp)
+                        )
+                    }
+                )
             }
+
 
         }
     }
