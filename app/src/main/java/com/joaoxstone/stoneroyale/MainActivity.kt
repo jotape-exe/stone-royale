@@ -38,18 +38,23 @@ class MainActivity : ComponentActivity() {
                     val viewModel: AppViewModel = viewModel()
                     val uiState by viewModel.uiState.collectAsState()
 
-                    NavHost(navController = navController, startDestination = "home") {
-                        composable("home") {
-                            HomeScreen(
+                    NavHost(navController = navController, startDestination = "welcome") {
+                        composable("welcome") {
+                            WelcomeScreen(
                                 uiState = uiState,
                                 navigationAction = {
-                                    startActivity(
-                                        Intent(
-                                            applicationContext,
-                                            WelcomeScreen::class.java
-                                        )
-                                    )
+                                    navController.navigate("home")
                                 },
+                                navClick = { leagueId, arenaId, playerName ->
+                                    navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
+                                },
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this@composable
+                            )
+                        }
+                        composable("home") {
+                            HomeScreen(
+                                uiState,
                                 navClick = { leagueId, arenaId, playerName ->
                                     navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
                                 },
@@ -73,7 +78,7 @@ class MainActivity : ComponentActivity() {
                                 sharedTransitionScope = this@SharedTransitionLayout,
                                 onOpenClan = {
                                 },
-                                onOpenMasteries ={
+                                onOpenMasteries = {
                                     navController.navigate("badges")
                                 }
                             )

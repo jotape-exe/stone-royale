@@ -20,7 +20,7 @@
             android:label="@string/title_activity_badges_screen"
             android:theme="@style/Theme.StoneRoyale" />
         <activity
-            android:name=".ui.screens.WelcomeScreen"
+            android:name=".ui.screens.HomeScreen"
             android:exported="false"
             android:label="@string/title_activity_welcome_screen"
             android:theme="@style/Theme.StoneRoyale" />
