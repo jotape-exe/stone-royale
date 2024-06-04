@@ -1,8 +1,11 @@
 package com.joaoxstone.stoneroyale.ui.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.joaoxstone.stoneroyale.api
 import com.joaoxstone.stoneroyale.data.model.player.Badges
 import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -12,6 +15,7 @@ data class AppUiState(
     val player: PlayerResponse = PlayerResponse(),
     val onPlayerChange: (PlayerResponse) -> Unit = {},
     val onPlayerBagdeChange: (List<Badges>) -> Unit = {},
+    val onGetPlayer: suspend (term: String) -> Unit = { },
 )
 
 class AppViewModel : ViewModel() {
@@ -30,9 +34,24 @@ class AppViewModel : ViewModel() {
                     _uiState.update { playerState ->
                         playerState.copy(player = playerState.player.copy(badges = it))
                     }
+                },
+                onGetPlayer = { term ->
+                        var response = PlayerResponse()
+                        var hasPlayer = false
+                        try {
+                            delay(450)
+                            response = api.getPlayer(term)
+                            hasPlayer = true
+                        } catch (error: Exception) {
+                            Log.d("Error: ", error.message.toString())
+                        }
+                    if (hasPlayer) {
+                        this.uiState.value.onPlayerChange(response)
+                    }
                 }
             )
         }
     }
+
 
 }
