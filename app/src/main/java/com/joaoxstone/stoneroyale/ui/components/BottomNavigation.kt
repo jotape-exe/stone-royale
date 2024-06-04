@@ -41,7 +41,7 @@ fun BottomNavigation(
 }
 
 @Composable
-fun BottomNavItem(click: () -> Unit, index: Int, tabIndex: Int, imageId: Int){
+fun BottomNavItem(click: () -> Unit, index: String, tabIndex: String, imageId: Int){
         IconButton(
             colors = IconButtonDefaults.iconButtonColors(
                 containerColor = if (tabIndex == index) Color(0x6FFFFFFF) else Color.Transparent,

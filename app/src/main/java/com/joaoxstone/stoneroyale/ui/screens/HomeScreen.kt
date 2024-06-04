@@ -29,6 +29,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +46,10 @@ import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.api
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
@@ -61,6 +66,7 @@ import com.joaoxstone.stoneroyale.ui.components.ProfileAction
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.AppViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -74,26 +80,28 @@ fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
 
+    val navController = rememberNavController()
+
     val player = uiState.player
     var loading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
     var tabIndex by rememberSaveable {
-        mutableIntStateOf(0)
+        mutableStateOf("player")
     }
 
     val bottomNavOptions = mapOf(
-        0 to ScreenContent(
+        "player" to ScreenContent(
             Color(0XFF1f6af2),
             Color(0XFF1650b5),
             R.drawable.player
         ),
-        1 to ScreenContent(
+        "cards" to ScreenContent(
             Color(0xFFF21F1F),
             Color(0xFFB51616),
             R.drawable.cardicon
         ),
-        2 to ScreenContent(
+        "clan" to ScreenContent(
             Color(0XFFeb7a34),
             Color(0XFFbf6228),
             R.drawable.clanicon
@@ -120,7 +128,7 @@ fun HomeScreen(
                     }
                 }
             }) {
-            AnimatedVisibility(tabIndex == 0, modifier = modifier.align(Alignment.TopCenter),
+            AnimatedVisibility(tabIndex == "player", modifier = modifier.align(Alignment.TopCenter),
                 enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
                     -fullWidth / 3
                 } + fadeIn(animationSpec = tween(durationMillis = 200)),
@@ -135,8 +143,7 @@ fun HomeScreen(
                         .size(230.dp)
                 )
             }
-
-            AnimatedVisibility(tabIndex == 1, modifier = modifier.align(Alignment.TopCenter),
+            AnimatedVisibility(tabIndex == "cards", modifier = modifier.align(Alignment.TopCenter),
                 enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
                     -fullWidth / 3
                 } + fadeIn(animationSpec = tween(durationMillis = 200)),
@@ -150,7 +157,7 @@ fun HomeScreen(
                 )
             }
 
-            AnimatedVisibility(tabIndex == 2, modifier = modifier.align(Alignment.TopCenter),
+            AnimatedVisibility(tabIndex ==  "clan", modifier = modifier.align(Alignment.TopCenter),
                 enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
                     -fullWidth / 3
                 } + fadeIn(animationSpec = tween(durationMillis = 200)),
@@ -197,93 +204,106 @@ fun HomeScreen(
                         },
                         isLoading = loading
                     )
-                    Row(
-                        modifier = modifier
-                            .fillMaxWidth()
-                            .padding(top = 8.dp, start = 10.dp, end = 10.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center
-                    ) {
-                        if (player.name.isNullOrEmpty()) EmptyData()
-                        AnimatedVisibility(
-                            visible = !uiState.player.name.isNullOrEmpty(),
-                        ) {
-                            PlayerCard(
-                                imageSlot = {
-                                    val league =
-                                        player.currentPathOfLegendSeasonResult?.leagueNumber
-                                    val imageResourceArenaLeague =
-                                        if (league !== null) ClashConstants.getIconLeague(league) else ClashConstants.getIconArena(
-                                            player.arena!!.id!!
-                                        )
-                                    ImageArenaLeague(
-                                        imageResourceArenaLeague!!,
-                                        sharedTransitionScope = sharedTransitionScope,
-                                        animatedVisibilityScope = animatedContentScope
-                                    )
-                                },
-                                cardHeader = {
-                                    CardHeader(
-                                        playerName = player.name!!,
-                                        playerTag = player.tag!!,
-                                        trophies = player.trophies!!,
-                                        UCtrophies = player.currentPathOfLegendSeasonResult?.trophies,
-                                        leagueNumber = player.currentPathOfLegendSeasonResult?.leagueNumber,
-                                        sharedTransitionScope = sharedTransitionScope,
-                                        animatedVisibilityScope = animatedContentScope
-                                    )
-                                },
-                                cardContent = {
-                                    val classicChallengeWins = player.badges.find { badge ->
-                                        badge.name?.lowercase().equals("classic12wins")
-                                    }
-                                    val grandChallengeWins = player.badges.find { badge ->
-                                        badge.name?.lowercase().equals("grand12wins")
-                                    }
-                                    CardPlayerContent(
-                                        exp = player.expLevel!!,
-                                        classicChallengWins = classicChallengeWins?.progress,
-                                        grandChallengWins = grandChallengeWins?.progress,
-                                        challengeWins = player.challengeMaxWins
-                                    )
-                                },
-                                cardBottom = {
-                                    val clanIcon = ClashConstants.getIconClan(player.clan?.badgeId)
-                                    val clanContent = @Composable {
-                                        Image(
-                                            modifier = Modifier
-                                                .size(30.dp),
-                                            painter = painterResource(id = clanIcon!!),
-                                            contentDescription = "experience icon"
-                                        )
-                                        Text(
-                                            modifier = Modifier.padding(start = 4.dp),
-                                            text = player.clan?.name ?: "Sem clã",
-                                            fontWeight = FontWeight.Bold
-                                        )
-                                    }
+                    NavHost(navController = navController, startDestination = "player") {
+                        composable("player") {
+                            Row(
+                                modifier = modifier
+                                    .fillMaxWidth()
+                                    .padding(top = 8.dp, start = 10.dp, end = 10.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                if (player.name.isNullOrEmpty()) EmptyData()
+                                AnimatedVisibility(
+                                    visible = !uiState.player.name.isNullOrEmpty(),
+                                ) {
+                                    PlayerCard(
+                                        imageSlot = {
+                                            val league =
+                                                player.currentPathOfLegendSeasonResult?.leagueNumber
+                                            val imageResourceArenaLeague =
+                                                if (league !== null) ClashConstants.getIconLeague(
+                                                    league
+                                                ) else ClashConstants.getIconArena(
+                                                    player.arena!!.id!!
+                                                )
+                                            ImageArenaLeague(
+                                                imageResourceArenaLeague!!,
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedContentScope
+                                            )
+                                        },
+                                        cardHeader = {
+                                            CardHeader(
+                                                playerName = player.name!!,
+                                                playerTag = player.tag!!,
+                                                trophies = player.trophies!!,
+                                                UCtrophies = player.currentPathOfLegendSeasonResult?.trophies,
+                                                leagueNumber = player.currentPathOfLegendSeasonResult?.leagueNumber,
+                                                sharedTransitionScope = sharedTransitionScope,
+                                                animatedVisibilityScope = animatedContentScope
+                                            )
+                                        },
+                                        cardContent = {
+                                            val classicChallengeWins = player.badges.find { badge ->
+                                                badge.name?.lowercase().equals("classic12wins")
+                                            }
+                                            val grandChallengeWins = player.badges.find { badge ->
+                                                badge.name?.lowercase().equals("grand12wins")
+                                            }
+                                            CardPlayerContent(
+                                                exp = player.expLevel!!,
+                                                classicChallengWins = classicChallengeWins?.progress,
+                                                grandChallengWins = grandChallengeWins?.progress,
+                                                challengeWins = player.challengeMaxWins
+                                            )
+                                        },
+                                        cardBottom = {
+                                            val clanIcon =
+                                                ClashConstants.getIconClan(player.clan?.badgeId)
+                                            val clanContent = @Composable {
+                                                Image(
+                                                    modifier = Modifier
+                                                        .size(30.dp),
+                                                    painter = painterResource(id = clanIcon!!),
+                                                    contentDescription = "experience icon"
+                                                )
+                                                Text(
+                                                    modifier = Modifier.padding(start = 4.dp),
+                                                    text = player.clan?.name ?: "Sem clã",
+                                                    fontWeight = FontWeight.Bold
+                                                )
+                                            }
 
-                                    player.clan?.let { clan ->
-                                        if (clan.name.isNullOrEmpty()) {
-                                            TextButton(onClick = { }, enabled = false) {
-                                                clanContent()
+                                            player.clan?.let { clan ->
+                                                if (clan.name.isNullOrEmpty()) {
+                                                    TextButton(onClick = { }, enabled = false) {
+                                                        clanContent()
+                                                    }
+                                                } else {
+                                                    OutlinedButton(onClick = { }) {
+                                                        clanContent()
+                                                    }
+                                                }
                                             }
-                                        } else {
-                                            OutlinedButton(onClick = { }) {
-                                                clanContent()
-                                            }
+
+                                            ProfileAction(onclick = {
+                                                navClick(
+                                                    player.currentPathOfLegendSeasonResult?.leagueNumber,
+                                                    player.arena!!.id!!,
+                                                    player.name!!
+                                                )
+                                            })
                                         }
-                                    }
-
-                                    ProfileAction(onclick = {
-                                        navClick(
-                                            player.currentPathOfLegendSeasonResult?.leagueNumber,
-                                            player.arena!!.id!!,
-                                            player.name!!
-                                        )
-                                    })
+                                    )
                                 }
-                            )
+                            }
+                        }
+                        composable("cards") {
+                            Text("Cards")
+                        }
+                        composable("clan") {
+                            Text("Clan")
                         }
                     }
                     Row(
@@ -295,17 +315,19 @@ fun HomeScreen(
                         horizontalArrangement = Arrangement.Center
                     ) {
                         BottomNavigation {
-                            bottomNavOptions.forEach { (key, option) ->
+                            bottomNavOptions.forEach { (route, option) ->
                                 BottomNavItem(
-                                    click = { tabIndex = key },
-                                    index = key,
+                                    click = {
+                                        tabIndex = route
+                                        navController.navigate(route)
+                                    },
+                                    index = route,
                                     tabIndex = tabIndex,
                                     imageId = option.imageId
                                 )
                             }
                         }
                     }
-
                 }
             }
         }
