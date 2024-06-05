@@ -15,7 +15,7 @@ data class AppUiState(
     val player: PlayerResponse = PlayerResponse(),
     val onPlayerChange: (PlayerResponse) -> Unit = {},
     val onPlayerBagdeChange: (List<Badges>) -> Unit = {},
-    val onGetPlayer: suspend (term: String) -> Unit = { },
+    val onGetPlayer: suspend (term: String) -> Unit = {},
 )
 
 class AppViewModel : ViewModel() {
