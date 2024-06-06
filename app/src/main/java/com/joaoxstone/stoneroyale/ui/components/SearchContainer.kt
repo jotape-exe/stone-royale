@@ -35,9 +35,10 @@ fun SearchContainer(
     isLoading: Boolean = false,
     color: Color = MaterialTheme.colorScheme.primary,
     supportingText: String,
+    input: String,
+    onValueChange: (value: String) -> Unit,
     label: String
 ) {
-    var input by rememberSaveable { mutableStateOf("") }
     Column(modifier = modifier) {
         OutlinedTextField(
             colors = OutlinedTextFieldDefaults.colors(
@@ -46,7 +47,7 @@ fun SearchContainer(
             value = input,
             label = { Text(text = label) },
             onValueChange = {
-                input = it
+                onValueChange(it)
             }, modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
             prefix = { Text(text = "#") },

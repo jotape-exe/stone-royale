@@ -68,8 +68,6 @@ import com.joaoxstone.stoneroyale.ui.components.ProfileAction
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
-import com.joaoxstone.stoneroyale.ui.viewmodel.AppViewModel
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 
@@ -197,6 +195,7 @@ fun HomeScreen(
                     NavHost(navController = navController, startDestination = "player") {
                         composable("player") {
                             Column {
+                                var playerTag by remember {  mutableStateOf("89G0UYLVV") }
                                 SearchContainer(
                                     modifier = modifier
                                         .padding(16.dp),
@@ -213,7 +212,11 @@ fun HomeScreen(
                                     },
                                     isLoading = loading,
                                     supportingText = "Ex: #G9YV9GR8R",
-                                    label = "Tag do Jogador"
+                                    label = "Tag do Jogador",
+                                    input = playerTag,
+                                    onValueChange = {
+                                        playerTag = it
+                                    }
                                 )
                                 Row(
                                     modifier = modifier
@@ -318,18 +321,29 @@ fun HomeScreen(
                         }
                         composable("clan") {
                             Column {
+                                var clanTag by remember {  mutableStateOf("LL8J2PQ9") }
                                 SearchContainer(
                                     modifier = modifier
                                         .padding(16.dp),
                                     onSearch = { term ->
                                         scope.launch {
-
+                                            loading = true
+                                            uiState.onGetClan(
+                                                "#${
+                                                    term.uppercase().replace("O", "0").trim()
+                                                }",
+                                            )
+                                            loading = false
                                         }
                                     },
                                     isLoading = loading,
                                     color = Color(0xFFE25A01),
                                     supportingText = "Ex: #LL8J2PQ9",
-                                    label = "Tag do Clã"
+                                    label = "Tag do Clã",
+                                    input = clanTag,
+                                    onValueChange = {
+                                        clanTag = it
+                                    }
                                 )
                             }
                         }
