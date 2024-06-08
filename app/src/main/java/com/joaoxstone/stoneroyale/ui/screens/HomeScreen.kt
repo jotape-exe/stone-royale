@@ -114,6 +114,7 @@ fun HomeScreen(
         ),
     )
 
+
     val rigthColor by animateColorAsState(
         bottomNavOptions[tabIndex]?.rightColor ?: Color.Transparent, label = ""
     )
@@ -366,6 +367,7 @@ fun HomeScreen(
                                         if (currentRoute != route) {
                                             navController.navigate(route) {
                                                 launchSingleTop = true
+                                                popUpTo(navController.graph.startDestinationId)
                                             }
                                         }
                                     },
