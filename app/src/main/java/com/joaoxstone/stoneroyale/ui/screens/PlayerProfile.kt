@@ -2,8 +2,6 @@ package com.joaoxstone.stoneroyale.ui.screens
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
-import android.widget.Space
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -192,7 +190,6 @@ fun ProfileHeader(
     sharedTransitionScope: SharedTransitionScope,
     isCreator: Boolean
 ) {
-    Log.d("OXE", "$isPro Rapaz")
     with(sharedTransitionScope) {
         Surface(
             color = Color.Transparent,
@@ -411,7 +408,7 @@ fun ProBadge(modifier: Modifier = Modifier) {
         Text(
             fontWeight = FontWeight.ExtraBold,
             modifier = modifier
-                .padding(8.dp), text = "PRO", color = Color.White
+                .padding(8.dp), text = "CRL 2022", color = Color.White
         )
     }
 }

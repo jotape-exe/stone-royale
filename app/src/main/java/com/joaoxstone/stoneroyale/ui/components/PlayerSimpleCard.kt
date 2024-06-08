@@ -80,8 +80,8 @@ fun PlayerCard(
         Surface(
             modifier = modifier.padding(top = 18.dp),
             shadowElevation = 8.dp,
-            color = MaterialTheme.colorScheme.primaryContainer,
-            shape = MaterialTheme.shapes.extraLarge
+            color = MaterialTheme.colorScheme.surface,
+            shape = MaterialTheme.shapes.large
         ) {
             Column(modifier = modifier
                 .fillMaxWidth()
@@ -147,12 +147,12 @@ fun CardHeader(
             Column(horizontalAlignment = Alignment.End) {
                 Surface(
                     color = Color.Transparent,
-                    shape = MaterialTheme.shapes.extraLarge,
+                    shape = MaterialTheme.shapes.medium,
                     modifier = modifier
                         .fillMaxWidth()
                         .padding(start = 20.dp)
                         .background(
-                            shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp),
+                            shape = RoundedCornerShape(bottomStart = 20.dp, bottomEnd = 20.dp),
                             brush = Brush.horizontalGradient(
                                 ClashConstants.getBackgroundByLeague(leagueNumber)
                             )

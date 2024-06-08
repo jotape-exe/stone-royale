@@ -41,15 +41,9 @@ class MainActivity : ComponentActivity() {
                     NavHost(navController = navController, startDestination = "welcome") {
                         composable("welcome") {
                             WelcomeScreen(
-                                uiState = uiState,
                                 navigationAction = {
                                     navController.navigate("home")
                                 },
-                                navClick = { leagueId, arenaId, playerName ->
-                                    navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
-                                },
-                                sharedTransitionScope = this@SharedTransitionLayout,
-                                animatedContentScope = this@composable
                             )
                         }
                         composable("home") {

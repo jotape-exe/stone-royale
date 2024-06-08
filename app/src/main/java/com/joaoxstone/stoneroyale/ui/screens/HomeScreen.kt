@@ -1,9 +1,7 @@
 package com.joaoxstone.stoneroyale.ui.screens
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
-import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -13,27 +11,34 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
 import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOut
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.AssistChip
+import androidx.compose.material3.AssistChipDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.FilledTonalButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -48,18 +53,18 @@ import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.joaoxstone.stoneroyale.R
-import com.joaoxstone.stoneroyale.api
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
-import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
+import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.BottomNavItem
 import com.joaoxstone.stoneroyale.ui.components.BottomNavigation
 import com.joaoxstone.stoneroyale.ui.components.CardHeader
 import com.joaoxstone.stoneroyale.ui.components.CardPlayerContent
+import com.joaoxstone.stoneroyale.ui.components.ClanSimpleCard
 import com.joaoxstone.stoneroyale.ui.components.EmptyData
 import com.joaoxstone.stoneroyale.ui.components.GitHubButton
 import com.joaoxstone.stoneroyale.ui.components.ImageArenaLeague
@@ -122,6 +127,9 @@ fun HomeScreen(
         bottomNavOptions[tabIndex]?.leftColor ?: Color.Transparent,
         label = ""
     )
+    var playerTag by remember { mutableStateOf("89G0UYLVV") }
+    var clanTag by remember { mutableStateOf("LL8J2PQ9") }
+
     val brush = Brush.horizontalGradient(listOf(leftColor, rigthColor))
     StoneRoyaleTheme {
         Box(modifier = modifier
@@ -136,48 +144,21 @@ fun HomeScreen(
                 }
             }) {
 
-            AnimatedVisibility(tabIndex == "player", modifier = modifier.align(Alignment.TopCenter),
-                enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
-                    -fullWidth / 3
-                } + fadeIn(animationSpec = tween(durationMillis = 200)),
-                exit = slideOutHorizontally(animationSpec = spring(stiffness = Spring.StiffnessHigh)) {
-                    200
-                } + fadeOut())
-            {
-                Image(
-                    painter = painterResource(id = R.drawable.king),
-                    contentDescription = "",
-                    modifier = modifier
-                        .size(230.dp)
-                )
-            }
-            AnimatedVisibility(tabIndex == "chests", modifier = modifier.align(Alignment.TopCenter),
-                enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
-                    -fullWidth / 3
-                } + fadeIn(animationSpec = tween(durationMillis = 200)),
-                exit = slideOutHorizontally(animationSpec = spring(stiffness = Spring.StiffnessHigh)) { 200 } + fadeOut()) {
-                Image(
-                    painter = painterResource(id = R.drawable.chest_legendary),
-                    contentDescription = "",
-                    modifier = modifier
-                        .align(Alignment.TopCenter)
-                        .size(230.dp)
-                )
-            }
-
-            AnimatedVisibility(tabIndex ==  "clan", modifier = modifier.align(Alignment.TopCenter),
-                enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
-                    -fullWidth / 3
-                } + fadeIn(animationSpec = tween(durationMillis = 200)),
-                exit = slideOutHorizontally(animationSpec = spring(stiffness = Spring.StiffnessHigh)) { 200 } + fadeOut()) {
-                Image(
-                    painter = painterResource(id = R.drawable.clanicon),
-                    contentDescription = "",
-                    modifier = modifier
-                        .align(Alignment.TopCenter)
-                        .size(200.dp)
-                )
-            }
+            SetAnimatedContent(
+                imageId = R.drawable.king,
+                tabIndex = tabIndex,
+                actualRoute = "player"
+            )
+            SetAnimatedContent(
+                imageId = R.drawable.chest_legendary,
+                tabIndex = tabIndex,
+                actualRoute = "chests"
+            )
+            SetAnimatedContent(
+                imageId = R.drawable.clanicon,
+                tabIndex = tabIndex,
+                actualRoute = "clan"
+            )
 
             GitHubButton(
                 modifier
@@ -193,10 +174,14 @@ fun HomeScreen(
                     .fillMaxWidth()
             ) {
                 Column {
-                    NavHost(navController = navController, startDestination = "player") {
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = "player"
+                    ) {
                         composable("player") {
+                            //Separate to new Screen
                             Column {
-                                var playerTag by remember {  mutableStateOf("89G0UYLVV") }
                                 SearchContainer(
                                     modifier = modifier
                                         .padding(16.dp),
@@ -298,7 +283,9 @@ fun HomeScreen(
                                                             clanContent()
                                                         }
                                                     } else {
-                                                        OutlinedButton(onClick = { }) {
+                                                        OutlinedButton(
+                                                            shape = MaterialTheme.shapes.medium,
+                                                            onClick = { }) {
                                                             clanContent()
                                                         }
                                                     }
@@ -318,11 +305,11 @@ fun HomeScreen(
                             }
                         }
                         composable("chests") {
+                            //Separate to new Screen
                             Text("Cards")
                         }
                         composable("clan") {
                             Column {
-                                var clanTag by remember {  mutableStateOf("LL8J2PQ9") }
                                 SearchContainer(
                                     modifier = modifier
                                         .padding(16.dp),
@@ -346,6 +333,93 @@ fun HomeScreen(
                                         clanTag = it
                                     }
                                 )
+                                AnimatedVisibility(
+                                    modifier = modifier.padding(8.dp),
+                                    visible = uiState.clan.name != null
+                                ) {
+                                    ClanSimpleCard(
+                                        cardContent = {
+                                            Column(modifier.padding(4.dp)) {
+                                                Row(
+                                                    modifier
+                                                        .padding(4.dp)
+                                                        .fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.End
+                                                ) {
+                                                    AssistChip(
+                                                        colors = AssistChipDefaults.assistChipColors(
+                                                            labelColor = MaterialTheme.colorScheme.onPrimary,
+                                                            containerColor = MaterialTheme.colorScheme.primary
+                                                        ),
+                                                        shape = MaterialTheme.shapes.large,
+                                                        onClick = { },
+                                                        label = {
+                                                            Text(text = uiState.clan.type!!.uppercase())
+                                                        }
+                                                    )
+                                                }
+                                                Text(
+                                                    fontWeight = FontWeight.Bold,
+                                                    fontSize = 24.sp,
+                                                    text = uiState.clan.name ?: "Clã não encontrado"
+                                                )
+                                                Text(
+                                                    modifier = modifier.padding(top = 8.dp),
+                                                    fontSize = 18.sp,
+                                                    text = uiState.clan.tag!!
+                                                )
+                                            }
+                                        },
+                                        cardBottom = {
+                                            Column(
+                                                modifier.padding(4.dp),
+                                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                                            ) {
+                                                Row(
+                                                    modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.SpaceBetween
+                                                ) {
+                                                    Text(text = "${uiState.clan.members!!}/50 membros")
+                                                    Text(text = uiState.clan.location?.name!!)
+                                                }
+                                                Row(
+                                                    modifier.fillMaxWidth(),
+                                                    horizontalArrangement = Arrangement.Start,
+                                                    verticalAlignment = Alignment.CenterVertically
+                                                ) {
+                                                    Text(text = "Troféus necessários:  ")
+                                                    Badge(
+                                                        text = "${uiState.clan.requiredTrophies}",
+                                                        imageResoure = R.drawable.trophy,
+                                                        color = Color(0xFFE99A00)
+                                                    )
+                                                }
+                                                FilledTonalButton(
+                                                    shape = MaterialTheme.shapes.medium,
+                                                    onClick = {
+                                                        /* TODO */
+                                                    }) {
+                                                    Text(
+                                                        modifier = modifier.padding(end = 6.dp),
+                                                        text = "Ver membros "
+                                                    )
+                                                    Icon(
+                                                        painter = painterResource(id = R.drawable.ic_baseline_groups),
+                                                        contentDescription = ""
+                                                    )
+                                                }
+                                            }
+                                        },
+                                        imageSlot = {
+                                            Image(
+                                                painter = painterResource(
+                                                    id = ClashConstants.getIconClan(
+                                                        uiState.clan.badgeId
+                                                    )!!
+                                                ), contentDescription = null
+                                            )
+                                        })
+                                }
                             }
                         }
                     }
@@ -382,8 +456,35 @@ fun HomeScreen(
             }
         }
     }
+}
 
-
+@Composable
+fun SetAnimatedContent(
+    modifier: Modifier = Modifier,
+    imageId: Int,
+    tabIndex: String,
+    actualRoute: String
+) {
+    val enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
+        -fullWidth / 3
+    } + fadeIn(animationSpec = tween(durationMillis = 200))
+    val exit =
+        slideOutHorizontally(animationSpec = spring(stiffness = Spring.StiffnessHigh)) { 200 } + fadeOut()
+    Row(
+        modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.Top
+    ) {
+        AnimatedVisibility(
+            tabIndex == actualRoute,
+        ) {
+            Image(
+                painter = painterResource(id = imageId),
+                contentDescription = "",
+                modifier = modifier.size(230.dp)
+            )
+        }
+    }
 }
 
 data class ScreenContent(val leftColor: Color, val rightColor: Color, val imageId: Int)
