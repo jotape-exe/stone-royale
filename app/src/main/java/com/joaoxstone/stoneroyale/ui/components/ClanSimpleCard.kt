@@ -63,7 +63,7 @@ fun ClanSimpleCard(
                 .fillMaxWidth(),
             shadowElevation = 8.dp,
             color = MaterialTheme.colorScheme.surface,
-            shape = MaterialTheme.shapes.medium
+            shape = MaterialTheme.shapes.large
         ) {
             Column(
                 modifier

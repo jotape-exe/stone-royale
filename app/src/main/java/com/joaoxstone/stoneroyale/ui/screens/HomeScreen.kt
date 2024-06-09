@@ -6,21 +6,11 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.spring
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOut
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,14 +19,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,14 +49,8 @@ import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.BottomNavItem
 import com.joaoxstone.stoneroyale.ui.components.BottomNavigation
-import com.joaoxstone.stoneroyale.ui.components.CardHeader
-import com.joaoxstone.stoneroyale.ui.components.CardPlayerContent
 import com.joaoxstone.stoneroyale.ui.components.ClanSimpleCard
-import com.joaoxstone.stoneroyale.ui.components.EmptyData
 import com.joaoxstone.stoneroyale.ui.components.GitHubButton
-import com.joaoxstone.stoneroyale.ui.components.ImageArenaLeague
-import com.joaoxstone.stoneroyale.ui.components.PlayerCard
-import com.joaoxstone.stoneroyale.ui.components.ProfileAction
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
@@ -88,7 +69,7 @@ fun HomeScreen(
 
     val navController = rememberNavController()
 
-    val player = uiState.player
+
     var loading by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
@@ -127,8 +108,6 @@ fun HomeScreen(
         bottomNavOptions[tabIndex]?.leftColor ?: Color.Transparent,
         label = ""
     )
-    var playerTag by remember { mutableStateOf("89G0UYLVV") }
-    var clanTag by remember { mutableStateOf("LL8J2PQ9") }
 
     val brush = Brush.horizontalGradient(listOf(leftColor, rigthColor))
     StoneRoyaleTheme {
@@ -174,253 +153,26 @@ fun HomeScreen(
                     .fillMaxWidth()
             ) {
                 Column {
-
                     NavHost(
                         navController = navController,
                         startDestination = "player"
                     ) {
                         composable("player") {
-                            //Separate to new Screen
-                            Column {
-                                SearchContainer(
-                                    modifier = modifier
-                                        .padding(16.dp),
-                                    onSearch = { term ->
-                                        scope.launch {
-                                            loading = true
-                                            uiState.onGetPlayer(
-                                                "#${
-                                                    term.uppercase().replace("O", "0").trim()
-                                                }",
-                                            )
-                                            loading = false
-                                        }
-                                    },
-                                    isLoading = loading,
-                                    supportingText = "Ex: #G9YV9GR8R",
-                                    label = "Tag do Jogador",
-                                    input = playerTag,
-                                    onValueChange = {
-                                        playerTag = it
-                                    }
-                                )
-                                Row(
-                                    modifier = modifier
-                                        .fillMaxWidth()
-                                        .padding(top = 8.dp, start = 10.dp, end = 10.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    if (player.name.isNullOrEmpty()) EmptyData()
-                                    AnimatedVisibility(
-                                        visible = !uiState.player.name.isNullOrEmpty(),
-                                    ) {
-                                        PlayerCard(
-                                            imageSlot = {
-                                                val league =
-                                                    player.currentPathOfLegendSeasonResult?.leagueNumber
-                                                val imageResourceArenaLeague =
-                                                    if (league !== null) ClashConstants.getIconLeague(
-                                                        league
-                                                    ) else ClashConstants.getIconArena(
-                                                        player.arena!!.id!!
-                                                    )
-                                                ImageArenaLeague(
-                                                    imageResourceArenaLeague!!,
-                                                    sharedTransitionScope = sharedTransitionScope,
-                                                    animatedVisibilityScope = animatedContentScope
-                                                )
-                                            },
-                                            cardHeader = {
-                                                CardHeader(
-                                                    playerName = player.name!!,
-                                                    playerTag = player.tag!!,
-                                                    trophies = player.trophies!!,
-                                                    UCtrophies = player.currentPathOfLegendSeasonResult?.trophies,
-                                                    leagueNumber = player.currentPathOfLegendSeasonResult?.leagueNumber,
-                                                    sharedTransitionScope = sharedTransitionScope,
-                                                    animatedVisibilityScope = animatedContentScope
-                                                )
-                                            },
-                                            cardContent = {
-                                                val classicChallengeWins =
-                                                    player.badges.find { badge ->
-                                                        badge.name?.lowercase()
-                                                            .equals("classic12wins")
-                                                    }
-                                                val grandChallengeWins =
-                                                    player.badges.find { badge ->
-                                                        badge.name?.lowercase()
-                                                            .equals("grand12wins")
-                                                    }
-                                                CardPlayerContent(
-                                                    exp = player.expLevel!!,
-                                                    classicChallengWins = classicChallengeWins?.progress,
-                                                    grandChallengWins = grandChallengeWins?.progress,
-                                                    challengeWins = player.challengeMaxWins
-                                                )
-                                            },
-                                            cardBottom = {
-                                                val clanIcon =
-                                                    ClashConstants.getIconClan(player.clan?.badgeId)
-                                                val clanContent = @Composable {
-                                                    Image(
-                                                        modifier = Modifier
-                                                            .size(30.dp),
-                                                        painter = painterResource(id = clanIcon!!),
-                                                        contentDescription = "experience icon"
-                                                    )
-                                                    Text(
-                                                        modifier = Modifier.padding(start = 4.dp),
-                                                        text = player.clan?.name ?: "Sem clã",
-                                                        fontWeight = FontWeight.Bold
-                                                    )
-                                                }
-
-                                                player.clan?.let { clan ->
-                                                    if (clan.name.isNullOrEmpty()) {
-                                                        TextButton(onClick = { }, enabled = false) {
-                                                            clanContent()
-                                                        }
-                                                    } else {
-                                                        OutlinedButton(
-                                                            shape = MaterialTheme.shapes.medium,
-                                                            onClick = { }) {
-                                                            clanContent()
-                                                        }
-                                                    }
-                                                }
-
-                                                ProfileAction(onclick = {
-                                                    navClick(
-                                                        player.currentPathOfLegendSeasonResult?.leagueNumber,
-                                                        player.arena!!.id!!,
-                                                        player.name!!
-                                                    )
-                                                })
-                                            }
-                                        )
-                                    }
-                                }
-                            }
+                            PlayerScreen(
+                                uiState = uiState,
+                                animatedVisibilityScope = animatedContentScope,
+                                sharedTransitionScope = sharedTransitionScope,
+                                navClick = navClick
+                            )
                         }
                         composable("chests") {
                             //Separate to new Screen
                             Text("Cards")
                         }
                         composable("clan") {
-                            Column {
-                                SearchContainer(
-                                    modifier = modifier
-                                        .padding(16.dp),
-                                    onSearch = { term ->
-                                        scope.launch {
-                                            loading = true
-                                            uiState.onGetClan(
-                                                "#${
-                                                    term.uppercase().replace("O", "0").trim()
-                                                }",
-                                            )
-                                            loading = false
-                                        }
-                                    },
-                                    isLoading = loading,
-                                    color = Color(0xFFE25A01),
-                                    supportingText = "Ex: #LL8J2PQ9",
-                                    label = "Tag do Clã",
-                                    input = clanTag,
-                                    onValueChange = {
-                                        clanTag = it
-                                    }
-                                )
-                                AnimatedVisibility(
-                                    modifier = modifier.padding(8.dp),
-                                    visible = uiState.clan.name != null
-                                ) {
-                                    ClanSimpleCard(
-                                        cardContent = {
-                                            Column(modifier.padding(4.dp)) {
-                                                Row(
-                                                    modifier
-                                                        .padding(4.dp)
-                                                        .fillMaxWidth(),
-                                                    horizontalArrangement = Arrangement.End
-                                                ) {
-                                                    AssistChip(
-                                                        colors = AssistChipDefaults.assistChipColors(
-                                                            labelColor = MaterialTheme.colorScheme.onPrimary,
-                                                            containerColor = MaterialTheme.colorScheme.primary
-                                                        ),
-                                                        shape = MaterialTheme.shapes.large,
-                                                        onClick = { },
-                                                        label = {
-                                                            Text(text = uiState.clan.type!!.uppercase())
-                                                        }
-                                                    )
-                                                }
-                                                Text(
-                                                    fontWeight = FontWeight.Bold,
-                                                    fontSize = 24.sp,
-                                                    text = uiState.clan.name ?: "Clã não encontrado"
-                                                )
-                                                Text(
-                                                    modifier = modifier.padding(top = 8.dp),
-                                                    fontSize = 18.sp,
-                                                    text = uiState.clan.tag!!
-                                                )
-                                            }
-                                        },
-                                        cardBottom = {
-                                            Column(
-                                                modifier.padding(4.dp),
-                                                verticalArrangement = Arrangement.spacedBy(8.dp)
-                                            ) {
-                                                Row(
-                                                    modifier.fillMaxWidth(),
-                                                    horizontalArrangement = Arrangement.SpaceBetween
-                                                ) {
-                                                    Text(text = "${uiState.clan.members!!}/50 membros")
-                                                    Text(text = uiState.clan.location?.name!!)
-                                                }
-                                                Row(
-                                                    modifier.fillMaxWidth(),
-                                                    horizontalArrangement = Arrangement.Start,
-                                                    verticalAlignment = Alignment.CenterVertically
-                                                ) {
-                                                    Text(text = "Troféus necessários:  ")
-                                                    Badge(
-                                                        text = "${uiState.clan.requiredTrophies}",
-                                                        imageResoure = R.drawable.trophy,
-                                                        color = Color(0xFFE99A00)
-                                                    )
-                                                }
-                                                FilledTonalButton(
-                                                    shape = MaterialTheme.shapes.medium,
-                                                    onClick = {
-                                                        /* TODO */
-                                                    }) {
-                                                    Text(
-                                                        modifier = modifier.padding(end = 6.dp),
-                                                        text = "Ver membros "
-                                                    )
-                                                    Icon(
-                                                        painter = painterResource(id = R.drawable.ic_baseline_groups),
-                                                        contentDescription = ""
-                                                    )
-                                                }
-                                            }
-                                        },
-                                        imageSlot = {
-                                            Image(
-                                                painter = painterResource(
-                                                    id = ClashConstants.getIconClan(
-                                                        uiState.clan.badgeId
-                                                    )!!
-                                                ), contentDescription = null
-                                            )
-                                        })
-                                }
-                            }
+                            ClanScreen(
+                                uiState = uiState,
+                            )
                         }
                     }
                     Row(
@@ -465,11 +217,6 @@ fun SetAnimatedContent(
     tabIndex: String,
     actualRoute: String
 ) {
-    val enter = slideInHorizontally(animationSpec = tween(durationMillis = 200)) { fullWidth ->
-        -fullWidth / 3
-    } + fadeIn(animationSpec = tween(durationMillis = 200))
-    val exit =
-        slideOutHorizontally(animationSpec = spring(stiffness = Spring.StiffnessHigh)) { 200 } + fadeOut()
     Row(
         modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
