@@ -1,12 +1,14 @@
 package com.joaoxstone.stoneroyale.ui.screens
 
 import android.annotation.SuppressLint
+import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,18 +19,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AssistChip
-import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.FilledTonalButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -38,23 +34,18 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.joaoxstone.stoneroyale.R
-import com.joaoxstone.stoneroyale.data.constants.ClashConstants
-import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.BottomNavItem
 import com.joaoxstone.stoneroyale.ui.components.BottomNavigation
-import com.joaoxstone.stoneroyale.ui.components.ClanSimpleCard
 import com.joaoxstone.stoneroyale.ui.components.GitHubButton
-import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
-import kotlinx.coroutines.launch
 
 
 @SuppressLint("RestrictedApi")
@@ -63,16 +54,12 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     uiState: AppUiState, animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
-    navClick: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
+    playerNavigation: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
+    clanNavigation:(badgeId: Int?, clanName: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val navController = rememberNavController()
-
-
-    var loading by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-
     var tabIndex by rememberSaveable {
         mutableStateOf("player")
     }
@@ -110,6 +97,22 @@ fun HomeScreen(
     )
 
     val brush = Brush.horizontalGradient(listOf(leftColor, rigthColor))
+
+    val animatedHeaderScreen = listOf(
+        AnimatedScreeenContent(
+            route = "player",
+            imageId = R.drawable.king
+        ),
+        AnimatedScreeenContent(
+            route = "chests",
+            imageId = R.drawable.chest_legendary
+        ),
+        AnimatedScreeenContent(
+            route = "clan",
+            imageId = R.drawable.clanicon
+        )
+    )
+
     StoneRoyaleTheme {
         Box(modifier = modifier
             .fillMaxSize()
@@ -123,21 +126,13 @@ fun HomeScreen(
                 }
             }) {
 
-            SetAnimatedContent(
-                imageId = R.drawable.king,
-                tabIndex = tabIndex,
-                actualRoute = "player"
-            )
-            SetAnimatedContent(
-                imageId = R.drawable.chest_legendary,
-                tabIndex = tabIndex,
-                actualRoute = "chests"
-            )
-            SetAnimatedContent(
-                imageId = R.drawable.clanicon,
-                tabIndex = tabIndex,
-                actualRoute = "clan"
-            )
+            animatedHeaderScreen.forEach { screen ->
+                SetAnimatedContent(
+                    imageId = screen.imageId,
+                    tabIndex = tabIndex,
+                    actualRoute = screen.route
+                )
+            }
 
             GitHubButton(
                 modifier
@@ -162,7 +157,7 @@ fun HomeScreen(
                                 uiState = uiState,
                                 animatedVisibilityScope = animatedContentScope,
                                 sharedTransitionScope = sharedTransitionScope,
-                                navClick = navClick
+                                navClick = playerNavigation
                             )
                         }
                         composable("chests") {
@@ -172,6 +167,12 @@ fun HomeScreen(
                         composable("clan") {
                             ClanScreen(
                                 uiState = uiState,
+                                onOpenDetails = { badgeId, clanName ->
+                                    clanNavigation(badgeId, clanName)
+                                    //navController.navigate("clanDetails/$badgeId/$clanName")
+                                },
+                                animatedContentScope = animatedContentScope,
+                                sharedTransitionScope = sharedTransitionScope,
                             )
                         }
                     }
@@ -235,4 +236,5 @@ fun SetAnimatedContent(
 }
 
 data class ScreenContent(val leftColor: Color, val rightColor: Color, val imageId: Int)
+data class AnimatedScreeenContent(val route: String, @DrawableRes val imageId: Int)
 
