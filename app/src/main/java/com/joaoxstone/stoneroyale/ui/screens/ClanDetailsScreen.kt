@@ -19,7 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
 
@@ -38,26 +40,33 @@ fun ClanDetailsScreen(
         with(sharedTransitionScope) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier) {
                 item {
-                    Row(modifier = modifier.padding(bottom = 20.dp)) {
-                        Text(text = uiState.clan.name!!, modifier = modifier.sharedBounds(
+                    Column(modifier = modifier.padding(bottom = 20.dp)) {
+                        val resource = painterResource(
+                            ClashConstants.getIconClan(
+                                uiState.clan.badgeId
+                            )!!
+                        )
+                        Text(text = uiState.clan.name!!,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 34.sp,
+                            modifier = modifier.sharedBounds(
                             rememberSharedContentState(key = "clanName/${uiState.clan.name}"),
                             animatedVisibilityScope = animatedContentScope,
                             boundsTransform = { _, _ ->
-                                tween(durationMillis = 700)
+                                tween(durationMillis = 1000)
                             }
                         ))
-                        Image(contentDescription = uiState.clan.name!!, modifier = modifier
-                            .size(162.dp)
-                            .sharedBounds(
+                        Image(
+                            modifier = modifier.size(162.dp).sharedBounds(
                                 rememberSharedContentState(key = "badgeId/${uiState.clan.badgeId}"),
                                 animatedVisibilityScope = animatedContentScope,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = 700)
                                 }
                             ),
-                            painter = painterResource(ClashConstants.getIconClan(uiState.clan.badgeId!!)!!))
+                            painter = resource, contentDescription = null
+                        )
                     }
-
                 }
                 items(uiState.clan.memberList) { member ->
                     val image = ClashConstants.getIconArena(member.arena!!.id!!)!!

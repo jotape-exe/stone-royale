@@ -165,6 +165,11 @@ fun ClanScreen(
                         }
                     },
                     imageSlot = {
+                        val resource = painterResource(
+                            ClashConstants.getIconClan(
+                                uiState.clan.badgeId
+                            )!!
+                        )
                         Image(
                             modifier = modifier.sharedBounds(
                                 rememberSharedContentState(key = "badgeId/${uiState.clan.badgeId}"),
@@ -173,11 +178,7 @@ fun ClanScreen(
                                     tween(durationMillis = 700)
                                 }
                             ),
-                            painter = painterResource(
-                                id = ClashConstants.getIconClan(
-                                    uiState.clan.badgeId
-                                )!!
-                            ), contentDescription = null
+                            painter = resource, contentDescription = null
                         )
                     })
             }
