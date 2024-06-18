@@ -64,7 +64,8 @@ class MainActivity : ComponentActivity() {
                                 uiState = uiState,
                                 animatedVisibilityScope = this@composable,
                                 sharedTransitionScope = this@SharedTransitionLayout,
-                                onOpenClan = {
+                                onOpenClan = { badgeId, clanName ->
+                                    navController.navigate("clanDetails/$badgeId/$clanName")
                                 },
                                 onOpenMasteries = {
                                     navController.navigate("badges")

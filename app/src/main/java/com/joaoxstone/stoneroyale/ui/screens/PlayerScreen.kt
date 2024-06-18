@@ -1,6 +1,5 @@
 package com.joaoxstone.stoneroyale.ui.screens
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -12,6 +11,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
@@ -28,6 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
+import com.joaoxstone.stoneroyale.data.model.clan.ClanResponse
+import com.joaoxstone.stoneroyale.data.repository.ClanRespository
 import com.joaoxstone.stoneroyale.ui.components.CardHeader
 import com.joaoxstone.stoneroyale.ui.components.CardPlayerContent
 import com.joaoxstone.stoneroyale.ui.components.EmptyData
@@ -46,12 +49,15 @@ fun PlayerScreen(
     modifier: Modifier = Modifier, uiState: AppUiState,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
-    navClick: (Int?, Int, String) -> Unit,
+    onOpenPlayerProfile: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
+    onOpenClan: (badgeId: Int?, clanName: String) -> Unit,
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     var playerTag by remember { mutableStateOf("89G0UYLVV") }
     var loading by remember { mutableStateOf(false) }
+    var loadingClan by remember { mutableStateOf(false) }
     val player = uiState.player
+    val clanRespository = ClanRespository()
 
     Column {
         SearchContainer(
@@ -143,10 +149,13 @@ fun PlayerScreen(
                                 contentDescription = "experience icon"
                             )
                             Text(
-                                modifier = Modifier.padding(start = 4.dp),
+                                modifier = Modifier.padding(start = 4.dp, end = 4.dp),
                                 text = player.clan?.name ?: "Sem clã",
                                 fontWeight = FontWeight.Bold
                             )
+                            AnimatedVisibility(visible = loadingClan) {
+                                CircularProgressIndicator(modifier = modifier.size(22.dp))
+                            }
                         }
 
                         player.clan?.let { clan ->
@@ -157,14 +166,27 @@ fun PlayerScreen(
                             } else {
                                 OutlinedButton(
                                     shape = MaterialTheme.shapes.medium,
-                                    onClick = { }) {
+                                    onClick = {
+                                        scope.launch {
+                                            loadingClan = true
+                                            var clan = ClanResponse()
+                                            clan = clanRespository.getClan(player.clan!!.tag!!)
+                                            uiState.onClanChange(clan)
+                                            loadingClan = false
+                                            onOpenClan(
+                                                clan.badgeId!!,
+                                                clan.name!!
+                                            )
+                                        }
+
+                                    }) {
                                     clanContent()
                                 }
                             }
                         }
 
                         ProfileAction(onclick = {
-                            navClick(
+                            onOpenPlayerProfile(
                                 player.currentPathOfLegendSeasonResult?.leagueNumber,
                                 player.arena!!.id!!,
                                 player.name!!

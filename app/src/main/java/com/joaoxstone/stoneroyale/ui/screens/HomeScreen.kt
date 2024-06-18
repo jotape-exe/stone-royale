@@ -55,7 +55,7 @@ fun HomeScreen(
     uiState: AppUiState, animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
     playerNavigation: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
-    clanNavigation:(badgeId: Int?, clanName: String) -> Unit,
+    clanNavigation: (badgeId: Int?, clanName: String) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
@@ -70,11 +70,6 @@ fun HomeScreen(
             Color(0XFF1650b5),
             R.drawable.player
         ),
-        /* "cards" to ScreenContent(
-             Color(0xFFF21F1F),
-             Color(0xFFB51616),
-             R.drawable.cardicon
-         ),*/
         "clan" to ScreenContent(
             Color(0XFFeb7a34),
             Color(0XFFbf6228),
@@ -86,7 +81,6 @@ fun HomeScreen(
             R.drawable.chest_legendary
         ),
     )
-
 
     val rigthColor by animateColorAsState(
         bottomNavOptions[tabIndex]?.rightColor ?: Color.Transparent, label = ""
@@ -157,7 +151,8 @@ fun HomeScreen(
                                 uiState = uiState,
                                 animatedVisibilityScope = animatedContentScope,
                                 sharedTransitionScope = sharedTransitionScope,
-                                navClick = playerNavigation
+                                onOpenPlayerProfile = playerNavigation,
+                                onOpenClan = clanNavigation
                             )
                         }
                         composable("chests") {
@@ -169,7 +164,6 @@ fun HomeScreen(
                                 uiState = uiState,
                                 onOpenDetails = { badgeId, clanName ->
                                     clanNavigation(badgeId, clanName)
-                                    //navController.navigate("clanDetails/$badgeId/$clanName")
                                 },
                                 animatedContentScope = animatedContentScope,
                                 sharedTransitionScope = sharedTransitionScope,

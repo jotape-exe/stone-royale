@@ -96,8 +96,11 @@ fun ClanScreen(
                                         labelColor = MaterialTheme.colorScheme.onPrimary,
                                         containerColor = MaterialTheme.colorScheme.primary
                                     ),
-                                    shape = MaterialTheme.shapes.large,
-                                    onClick = { },
+                                    shape = MaterialTheme.shapes.small,
+                                    onClick = {
+
+                                    },
+                                    enabled = uiState.clan.type!!.lowercase() == "open",
                                     label = {
                                         Text(text = uiState.clan.type!!.uppercase())
                                     }

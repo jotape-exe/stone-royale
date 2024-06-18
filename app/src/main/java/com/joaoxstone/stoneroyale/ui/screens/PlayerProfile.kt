@@ -2,6 +2,7 @@ package com.joaoxstone.stoneroyale.ui.screens
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
@@ -36,7 +37,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -51,7 +56,9 @@ import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
+import com.joaoxstone.stoneroyale.data.model.clan.ClanResponse
 import com.joaoxstone.stoneroyale.data.model.player.CurrentDeck
+import com.joaoxstone.stoneroyale.data.repository.ClanRespository
 import com.joaoxstone.stoneroyale.ui.components.AsyncBadge
 import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.ExpBadge
@@ -67,11 +74,17 @@ fun PlayerProfileScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
     uiState: AppUiState,
-    onOpenClan: () -> Unit,
+    onOpenClan: (badgeId: Int, clanName: String) -> Unit,
     onOpenMasteries: () -> Unit
 ) {
-    val player = uiState.player
 
+    val clanRespository = ClanRespository()
+
+    val scope = rememberCoroutineScope()
+    var loadingClan by remember { mutableStateOf(false) }
+
+
+    val player = uiState.player
     val trophies = player.trophies
     val UCtrophies = player.currentPathOfLegendSeasonResult?.trophies
     val exp = player.expLevel!!
@@ -79,7 +92,7 @@ fun PlayerProfileScreen(
         badge.name?.lowercase().equals("classic12wins")
     }
 
-    val scope = rememberCoroutineScope()
+
 
     val grandChallengeWins = player.badges.find { badge ->
         badge.name?.lowercase().equals("grand12wins")
@@ -169,10 +182,19 @@ fun PlayerProfileScreen(
                 clanName = player.clan?.name,
                 clanRole = player.role,
                 onOpenClan = {
-                    scope.launch (Dispatchers.IO)  {
-                        onOpenClan()
+                    scope.launch {
+                        loadingClan = true
+                        var clan = ClanResponse()
+                        clan = clanRespository.getClan(player.clan!!.tag!!)
+                        uiState.onClanChange(clan)
+                        loadingClan = false
+                        onOpenClan(
+                            clan.badgeId!!,
+                            clan.name!!
+                        )
                     }
-                })
+                },
+                loadingClan = loadingClan)
             MasteryContainer(onOpenMasteries = { onOpenMasteries() })
         }
     }
@@ -434,6 +456,7 @@ fun ClanContainer(
     badgeClan: Int?,
     clanName: String?,
     clanRole: String?,
+    loadingClan: Boolean = false,
     onOpenClan: () -> Unit
 ) {
     val clanIcon = ClashConstants.getIconClan(badgeClan)
@@ -458,11 +481,15 @@ fun ClanContainer(
             FilledTonalButton(shape = MaterialTheme.shapes.small, onClick = {
                 onOpenClan()
             }) {
-                Text(modifier = modifier.padding(end = 4.dp), text = "Ver membros")
+                Text( text = "Ver membros")
                 Icon(
+                    modifier = modifier.padding(end = 4.dp, start = 4.dp),
                     painter = painterResource(id = R.drawable.ic_baseline_groups),
                     contentDescription = ""
                 )
+                AnimatedVisibility(visible = loadingClan) {
+                    CircularProgressIndicator(modifier = modifier.size(22.dp))
+                }
             }
         }
     }
