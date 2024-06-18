@@ -29,12 +29,12 @@ class AppViewModel : ViewModel() {
     private val clanRespository = ClanRespository()
     private val playerRepository = PlayerRepository()
 
-    //refactor to single responsibility principle
+    //refactor to srp
     private val _uiState = MutableStateFlow(AppUiState())
     val uiState: StateFlow<AppUiState> = _uiState.asStateFlow()
 
     init {
-        //refactor to single responsibility principle
+        //refactor to srp
         _uiState.update { currentState ->
             currentState.copy(
                 onPlayerChange = { player ->
@@ -49,17 +49,14 @@ class AppViewModel : ViewModel() {
                 },
                 onGetPlayer = { term ->
                         var response = PlayerResponse()
-                        var hasPlayer = false
                         try {
                             delay(450)
                             response = playerRepository.getPlayer(term)
-                            hasPlayer = true
+                            this.uiState.value.onPlayerChange(response)
                         } catch (error: Exception) {
                             Log.d("Error: ", error.message.toString())
                         }
-                    if (hasPlayer) {
-                        this.uiState.value.onPlayerChange(response)
-                    }
+
                 },
                 onClanChange = { clan ->
                     _uiState.update { clanState ->

@@ -1,6 +1,5 @@
 package com.joaoxstone.stoneroyale
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -88,6 +87,9 @@ class MainActivity : ComponentActivity() {
                                 uiState = uiState,
                                 animatedContentScope = this@composable,
                                 sharedTransitionScope = this@SharedTransitionLayout,
+                                onOpenPlayerProfile = { leagueId, arenaId, playerName ->
+                                    navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
+                                }
                             )
                         }
                         composable("home") {

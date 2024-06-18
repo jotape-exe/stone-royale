@@ -1,5 +1,6 @@
 package com.joaoxstone.stoneroyale.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -36,6 +37,7 @@ import com.joaoxstone.stoneroyale.ui.components.ProfileAction
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -56,7 +58,7 @@ fun PlayerScreen(
             modifier = modifier
                 .padding(16.dp),
             onSearch = { term ->
-                scope.launch {
+                scope.launch(Dispatchers.IO) {
                     loading = true
                     uiState.onGetPlayer(
                         "#${

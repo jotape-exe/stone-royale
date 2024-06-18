@@ -57,6 +57,7 @@ import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.ExpBadge
 import com.joaoxstone.stoneroyale.ui.components.shadowCustom
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -168,7 +169,7 @@ fun PlayerProfileScreen(
                 clanName = player.clan?.name,
                 clanRole = player.role,
                 onOpenClan = {
-                    scope.launch {
+                    scope.launch (Dispatchers.IO)  {
                         onOpenClan()
                     }
                 })
@@ -325,7 +326,7 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                     FilledIconButton(
                         shape = MaterialTheme.shapes.medium,
                         onClick = {
-                            scope.launch {
+                            scope.launch (Dispatchers.IO)  {
                                 val URI = onCopyDeck(currentDeck)
                                 val intent = Intent(Intent.ACTION_VIEW, URI)
                                 context.startActivity(intent)

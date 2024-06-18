@@ -37,6 +37,7 @@ import com.joaoxstone.stoneroyale.ui.components.ClanSimpleCard
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -58,7 +59,7 @@ fun ClanScreen(
                 modifier = modifier
                     .padding(16.dp),
                 onSearch = { term ->
-                    scope.launch {
+                    scope.launch (Dispatchers.IO)  {
                         loading = true
                         uiState.onGetClan(
                             "#${
