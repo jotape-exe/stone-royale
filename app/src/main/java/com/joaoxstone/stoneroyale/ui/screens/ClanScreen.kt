@@ -16,6 +16,8 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -132,17 +134,25 @@ fun ClanScreen(
                         ) {
                             Row(
                                 modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween
+                                horizontalArrangement = Arrangement.SpaceBetween,
+                                verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = "${clanUiState.clan.members!!}/50 membros")
-                                Text(text = clanUiState.clan.location?.name!!)
+                                Surface(color = MaterialTheme.colorScheme.background, shadowElevation = 2.dp, shape = MaterialTheme.shapes.small) {
+                                    Text(text = "${clanUiState.clan.members!!}/50 MEMBROS", Modifier.padding(4.dp), fontWeight = FontWeight.SemiBold)
+                                }
+
+                                Surface(color = MaterialTheme.colorScheme.background, shadowElevation = 2.dp, shape = MaterialTheme.shapes.small) {
+                                    Text(text = clanUiState.clan.location?.name!!.uppercase(), Modifier.padding(4.dp), fontWeight = FontWeight.SemiBold)
+                                }
                             }
                             Row(
                                 modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.Start,
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Text(text = "Troféus necessários:  ")
+
+                                    Text(text = "Min. Trophies:  ", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+
                                 Badge(
                                     text = "${clanUiState.clan.requiredTrophies}",
                                     imageResoure = R.drawable.trophy,

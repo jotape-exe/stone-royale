@@ -494,7 +494,7 @@ fun ClanContainer(
             )
         }
         if (badgeClan != null) {
-            Text(modifier = modifier.padding(8.dp), text = clanRole ?: "")
+            Text(modifier = modifier.padding(8.dp), text = clanRole?.uppercase() ?: "", fontWeight = FontWeight.Bold)
             FilledTonalButton(shape = MaterialTheme.shapes.small, onClick = {
                 onOpenClan()
             }) {

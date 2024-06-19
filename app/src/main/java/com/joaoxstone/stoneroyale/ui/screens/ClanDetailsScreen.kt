@@ -68,7 +68,7 @@ fun ClanDetailsScreen(
             .background(MaterialTheme.colorScheme.surface)
     ) {
         with(sharedTransitionScope) {
-            LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = modifier) {
+            LazyColumn(verticalArrangement = Arrangement.spacedBy(6.dp), modifier = Modifier) {
                 item {
                     val resource = painterResource(
                         ClashConstants.getIconClan(
@@ -76,13 +76,13 @@ fun ClanDetailsScreen(
                         )!!
                     )
                     Row(
-                        modifier = modifier.fillMaxWidth(),
+                        modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text(text = clanUiState.clan.name!!,
                             fontWeight = FontWeight.Bold,
                             fontSize = 34.sp,
                             color = MaterialTheme.colorScheme.onBackground,
-                            modifier = modifier.sharedBounds(
+                            modifier = Modifier.sharedBounds(
                                 rememberSharedContentState(key = "clanName/${clanUiState.clan.name}"),
                                 animatedVisibilityScope = animatedContentScope,
                                 boundsTransform = { _, _ ->
@@ -90,7 +90,7 @@ fun ClanDetailsScreen(
                                 }
                             ))
                         Image(
-                            modifier = modifier
+                            modifier = Modifier
                                 .size(130.dp)
                                 .sharedBounds(
                                     rememberSharedContentState(key = "badgeId/${clanUiState.clan.badgeId}"),
@@ -156,12 +156,12 @@ fun CardClanMember(
 ) {
     Box(modifier = modifier) {
         Card(
-            modifier = modifier.align(
+            modifier = Modifier.align(
                 Alignment.BottomCenter
             ),
         ) {
             Column {
-                Row(modifier = modifier
+                Row(modifier = Modifier
                     .clickable(
                         onClick = {
                             onGetPlayer()
@@ -174,23 +174,23 @@ fun CardClanMember(
                     }
                     Column {
                         Row(
-                            modifier = modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             verticalAlignment = Alignment.Top,
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Column {
                                 Text(
                                     text = memberName,
-                                    modifier = modifier.padding(bottom = 4.dp),
+                                    modifier = Modifier.padding(bottom = 4.dp),
                                     fontWeight = FontWeight.Bold,
                                     fontSize = 22.sp
                                 )
-                                Text(text = memberTag, modifier = modifier.padding(bottom = 8.dp))
+                                Text(text = memberTag, modifier = Modifier.padding(bottom = 8.dp))
                             }
                             Text(text = "#$memberRank", fontWeight = FontWeight.ExtraBold)
                         }
                         Column(
-                            modifier = modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth(),
                             horizontalAlignment = Alignment.End,
                             verticalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
@@ -207,18 +207,18 @@ fun CardClanMember(
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
                                 shape = MaterialTheme.shapes.small
                             ) {
-                                Text(text = "Doações: $memberDonations", modifier.padding(2.dp))
+                                Text(text = "Doações: $memberDonations", Modifier.padding(2.dp))
                             }
                         }
                     }
                 }
                 if (loading.first == memberTag && loading.second) {
-                    LinearProgressIndicator(modifier = modifier.fillMaxWidth())
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 }
             }
         }
         Image(
-            modifier = modifier
+            modifier = Modifier
                 .align(
                     Alignment.TopStart
                 )
