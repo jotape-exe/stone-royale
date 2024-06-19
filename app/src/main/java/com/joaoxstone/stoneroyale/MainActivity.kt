@@ -24,7 +24,6 @@ import com.joaoxstone.stoneroyale.ui.screens.HomeScreen
 import com.joaoxstone.stoneroyale.ui.screens.PlayerProfileScreen
 import com.joaoxstone.stoneroyale.ui.screens.WelcomeScreen
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
-import com.joaoxstone.stoneroyale.ui.viewmodel.AppViewModel
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanViewModel
 import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerViewModel
 

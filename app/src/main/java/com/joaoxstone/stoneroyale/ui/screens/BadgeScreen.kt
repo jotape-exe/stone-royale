@@ -110,7 +110,7 @@ fun BadgesScreen(
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Ornedar por nível") },
+                                text = { Text("Ordenar por nível") },
                                 onClick = {
                                     playerUiState.onPlayerBagdeChange(playerUiState.player.badges.sortedBy { it.level })
                                 }

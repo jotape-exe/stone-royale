@@ -9,22 +9,34 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class PlayerViewModel(private val playerRepository: PlayerRepository) : ViewModel() {
+class PlayerViewModel : ViewModel() {
+    private val playerRepository: PlayerRepository = PlayerRepository()
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
     init {
         _uiState.update { currentState ->
             currentState.copy(
+                onPlayerChange = { player ->
+                    _uiState.update { playerState ->
+                        playerState.copy(player = player)
+                    }
+                },
+                onPlayerBagdeChange = {
+                    _uiState.update { playerState ->
+                        playerState.copy(player = playerState.player.copy(badges = it))
+                    }
+                },
                 onGetPlayer = { term ->
                     var response = PlayerResponse()
                     try {
                         response = playerRepository.getPlayer(term)
-                        _uiState.update { it.copy(player = response) }
+                        this.uiState.value.onPlayerChange(response)
                     } catch (error: Exception) {
                         Log.d("Error: ", error.message.toString())
                     }
-                }
+
+                },
             )
         }
     }

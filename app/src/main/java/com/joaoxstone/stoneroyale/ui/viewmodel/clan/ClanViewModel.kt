@@ -10,19 +10,24 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class ClanViewModel(private val clanRespository: ClanRespository) : ViewModel() {
+class ClanViewModel : ViewModel() {
+    private val clanRespository: ClanRespository = ClanRespository()
     private val _uiState = MutableStateFlow(ClanUiState())
     val uiState: StateFlow<ClanUiState> = _uiState.asStateFlow()
 
     init {
         _uiState.update { currentState ->
             currentState.copy(
+                onClanChange = { clan ->
+                    _uiState.update { clanState ->
+                        clanState.copy(clan = clan)
+                    }
+                },
                 onGetClan = { term ->
                     var response = ClanResponse()
                     try {
-                        delay(450)
                         response = clanRespository.getClan(term)
-                        _uiState.update { it.copy(clan = response) }
+                        this.uiState.value.onClanChange(response)
                     } catch (error: Exception) {
                         Log.d("Error: ", error.message.toString())
                     }
