@@ -27,7 +27,7 @@ fun BottomNavigation(
         shape = MaterialTheme.shapes.extraLarge,
         modifier = modifier.padding(16.dp)
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = modifier.padding(4.dp)) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.padding(4.dp)) {
             content()
         }
     }

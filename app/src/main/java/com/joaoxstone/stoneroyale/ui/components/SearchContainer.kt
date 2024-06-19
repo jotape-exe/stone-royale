@@ -64,7 +64,7 @@ fun SearchContainer(
                     ),
             ) {
                 Row(
-                    modifier = modifier.padding(1.dp),
+                    modifier = Modifier.padding(1.dp),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {

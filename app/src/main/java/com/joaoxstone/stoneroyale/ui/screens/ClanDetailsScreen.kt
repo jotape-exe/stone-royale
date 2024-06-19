@@ -169,7 +169,7 @@ fun CardClanMember(
                     )
                     .fillMaxWidth()
                     .padding(8.dp)) {
-                    Surface(modifier.size(90.dp), color = Color.Transparent) {
+                    Surface(Modifier.size(90.dp), color = Color.Transparent) {
 
                     }
                     Column {

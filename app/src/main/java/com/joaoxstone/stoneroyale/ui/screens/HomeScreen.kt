@@ -128,14 +128,14 @@ fun HomeScreen(
             }
 
             GitHubButton(
-                modifier
+                Modifier
                     .padding(8.dp)
                     .align(Alignment.TopEnd)
             )
 
             Surface(
                 shape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp),
-                modifier = modifier
+                modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxHeight(.769f)
                     .fillMaxWidth()
@@ -171,7 +171,7 @@ fun HomeScreen(
                         }
                     }
                     Row(
-                        modifier = modifier
+                        modifier = Modifier
                             .fillMaxHeight()
                             .fillMaxWidth()
                             .padding(bottom = 12.dp),
@@ -223,7 +223,7 @@ fun SetAnimatedContent(
             Image(
                 painter = painterResource(id = imageId),
                 contentDescription = "",
-                modifier = modifier.size(230.dp)
+                modifier = Modifier.size(230.dp)
             )
         }
     }

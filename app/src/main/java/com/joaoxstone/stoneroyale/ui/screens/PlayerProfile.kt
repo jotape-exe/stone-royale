@@ -25,7 +25,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
@@ -123,10 +124,10 @@ fun PlayerProfileScreen(
             sharedTransitionScope = sharedTransitionScope,
             isCreator = isCreator?.name != null
         )
-        Card(modifier = modifier.padding(8.dp), shape = MaterialTheme.shapes.large) {
+        Card(modifier = Modifier.padding(8.dp), shape = MaterialTheme.shapes.large) {
 
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -146,7 +147,7 @@ fun PlayerProfileScreen(
                 }
             }
             Row(
-                modifier = modifier
+                modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
@@ -179,7 +180,7 @@ fun PlayerProfileScreen(
         PlayerProfileContent {
             DeckContainer(currentDeck = player.currentDeck)
         }
-        PlayerProfileBottom(modifier.fillMaxWidth()) {
+        PlayerProfileBottom(Modifier.fillMaxWidth()) {
             ClanContainer(
                 badgeClan = player.clan?.badgeId,
                 clanName = player.clan?.name,
@@ -220,17 +221,17 @@ fun ProfileHeader(
     with(sharedTransitionScope) {
         Surface(
             color = Color.Transparent,
-            modifier = Modifier.background(
+            modifier = modifier.background(
                 Brush.horizontalGradient(
                     ClashConstants.getBackgroundByLeague(leagueId)
                 ),
                 shape = RoundedCornerShape(bottomStart = 28.dp, bottomEnd = 28.dp)
             ),
         ) {
-            Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
-                Box(modifier = modifier.size(162.dp), contentAlignment = Alignment.Center) {
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
+                Box(modifier = Modifier.size(162.dp), contentAlignment = Alignment.Center) {
                     Surface(
-                        color = Color.Transparent, modifier = modifier
+                        color = Color.Transparent, modifier = Modifier
                             .size(50.dp)
                             .shadowCustom(
                                 Color(0x744400FF),
@@ -246,7 +247,7 @@ fun ProfileHeader(
                         )
 
                     Image(
-                        modifier = modifier
+                        modifier = Modifier
                             .size(162.dp)
                             .sharedBounds(
                                 rememberSharedContentState(key = "leagueId/$resource"),
@@ -262,7 +263,7 @@ fun ProfileHeader(
 
                 Column {
                     Text(
-                        modifier = modifier
+                        modifier = Modifier
                             .padding(top = 14.dp)
                             .sharedBounds(
                                 rememberSharedContentState(key = "playerName/$playerName"),
@@ -276,10 +277,10 @@ fun ProfileHeader(
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold
                     )
-                    Spacer(modifier = modifier.padding(4.dp))
+                    Spacer(modifier = Modifier.padding(4.dp))
                     Row {
                         TagBadge(tag = playerTag)
-                        Spacer(modifier = modifier.padding(2.dp))
+                        Spacer(modifier = Modifier.padding(2.dp))
                         if (isPro) {
                             ProBadge()
                         }
@@ -309,7 +310,7 @@ fun PlayerProfileContent(content: @Composable () -> Unit) {
 fun PlayerProfileBottom(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Card(modifier = modifier.padding(8.dp), shape = MaterialTheme.shapes.large) {
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(14.dp),
             horizontalArrangement = Arrangement.SpaceBetween
@@ -324,6 +325,7 @@ fun PlayerProfileBottom(modifier: Modifier = Modifier, content: @Composable () -
 fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentDeck>) {
     val evoPositios = listOf(0, 1)
     val scope = rememberCoroutineScope()
+    val gridState = rememberLazyGridState()
     val context = LocalContext.current
 
     Column(
@@ -332,12 +334,12 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
     ) {
         Card(shape = MaterialTheme.shapes.large) {
             Surface(
-                modifier = modifier.padding(4.dp),
+                modifier = Modifier.padding(4.dp),
                 shape = MaterialTheme.shapes.medium,
                 color = MaterialTheme.colorScheme.secondaryContainer
             ) {
                 Row(
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(2.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
@@ -366,9 +368,10 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                 }
             }
             LazyVerticalGrid(
+                state = gridState,
                 columns = GridCells.Fixed(4),
             ) {
-                items(currentDeck) { card ->
+                itemsIndexed(currentDeck) { _, card ->
                     if (evoPositios.contains(currentDeck.indexOf(card))) {
                         SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
@@ -441,13 +444,13 @@ fun ProBadge(modifier: Modifier = Modifier) {
         ), label = ""
     )
     Surface(
+        modifier = modifier,
         color = color.value,
-
         shape = MaterialTheme.shapes.medium
     ) {
         Text(
             fontWeight = FontWeight.ExtraBold,
-            modifier = modifier
+            modifier = Modifier
                 .padding(8.dp), text = "CRL 2022", color = Color.White
         )
     }
@@ -456,12 +459,13 @@ fun ProBadge(modifier: Modifier = Modifier) {
 @Composable
 fun TagBadge(modifier: Modifier = Modifier, tag: String) {
     Surface(
+        modifier = modifier,
         color = Color(0xBF050031),
         shape = MaterialTheme.shapes.medium
     ) {
         Text(
             fontWeight = FontWeight.ExtraBold,
-            modifier = modifier
+            modifier = Modifier
                 .padding(8.dp), text = tag, color = Color.White
         )
     }
@@ -477,7 +481,7 @@ fun ClanContainer(
     onOpenClan: () -> Unit
 ) {
     val clanIcon = ClashConstants.getIconClan(badgeClan)
-    Column {
+    Column(modifier) {
         Row {
             Image(
                 modifier = Modifier
@@ -486,7 +490,7 @@ fun ClanContainer(
                 contentDescription = "experience icon"
             )
             Text(
-                modifier = modifier.padding(start = 8.dp),
+                modifier = Modifier.padding(start = 8.dp),
                 text = clanName ?: "Sem clã",
                 fontSize = 24.sp,
                 fontWeight = FontWeight.ExtraBold,
@@ -494,18 +498,22 @@ fun ClanContainer(
             )
         }
         if (badgeClan != null) {
-            Text(modifier = modifier.padding(8.dp), text = clanRole?.uppercase() ?: "", fontWeight = FontWeight.Bold)
+            Text(
+                modifier = Modifier.padding(8.dp),
+                text = clanRole?.uppercase() ?: "",
+                fontWeight = FontWeight.Bold
+            )
             FilledTonalButton(shape = MaterialTheme.shapes.small, onClick = {
                 onOpenClan()
             }) {
                 Text(text = "Ver membros")
                 Icon(
-                    modifier = modifier.padding(end = 4.dp, start = 4.dp),
+                    modifier = Modifier.padding(end = 4.dp, start = 4.dp),
                     painter = painterResource(id = R.drawable.ic_baseline_groups),
                     contentDescription = ""
                 )
                 AnimatedVisibility(visible = loadingClan) {
-                    CircularProgressIndicator(modifier = modifier.size(22.dp))
+                    CircularProgressIndicator(modifier = Modifier.size(22.dp))
                 }
             }
         }
@@ -519,7 +527,7 @@ fun MasteryContainer(
 ) {
     IconButton(modifier = modifier.size(90.dp), onClick = { onOpenMasteries() }) {
         Image(
-            modifier = modifier.size(66.dp),
+            modifier = Modifier.size(66.dp),
             painter = painterResource(id = R.drawable.mastery),
             contentDescription = "Mastery"
         )

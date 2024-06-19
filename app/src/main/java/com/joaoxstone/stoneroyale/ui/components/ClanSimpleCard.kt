@@ -48,7 +48,7 @@ fun ClanSimpleCard(
     Box(modifier = modifier) {
         //aumente a altura dinamicamente
         Surface(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxHeight(.4f)
                 .align(alignment = Alignment.TopCenter)
                 .fillMaxWidth(.865f)
@@ -58,7 +58,7 @@ fun ClanSimpleCard(
         ) {
         }
         Surface(
-            modifier = modifier
+            modifier = Modifier
                 .padding(top = 18.dp)
                 .fillMaxWidth(),
             shadowElevation = 8.dp,
@@ -66,7 +66,7 @@ fun ClanSimpleCard(
             shape = MaterialTheme.shapes.large
         ) {
             Column(
-                modifier
+                Modifier
                     .clickable {
                         isExpanded = !isExpanded
                     }
@@ -84,14 +84,14 @@ fun ClanSimpleCard(
                     cardBottom()
                 }
                 Row(
-                    modifier = modifier
+                    modifier = Modifier
                         .fillMaxWidth()
                         .padding(end = 8.dp, bottom = 8.dp),
                     horizontalArrangement = Arrangement.End
                 ) {
 
                     IconButton(
-                        modifier = modifier.graphicsLayer(rotationZ = angle),
+                        modifier = Modifier.graphicsLayer(rotationZ = angle),
                         onClick = { isExpanded = !isExpanded }) {
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,
@@ -102,7 +102,7 @@ fun ClanSimpleCard(
             }
 
         }
-        Row(modifier.align(Alignment.TopCenter)) {
+        Row(Modifier.align(Alignment.TopCenter)) {
             imageSlot()
         }
     }

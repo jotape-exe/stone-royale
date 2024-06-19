@@ -81,14 +81,14 @@ fun ClanScreen(
                 }
             )
             AnimatedVisibility(
-                modifier = modifier.padding(8.dp),
+                modifier = Modifier.padding(8.dp),
                 visible = clanUiState.clan.name != null
             ) {
                 ClanSimpleCard(
                     cardContent = {
-                        Column(modifier.padding(4.dp)) {
+                        Column(Modifier.padding(4.dp)) {
                             Row(
-                                modifier
+                                Modifier
                                     .padding(4.dp)
                                     .fillMaxWidth(),
                                 horizontalArrangement = Arrangement.End

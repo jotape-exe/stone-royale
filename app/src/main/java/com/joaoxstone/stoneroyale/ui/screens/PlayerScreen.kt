@@ -62,9 +62,9 @@ fun PlayerScreen(
     val player = playerUiState.player
     val clanRespository = ClanRespository()
 
-    Column {
+    Column(modifier) {
         SearchContainer(
-            modifier = modifier
+            modifier = Modifier
                 .padding(16.dp),
             onSearch = { term ->
                 scope.launch(Dispatchers.IO) {
@@ -86,7 +86,7 @@ fun PlayerScreen(
             }
         )
         Row(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 8.dp, start = 10.dp, end = 10.dp),
             verticalAlignment = Alignment.CenterVertically,
@@ -157,7 +157,7 @@ fun PlayerScreen(
                                 fontWeight = FontWeight.Bold
                             )
                             AnimatedVisibility(visible = loadingClan) {
-                                CircularProgressIndicator(modifier = modifier.size(22.dp))
+                                CircularProgressIndicator(modifier = Modifier.size(22.dp))
                             }
                         }
 

@@ -16,9 +16,10 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun WelcomeScreen(
     navigationAction: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Surface(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
         Column(modifier = Modifier.padding(16.dp)) {

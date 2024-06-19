@@ -199,7 +199,7 @@ fun ModalBadgeContent(
 
     Row(modifier = modifier.padding(8.dp)) {
         SubcomposeAsyncImage(
-            modifier = modifier.size(104.dp),
+            modifier = Modifier.size(104.dp),
             model = ImageRequest.Builder(LocalContext.current)
                 .data(badgeImage)
                 .crossfade(true)
@@ -211,7 +211,7 @@ fun ModalBadgeContent(
         )
         Column {
             Text(
-                modifier = modifier.padding(top = 14.dp),
+                modifier = Modifier.padding(top = 14.dp),
                 text = badgeName,
                 fontSize = 24.sp,
                 fontWeight = FontWeight.Bold
@@ -222,7 +222,7 @@ fun ModalBadgeContent(
                     shape = MaterialTheme.shapes.medium
                 ) {
                     Text(
-                        modifier = modifier.padding(10.dp),
+                        modifier = Modifier.padding(10.dp),
                         text = "$badgeLevel / $badgeMaxLevel",
                         fontSize = 12.sp,
                     )

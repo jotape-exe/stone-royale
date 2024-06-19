@@ -159,7 +159,7 @@ fun CardHeader(
                         )
                 ) {
                     Text(
-                        modifier = modifier
+                        modifier = Modifier
                             .padding(8.dp)
                             .sharedBounds(
                                 rememberSharedContentState(key = "playerName/$playerName"),
@@ -175,7 +175,7 @@ fun CardHeader(
                     )
                 }
                 Text(
-                    modifier = modifier.padding(8.dp),
+                    modifier = Modifier.padding(8.dp),
                     text = playerTag,
                     fontWeight = FontWeight.Bold,
                     textAlign = TextAlign.End,
@@ -183,7 +183,7 @@ fun CardHeader(
                 )
             }
             Row(
-                modifier = modifier.padding(8.dp),
+                modifier = Modifier.padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Badge(
@@ -243,13 +243,13 @@ fun ExpBadge(modifier: Modifier = Modifier, exp: Int) {
             shape = MaterialTheme.shapes.medium,
         ) {
             Image(
-                modifier = modifier.size(38.dp),
+                modifier = Modifier.size(38.dp),
                 painter = painterResource(id = R.drawable.experience),
                 contentDescription = "experience icon"
             )
         }
         Text(
-            modifier = modifier.padding(bottom = 6.dp),
+            modifier = Modifier.padding(bottom = 6.dp),
             text = "$exp",
             color = Color.White,
             fontSize = 12.sp,
@@ -265,15 +265,15 @@ fun Badge(
     @DrawableRes imageResoure: Int,
     color: Color
 ) {
-    Box(contentAlignment = Alignment.CenterStart) {
+    Box(modifier, contentAlignment = Alignment.CenterStart) {
         Surface(
             color = color,
             shape = MaterialTheme.shapes.extraLarge,
-            modifier = modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = 8.dp)
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier.padding(start = 30.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
+                modifier = Modifier.padding(start = 30.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
             ) {
                 Text(
                     text = "$text",
@@ -283,7 +283,7 @@ fun Badge(
             }
         }
         Image(
-            modifier = modifier
+            modifier = Modifier
                 .size(36.dp)
                 .align(Alignment.CenterStart),
             painter = painterResource(id = imageResoure),
@@ -299,14 +299,14 @@ fun AsyncBadge(
     imageURL: String,
     color: Color
 ) {
-    Box(contentAlignment = Alignment.CenterStart) {
+    Box(modifier, contentAlignment = Alignment.CenterStart) {
         Surface(
             color = color,
             shape = MaterialTheme.shapes.extraLarge,
         ) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = modifier.padding(start = 30.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
+                modifier = Modifier.padding(start = 30.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
             ) {
                 Text(
                     text = "$text",
@@ -316,7 +316,7 @@ fun AsyncBadge(
             }
         }
         AsyncImage(
-            modifier = modifier
+            modifier = Modifier
                 .size(52.dp)
                 .padding(end = 20.dp)
                 .align(Alignment.CenterStart),
