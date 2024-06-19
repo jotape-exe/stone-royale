@@ -39,6 +39,8 @@ import com.joaoxstone.stoneroyale.ui.components.PlayerCard
 import com.joaoxstone.stoneroyale.ui.components.ProfileAction
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -46,7 +48,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun PlayerScreen(
-    modifier: Modifier = Modifier, uiState: AppUiState,
+    modifier: Modifier = Modifier,
+    playerUiState: PlayerUiState,
+    clanUiState: ClanUiState,
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onOpenPlayerProfile: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
@@ -56,7 +60,7 @@ fun PlayerScreen(
     var playerTag by remember { mutableStateOf("89G0UYLVV") }
     var loading by remember { mutableStateOf(false) }
     var loadingClan by remember { mutableStateOf(false) }
-    val player = uiState.player
+    val player = playerUiState.player
     val clanRespository = ClanRespository()
 
     Column {
@@ -66,7 +70,7 @@ fun PlayerScreen(
             onSearch = { term ->
                 scope.launch(Dispatchers.IO) {
                     loading = true
-                    uiState.onGetPlayer(
+                    playerUiState.onGetPlayer(
                         "#${
                             term.uppercase().replace("O", "0").trim()
                         }",
@@ -91,7 +95,7 @@ fun PlayerScreen(
         ) {
             if (player.name.isNullOrEmpty()) EmptyData()
             AnimatedVisibility(
-                visible = !uiState.player.name.isNullOrEmpty(),
+                visible = !playerUiState.player.name.isNullOrEmpty(),
             ) {
                 PlayerCard(
                     imageSlot = {
@@ -171,7 +175,7 @@ fun PlayerScreen(
                                             loadingClan = true
                                             var clan = ClanResponse()
                                             clan = clanRespository.getClan(player.clan!!.tag!!)
-                                            uiState.onClanChange(clan)
+                                            clanUiState.onClanChange(clan)
                                             loadingClan = false
                                             onOpenClan(
                                                 clan.badgeId!!,

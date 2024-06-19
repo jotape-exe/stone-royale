@@ -8,7 +8,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,24 +33,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.inset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.ui.components.BottomNavItem
 import com.joaoxstone.stoneroyale.ui.components.BottomNavigation
 import com.joaoxstone.stoneroyale.ui.components.GitHubButton
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
-import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState
 
 
 @SuppressLint("RestrictedApi")
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun HomeScreen(
-    uiState: AppUiState, animatedContentScope: AnimatedContentScope,
+    playerUiState: PlayerUiState,
+    clanUiState: ClanUiState,
+    animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
     playerNavigation: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
     clanNavigation: (badgeId: Int?, clanName: String) -> Unit,
@@ -148,7 +147,8 @@ fun HomeScreen(
                     ) {
                         composable("player") {
                             PlayerScreen(
-                                uiState = uiState,
+                                playerUiState = playerUiState,
+                                clanUiState = clanUiState,
                                 animatedVisibilityScope = animatedContentScope,
                                 sharedTransitionScope = sharedTransitionScope,
                                 onOpenPlayerProfile = playerNavigation,
@@ -161,7 +161,7 @@ fun HomeScreen(
                         }
                         composable("clan") {
                             ClanScreen(
-                                uiState = uiState,
+                                clanUiState = clanUiState,
                                 onOpenDetails = { badgeId, clanName ->
                                     clanNavigation(badgeId, clanName)
                                 },

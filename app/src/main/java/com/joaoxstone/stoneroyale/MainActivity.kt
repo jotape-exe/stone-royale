@@ -25,6 +25,8 @@ import com.joaoxstone.stoneroyale.ui.screens.PlayerProfileScreen
 import com.joaoxstone.stoneroyale.ui.screens.WelcomeScreen
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppViewModel
+import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanViewModel
+import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerViewModel
 
 
 val api = PlayerRepository()
@@ -39,8 +41,13 @@ class MainActivity : ComponentActivity() {
                 SharedTransitionLayout {
 
                     val navController = rememberNavController()
-                    val viewModel: AppViewModel = viewModel()
-                    val uiState by viewModel.uiState.collectAsState()
+
+                    val playerViewModel: PlayerViewModel = viewModel()
+                    val clanViewModel: ClanViewModel = viewModel()
+
+                    val playerUiState by playerViewModel.uiState.collectAsState()
+                    val clanUiState by clanViewModel.uiState.collectAsState()
+
 
                     NavHost(navController = navController, startDestination = "welcome") {
                         composable("welcome") {
@@ -61,7 +68,8 @@ class MainActivity : ComponentActivity() {
                             )
                         ) {
                             PlayerProfileScreen(
-                                uiState = uiState,
+                                playerUiState = playerUiState,
+                                clanUiState = clanUiState,
                                 animatedVisibilityScope = this@composable,
                                 sharedTransitionScope = this@SharedTransitionLayout,
                                 onOpenClan = { badgeId, clanName ->
@@ -85,7 +93,8 @@ class MainActivity : ComponentActivity() {
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .background(MaterialTheme.colorScheme.surface),
-                                uiState = uiState,
+                                playerUiState = playerUiState,
+                                clanUiState = clanUiState,
                                 animatedContentScope = this@composable,
                                 sharedTransitionScope = this@SharedTransitionLayout,
                                 onOpenPlayerProfile = { leagueId, arenaId, playerName ->
@@ -95,7 +104,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable("home") {
                             HomeScreen(
-                                uiState,
+                                playerUiState = playerUiState,
+                                clanUiState = clanUiState,
                                 playerNavigation = { leagueId, arenaId, playerName ->
                                     navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
                                 },
@@ -107,7 +117,9 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable("badges") {
-                            BadgesScreen(uiState, onClose = {
+                            BadgesScreen(
+                                playerUiState = playerUiState,
+                                onClose = {
                                 navController.popBackStack()
                             })
                         }

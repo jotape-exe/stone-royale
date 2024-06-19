@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,11 +43,12 @@ import coil.compose.SubcomposeAsyncImage
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.model.player.Badges
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun BadgesScreen(
-    uiState: AppUiState,
+    playerUiState: PlayerUiState,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -58,7 +60,7 @@ fun BadgesScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     var expanded by remember { mutableStateOf(false) }
 
-    val player = uiState.player
+    val player = playerUiState.player
     val masteryList = player.badges
     val playerName = player.name
 
@@ -104,13 +106,13 @@ fun BadgesScreen(
                             DropdownMenuItem(
                                 text = { Text("Ordenar por nome") },
                                 onClick = {
-                                    uiState.onPlayerBagdeChange(uiState.player.badges.sortedBy { it.name })
+                                    playerUiState.onPlayerBagdeChange(playerUiState.player.badges.sortedBy { it.name })
                                 }
                             )
                             DropdownMenuItem(
                                 text = { Text("Ornedar por nível") },
                                 onClick = {
-                                    uiState.onPlayerBagdeChange(uiState.player.badges.sortedBy { it.level })
+                                    playerUiState.onPlayerBagdeChange(playerUiState.player.badges.sortedBy { it.level })
                                 }
                             )
                         }
@@ -120,6 +122,7 @@ fun BadgesScreen(
             )
         },
     ) { innerPadding ->
+        val gridState = rememberLazyGridState()
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -138,8 +141,12 @@ fun BadgesScreen(
                 )
             }
         }
-        LazyVerticalGrid(modifier = modifier.padding(innerPadding), columns = GridCells.Fixed(3)) {
-            items(masteryList) { badge ->
+        LazyVerticalGrid(
+            modifier = modifier.padding(innerPadding),
+            columns = GridCells.Fixed(3),
+            state = gridState
+        ) {
+            itemsIndexed(masteryList) { _, badge ->
                 SubcomposeAsyncImage(
                     modifier = modifier.clickable(
                         onClick = {

@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 //refactor to single responsibility principle
+
+
 data class AppUiState(
     val player: PlayerResponse = PlayerResponse(),
     val onPlayerChange: (PlayerResponse) -> Unit = {},

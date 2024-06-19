@@ -63,7 +63,8 @@ import com.joaoxstone.stoneroyale.ui.components.AsyncBadge
 import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.ExpBadge
 import com.joaoxstone.stoneroyale.ui.components.shadowCustom
-import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -73,7 +74,8 @@ fun PlayerProfileScreen(
     modifier: Modifier = Modifier,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
-    uiState: AppUiState,
+    playerUiState: PlayerUiState,
+    clanUiState: ClanUiState,
     onOpenClan: (badgeId: Int, clanName: String) -> Unit,
     onOpenMasteries: () -> Unit
 ) {
@@ -84,7 +86,7 @@ fun PlayerProfileScreen(
     var loadingClan by remember { mutableStateOf(false) }
 
 
-    val player = uiState.player
+    val player = playerUiState.player
     val trophies = player.trophies
     val UCtrophies = player.currentPathOfLegendSeasonResult?.trophies
     val exp = player.expLevel!!
@@ -186,7 +188,7 @@ fun PlayerProfileScreen(
                         loadingClan = true
                         var clan = ClanResponse()
                         clan = clanRespository.getClan(player.clan!!.tag!!)
-                        uiState.onClanChange(clan)
+                        clanUiState.onClanChange(clan)
                         loadingClan = false
                         onOpenClan(
                             clan.badgeId!!,

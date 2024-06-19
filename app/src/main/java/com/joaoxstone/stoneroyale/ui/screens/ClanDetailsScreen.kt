@@ -42,6 +42,8 @@ import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
 import com.joaoxstone.stoneroyale.data.repository.PlayerRepository
 import com.joaoxstone.stoneroyale.ui.utils.DateUtils
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -49,7 +51,9 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun ClanDetailsScreen(
-    modifier: Modifier = Modifier, uiState: AppUiState,
+    modifier: Modifier = Modifier,
+    playerUiState: PlayerUiState,
+    clanUiState: ClanUiState,
     animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
     onOpenPlayerProfile: (leagueId: Int?, arenaId: Int, playerName: String) -> Unit,
@@ -69,18 +73,18 @@ fun ClanDetailsScreen(
                 item {
                     val resource = painterResource(
                         ClashConstants.getIconClan(
-                            uiState.clan.badgeId
+                            clanUiState.clan.badgeId
                         )!!
                     )
                     Row(
                         modifier = modifier.fillMaxWidth(),
                     ) {
-                        Text(text = uiState.clan.name!!,
+                        Text(text = clanUiState.clan.name!!,
                             fontWeight = FontWeight.Bold,
                             fontSize = 34.sp,
                             color = MaterialTheme.colorScheme.onBackground,
                             modifier = modifier.sharedBounds(
-                                rememberSharedContentState(key = "clanName/${uiState.clan.name}"),
+                                rememberSharedContentState(key = "clanName/${clanUiState.clan.name}"),
                                 animatedVisibilityScope = animatedContentScope,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = 1000)
@@ -90,7 +94,7 @@ fun ClanDetailsScreen(
                             modifier = modifier
                                 .size(130.dp)
                                 .sharedBounds(
-                                    rememberSharedContentState(key = "badgeId/${uiState.clan.badgeId}"),
+                                    rememberSharedContentState(key = "badgeId/${clanUiState.clan.badgeId}"),
                                     animatedVisibilityScope = animatedContentScope,
                                     boundsTransform = { _, _ ->
                                         tween(durationMillis = 700)
@@ -101,7 +105,7 @@ fun ClanDetailsScreen(
                     }
 
                 }
-                items(uiState.clan.memberList) { member ->
+                items(clanUiState.clan.memberList) { member ->
                     val image = ClashConstants.getIconArena(member.arena!!.id!!)!!
                     CardClanMember(
                         image = image,
@@ -117,7 +121,7 @@ fun ClanDetailsScreen(
                                 try {
                                     delay(450)
                                     response = playerRespository.getPlayer(member.tag!!)
-                                    uiState.onPlayerChange(response)
+                                    playerUiState.onPlayerChange(response)
                                     response.apply {
                                         onOpenPlayerProfile(
                                             currentPathOfLegendSeasonResult?.leagueNumber,

@@ -36,6 +36,7 @@ import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.ClanSimpleCard
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -45,7 +46,7 @@ import kotlinx.coroutines.launch
 fun ClanScreen(
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
-    uiState: AppUiState,
+    clanUiState: ClanUiState,
     onOpenDetails: (Int, String) -> Unit,
     animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
@@ -61,7 +62,7 @@ fun ClanScreen(
                 onSearch = { term ->
                     scope.launch (Dispatchers.IO)  {
                         loading = true
-                        uiState.onGetClan(
+                        clanUiState.onGetClan(
                             "#${
                                 term.uppercase().replace("O", "0").trim()
                             }",
@@ -80,7 +81,7 @@ fun ClanScreen(
             )
             AnimatedVisibility(
                 modifier = modifier.padding(8.dp),
-                visible = uiState.clan.name != null
+                visible = clanUiState.clan.name != null
             ) {
                 ClanSimpleCard(
                     cardContent = {
@@ -100,15 +101,15 @@ fun ClanScreen(
                                     onClick = {
 
                                     },
-                                    enabled = uiState.clan.type!!.lowercase() == "open",
+                                    enabled = clanUiState.clan.type!!.lowercase() == "open",
                                     label = {
-                                        Text(text = uiState.clan.type!!.uppercase())
+                                        Text(text = clanUiState.clan.type!!.uppercase())
                                     }
                                 )
                             }
                             Text(
                                 modifier = modifier.sharedBounds(
-                                    rememberSharedContentState(key = "clanName/${uiState.clan.name}"),
+                                    rememberSharedContentState(key = "clanName/${clanUiState.clan.name}"),
                                     animatedVisibilityScope = animatedContentScope,
                                     boundsTransform = { _, _ ->
                                         tween(durationMillis = 700)
@@ -116,12 +117,12 @@ fun ClanScreen(
                                 ),
                                 fontWeight = FontWeight.Bold,
                                 fontSize = 24.sp,
-                                text = uiState.clan.name ?: "Clã não encontrado"
+                                text = clanUiState.clan.name ?: "Clã não encontrado"
                             )
                             Text(
                                 modifier = modifier.padding(top = 8.dp),
                                 fontSize = 18.sp,
-                                text = uiState.clan.tag!!
+                                text = clanUiState.clan.tag!!
                             )
                         }
                     },
@@ -134,8 +135,8 @@ fun ClanScreen(
                                 modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.SpaceBetween
                             ) {
-                                Text(text = "${uiState.clan.members!!}/50 membros")
-                                Text(text = uiState.clan.location?.name!!)
+                                Text(text = "${clanUiState.clan.members!!}/50 membros")
+                                Text(text = clanUiState.clan.location?.name!!)
                             }
                             Row(
                                 modifier.fillMaxWidth(),
@@ -144,7 +145,7 @@ fun ClanScreen(
                             ) {
                                 Text(text = "Troféus necessários:  ")
                                 Badge(
-                                    text = "${uiState.clan.requiredTrophies}",
+                                    text = "${clanUiState.clan.requiredTrophies}",
                                     imageResoure = R.drawable.trophy,
                                     color = Color(0xFFE99A00)
                                 )
@@ -153,8 +154,8 @@ fun ClanScreen(
                                 shape = MaterialTheme.shapes.medium,
                                 onClick = {
                                     onOpenDetails(
-                                        uiState.clan.badgeId!!,
-                                        uiState.clan.name!!
+                                        clanUiState.clan.badgeId!!,
+                                        clanUiState.clan.name!!
                                     )
                                 }) {
                                 Text(
@@ -171,12 +172,12 @@ fun ClanScreen(
                     imageSlot = {
                         val resource = painterResource(
                             ClashConstants.getIconClan(
-                                uiState.clan.badgeId
+                                clanUiState.clan.badgeId
                             )!!
                         )
                         Image(
                             modifier = modifier.sharedBounds(
-                                rememberSharedContentState(key = "badgeId/${uiState.clan.badgeId}"),
+                                rememberSharedContentState(key = "badgeId/${clanUiState.clan.badgeId}"),
                                 animatedVisibilityScope = animatedContentScope,
                                 boundsTransform = { _, _ ->
                                     tween(durationMillis = 700)
