@@ -1,9 +1,12 @@
 package com.joaoxstone.stoneroyale.ui.screens
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -12,6 +15,7 @@ import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -32,17 +36,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImagePainter
 import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.model.player.Badges
-import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
+import com.joaoxstone.stoneroyale.ui.components.BrokenImage
 import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -65,7 +73,7 @@ fun BadgesScreen(
     val playerName = player.name
 
     Scaffold(
-        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
         topBar = {
             MediumTopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
@@ -142,27 +150,34 @@ fun BadgesScreen(
             }
         }
         LazyVerticalGrid(
-            modifier = modifier.padding(innerPadding),
+            modifier = Modifier.padding(innerPadding),
             columns = GridCells.Fixed(3),
             state = gridState
         ) {
             itemsIndexed(masteryList) { _, badge ->
                 SubcomposeAsyncImage(
-                    modifier = modifier.clickable(
+                    modifier = Modifier.clickable(
                         onClick = {
                             showBottomSheet = true
                             currentBadge.value = badge
                         }
                     ),
-                    model = badge.iconUrls?.large,
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(badge.iconUrls?.large)
+                        .crossfade(true)
+                        .build(),
                     contentDescription = badge.name,
+                    error = {
+                        BrokenImage()
+                    },
                     loading = {
                         CircularProgressIndicator(
-                            modifier = modifier
+                            modifier = Modifier
                                 .size(10.dp)
                                 .padding(18.dp)
                         )
                     }
+
                 )
             }
 
@@ -185,8 +200,14 @@ fun ModalBadgeContent(
     Row(modifier = modifier.padding(8.dp)) {
         SubcomposeAsyncImage(
             modifier = modifier.size(104.dp),
-            model = badgeImage,
-            contentDescription = badgeName
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(badgeImage)
+                .crossfade(true)
+                .build(),
+            contentDescription = badgeName,
+            error = {
+                BrokenImage()
+            }
         )
         Column {
             Text(

@@ -54,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
+import coil.request.ImageRequest
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 import com.joaoxstone.stoneroyale.data.model.clan.ClanResponse
@@ -61,6 +62,7 @@ import com.joaoxstone.stoneroyale.data.model.player.CurrentDeck
 import com.joaoxstone.stoneroyale.data.repository.ClanRespository
 import com.joaoxstone.stoneroyale.ui.components.AsyncBadge
 import com.joaoxstone.stoneroyale.ui.components.Badge
+import com.joaoxstone.stoneroyale.ui.components.BrokenImage
 import com.joaoxstone.stoneroyale.ui.components.ExpBadge
 import com.joaoxstone.stoneroyale.ui.components.shadowCustom
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
@@ -93,7 +95,6 @@ fun PlayerProfileScreen(
     val classicChallengeWins = player.badges.find { badge ->
         badge.name?.lowercase().equals("classic12wins")
     }
-
 
 
     val grandChallengeWins = player.badges.find { badge ->
@@ -196,7 +197,8 @@ fun PlayerProfileScreen(
                         )
                     }
                 },
-                loadingClan = loadingClan)
+                loadingClan = loadingClan
+            )
             MasteryContainer(onOpenMasteries = { onOpenMasteries() })
         }
     }
@@ -350,7 +352,7 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                     FilledIconButton(
                         shape = MaterialTheme.shapes.medium,
                         onClick = {
-                            scope.launch (Dispatchers.IO)  {
+                            scope.launch(Dispatchers.IO) {
                                 val URI = onCopyDeck(currentDeck)
                                 val intent = Intent(Intent.ACTION_VIEW, URI)
                                 context.startActivity(intent)
@@ -369,14 +371,14 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                 items(currentDeck) { card ->
                     if (evoPositios.contains(currentDeck.indexOf(card))) {
                         SubcomposeAsyncImage(
-                            model = card.iconUrls?.evolutionMedium ?: card.iconUrls!!.medium,
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(card.iconUrls?.evolutionMedium ?: card.iconUrls!!.medium)
+                                .crossfade(true)
+                                .build(),
                             contentDescription = card.name,
                             contentScale = ContentScale.Crop,
                             error = {
-                                AsyncImage(
-                                    model = card.iconUrls!!.medium,
-                                    contentDescription = card.name
-                                )
+                                BrokenImage()
                             },
                             loading = {
                                 CircularProgressIndicator(
@@ -387,9 +389,22 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                             }
                         )
                     } else {
-                        AsyncImage(
-                            model = card.iconUrls!!.medium,
-                            contentDescription = card.name
+                        SubcomposeAsyncImage(
+                            model = ImageRequest.Builder(LocalContext.current)
+                                .data(card.iconUrls!!.medium)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = card.name,
+                            error = {
+                                BrokenImage()
+                            },
+                            loading = {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .size(10.dp)
+                                        .padding(24.dp)
+                                )
+                            }
                         )
                     }
                 }
@@ -483,7 +498,7 @@ fun ClanContainer(
             FilledTonalButton(shape = MaterialTheme.shapes.small, onClick = {
                 onOpenClan()
             }) {
-                Text( text = "Ver membros")
+                Text(text = "Ver membros")
                 Icon(
                     modifier = modifier.padding(end = 4.dp, start = 4.dp),
                     painter = painterResource(id = R.drawable.ic_baseline_groups),

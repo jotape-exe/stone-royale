@@ -35,7 +35,6 @@ import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 import com.joaoxstone.stoneroyale.ui.components.Badge
 import com.joaoxstone.stoneroyale.ui.components.ClanSimpleCard
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
-import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

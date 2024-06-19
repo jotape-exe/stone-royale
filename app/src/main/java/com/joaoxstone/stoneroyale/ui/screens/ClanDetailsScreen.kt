@@ -41,7 +41,6 @@ import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
 import com.joaoxstone.stoneroyale.data.repository.PlayerRepository
 import com.joaoxstone.stoneroyale.ui.utils.DateUtils
-import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState
 import kotlinx.coroutines.CoroutineScope

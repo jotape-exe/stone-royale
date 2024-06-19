@@ -38,7 +38,6 @@ import com.joaoxstone.stoneroyale.ui.components.ImageArenaLeague
 import com.joaoxstone.stoneroyale.ui.components.PlayerCard
 import com.joaoxstone.stoneroyale.ui.components.ProfileAction
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
-import com.joaoxstone.stoneroyale.ui.viewmodel.AppUiState
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState
 import kotlinx.coroutines.CoroutineScope
