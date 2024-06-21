@@ -160,7 +160,7 @@ fun ClanScreen(
                                 )
                             }
                             FilledTonalButton(
-                                shape = MaterialTheme.shapes.medium,
+                                shape = MaterialTheme.shapes.small,
                                 onClick = {
                                     onOpenDetails(
                                         clanUiState.clan.badgeId!!,

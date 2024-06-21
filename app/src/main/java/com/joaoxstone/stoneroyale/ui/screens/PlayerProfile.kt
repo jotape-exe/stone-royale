@@ -373,6 +373,7 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
             ) {
                 itemsIndexed(currentDeck) { _, card ->
                     if (evoPositios.contains(currentDeck.indexOf(card))) {
+                        //Sensitive
                         SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(card.iconUrls?.evolutionMedium ?: card.iconUrls!!.medium)
@@ -380,8 +381,17 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                                 .build(),
                             contentDescription = card.name,
                             contentScale = ContentScale.Crop,
-                            error = {
-                                BrokenImage()
+                            error = { _ ->
+                                SubcomposeAsyncImage(
+                                    model = ImageRequest.Builder(LocalContext.current)
+                                        .data(card.iconUrls!!.medium)
+                                        .crossfade(true)
+                                        .build(),
+                                    contentDescription = card.name,
+                                    error = {
+                                        BrokenImage()
+                                    }
+                                )
                             },
                             loading = {
                                 CircularProgressIndicator(
