@@ -40,6 +40,7 @@ import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.app.components.common.BottomNavItem
 import com.joaoxstone.stoneroyale.app.components.common.BottomNavigation
 import com.joaoxstone.stoneroyale.app.components.GitHubButton
+import com.joaoxstone.stoneroyale.app.screens.chests.ChestsScreen
 import com.joaoxstone.stoneroyale.app.screens.clan.ClanScreen
 import com.joaoxstone.stoneroyale.app.screens.player.PlayerScreen
 import com.joaoxstone.stoneroyale.app.theme.StoneRoyaleTheme
@@ -78,7 +79,7 @@ fun HomeScreen(
         ),
         "chests" to ScreenContent(
             Color(0xFF66FF55),
-            Color(0xFFEA4DFC),
+            Color(0xFF21C037),
             R.drawable.chest_legendary
         ),
     )
@@ -119,7 +120,8 @@ fun HomeScreen(
                         drawRect(brush = brush)
                     }
                 }
-            }) {
+            }
+        ) {
 
             animatedHeaderScreen.forEach { screen ->
                 SetAnimatedContent(
@@ -158,8 +160,7 @@ fun HomeScreen(
                             )
                         }
                         composable("chests") {
-                            //Separate to new Screen
-                            Text("Cards")
+                            ChestsScreen()
                         }
                         composable("clan") {
                             ClanScreen(

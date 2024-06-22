@@ -116,7 +116,7 @@ class ClashConstants private constructor() {
                 )
             )
 
-            return  colorsBrush[leageNumber]!!
+            return colorsBrush[leageNumber]!!
         }
 
         fun getIconClan(clanId: Int?): Int? {
@@ -305,6 +305,29 @@ class ClashConstants private constructor() {
             )
 
             return clans[clanId]
+        }
+
+        fun getChestByChestName(chestName: String): Int {
+            val lowerChestName = chestName.lowercase().replace(" ", "")
+
+            val chest = mapOf(
+                "woodenchest" to R.drawable.chest_wooden,
+                "silverchest" to R.drawable.chest_silver,
+                "goldenchest" to R.drawable.chest_golden,
+                "magicalchest" to R.drawable.chest_magical,
+                "giantchest" to R.drawable.chest_giant,
+                "epicchest" to R.drawable.chest_epic,
+                "legendarychest" to R.drawable.chest_legendary,
+                "towertroopchest" to R.drawable.chest_towertroop,
+                "megalightningchest" to R.drawable.chest_megalightning,
+                "legendarychest" to R.drawable.chest_legendary,
+                "royalwildchest" to R.drawable.chest_royalwild,
+                "goldcrate" to R.drawable.chest_goldcrate,
+                "plentifulgoldcrate" to R.drawable.chest_plentifulgoldcrate,
+                "overflowinggoldcrate" to R.drawable.chest_overflowinggoldcrate,
+            )
+
+            return chest[lowerChestName] ?: R.drawable.ic_baseline_broken_image
         }
     }
 

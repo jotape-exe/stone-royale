@@ -5,9 +5,10 @@ import com.joaoxstone.stoneroyale.core.repository.remote.RetrofitClient
 import com.joaoxstone.stoneroyale.core.repository.remote.network.ClashRoyaleService
 
 class ClanRespository {
-    val clanService: ClashRoyaleService =
+    private val service: ClashRoyaleService =
         RetrofitClient.getService(ClashRoyaleService::class.java)
+
     suspend fun getClan(clanTag: String): ClanResponse {
-        return clanService.getClan(clanTag)
+        return service.getClan(clanTag)
     }
 }
