@@ -2,8 +2,8 @@ package com.joaoxstone.stoneroyale.ui.viewmodel.player
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
-import com.joaoxstone.stoneroyale.data.repository.PlayerRepository
+import com.joaoxstone.stoneroyale.app.model.player.PlayerResponse
+import com.joaoxstone.stoneroyale.app.repository.PlayerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

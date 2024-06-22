@@ -40,6 +40,8 @@ import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.ui.components.BottomNavItem
 import com.joaoxstone.stoneroyale.ui.components.BottomNavigation
 import com.joaoxstone.stoneroyale.ui.components.GitHubButton
+import com.joaoxstone.stoneroyale.ui.screens.clan.ClanScreen
+import com.joaoxstone.stoneroyale.ui.screens.player.PlayerScreen
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState

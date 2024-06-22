@@ -17,11 +17,11 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.joaoxstone.stoneroyale.data.repository.PlayerRepository
-import com.joaoxstone.stoneroyale.ui.screens.BadgesScreen
-import com.joaoxstone.stoneroyale.ui.screens.ClanDetailsScreen
+import com.joaoxstone.stoneroyale.app.repository.PlayerRepository
+import com.joaoxstone.stoneroyale.ui.screens.badge.BadgesScreen
+import com.joaoxstone.stoneroyale.ui.screens.clan.ClanDetailsScreen
 import com.joaoxstone.stoneroyale.ui.screens.HomeScreen
-import com.joaoxstone.stoneroyale.ui.screens.PlayerProfileScreen
+import com.joaoxstone.stoneroyale.ui.screens.player.PlayerProfileScreen
 import com.joaoxstone.stoneroyale.ui.screens.WelcomeScreen
 import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanViewModel

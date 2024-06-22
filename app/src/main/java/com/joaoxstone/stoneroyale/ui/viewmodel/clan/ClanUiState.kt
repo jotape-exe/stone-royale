@@ -1,6 +1,6 @@
 package com.joaoxstone.stoneroyale.ui.viewmodel.clan
 
-import com.joaoxstone.stoneroyale.data.model.clan.ClanResponse
+import com.joaoxstone.stoneroyale.app.model.clan.ClanResponse
 
 data class ClanUiState(
     val clan: ClanResponse = ClanResponse(),

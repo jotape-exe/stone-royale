@@ -2,8 +2,8 @@ package com.joaoxstone.stoneroyale.ui.viewmodel.clan
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import com.joaoxstone.stoneroyale.data.model.clan.ClanResponse
-import com.joaoxstone.stoneroyale.data.repository.ClanRespository
+import com.joaoxstone.stoneroyale.app.model.clan.ClanResponse
+import com.joaoxstone.stoneroyale.app.repository.ClanRespository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

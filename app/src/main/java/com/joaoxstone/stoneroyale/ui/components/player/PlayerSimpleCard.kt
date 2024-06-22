@@ -57,7 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.joaoxstone.stoneroyale.R
-import com.joaoxstone.stoneroyale.data.constants.ClashConstants
+import com.joaoxstone.stoneroyale.app.constants.ClashConstants
 
 @Composable
 fun PlayerCard(

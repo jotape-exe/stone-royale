@@ -1,7 +1,7 @@
 package com.joaoxstone.stoneroyale.ui.viewmodel.player
 
-import com.joaoxstone.stoneroyale.data.model.player.Badges
-import com.joaoxstone.stoneroyale.data.model.player.PlayerResponse
+import com.joaoxstone.stoneroyale.app.model.player.Badges
+import com.joaoxstone.stoneroyale.app.model.player.PlayerResponse
 
 data class PlayerUiState(
     val player: PlayerResponse = PlayerResponse(),
