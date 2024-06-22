@@ -25,7 +25,7 @@ fun Badge(
     modifier: Modifier = Modifier,
     text: String?,
     @DrawableRes imageResoure: Int? = null,
-    color: Color,
+    color: Color = MaterialTheme.colorScheme.background,
     textColor: Color = Color.White,
     textSize: TextUnit = 18.sp,
     shape: CornerBasedShape = MaterialTheme.shapes.extraLarge

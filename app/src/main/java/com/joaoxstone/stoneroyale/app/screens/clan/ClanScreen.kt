@@ -6,6 +6,7 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -26,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -60,7 +62,7 @@ fun ClanScreen(
                 modifier = modifier
                     .padding(16.dp),
                 onSearch = { term ->
-                    scope.launch (Dispatchers.IO)  {
+                    scope.launch(Dispatchers.IO) {
                         loading = true
                         clanUiState.onGetClan(
                             "#${
@@ -133,16 +135,23 @@ fun ClanScreen(
                         ) {
                             Row(
                                 modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.SpaceBetween,
+                                horizontalArrangement = Arrangement.spacedBy(2.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Surface(color = MaterialTheme.colorScheme.background, shadowElevation = 2.dp, shape = MaterialTheme.shapes.small) {
-                                    Text(text = "${clanUiState.clan.members!!}/50 MEMBROS", Modifier.padding(4.dp), fontWeight = FontWeight.SemiBold)
-                                }
-
-                                Surface(color = MaterialTheme.colorScheme.background, shadowElevation = 2.dp, shape = MaterialTheme.shapes.small) {
-                                    Text(text = clanUiState.clan.location?.name!!.uppercase(), Modifier.padding(4.dp), fontWeight = FontWeight.SemiBold)
-                                }
+                                Badge(
+                                    text = "${clanUiState.clan.members!!}/50 MEMBROS",
+                                    textSize = 14.sp,
+                                    textColor = MaterialTheme.colorScheme.onBackground,
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = MaterialTheme.shapes.small
+                                )
+                                Badge(
+                                    text = clanUiState.clan.location?.name!!.uppercase(),
+                                    textSize = 14.sp,
+                                    textColor = MaterialTheme.colorScheme.onBackground,
+                                    color = MaterialTheme.colorScheme.primaryContainer,
+                                    shape = MaterialTheme.shapes.small
+                                )
                             }
                             Row(
                                 modifier.fillMaxWidth(),
@@ -150,12 +159,18 @@ fun ClanScreen(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
 
-                                    Text(text = "Min. Trophies:  ", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+                                Text(
+                                    text = "Requisitos:  ",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.SemiBold
+                                )
 
                                 Badge(
-                                    text = "${clanUiState.clan.requiredTrophies}",
+                                    text = "${clanUiState.clan.requiredTrophies} troféus",
                                     imageResoure = R.drawable.trophy,
-                                    color = Color(0xFFE99A00)
+                                    color = Color(0xFFE99A00),
+                                    textSize = 14.sp,
+                                    shape = MaterialTheme.shapes.small
                                 )
                             }
                             OutlinedButton(

@@ -502,7 +502,7 @@ fun ClanContainer(
             OutlinedButton(shape = MaterialTheme.shapes.medium, onClick = {
                 onOpenClan()
             }) {
-                Text(text = "Ver membros")
+                Text(text = "Membros")
                 Icon(
                     modifier = Modifier.padding(end = 4.dp, start = 4.dp),
                     painter = painterResource(id = R.drawable.ic_baseline_groups),
