@@ -53,7 +53,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.joaoxstone.stoneroyale.R
@@ -61,11 +60,12 @@ import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 import com.joaoxstone.stoneroyale.data.model.clan.ClanResponse
 import com.joaoxstone.stoneroyale.data.model.player.CurrentDeck
 import com.joaoxstone.stoneroyale.data.repository.ClanRespository
-import com.joaoxstone.stoneroyale.ui.components.AsyncBadge
-import com.joaoxstone.stoneroyale.ui.components.Badge
+import com.joaoxstone.stoneroyale.ui.components.player.AsyncBadge
+import com.joaoxstone.stoneroyale.ui.components.player.Badge
 import com.joaoxstone.stoneroyale.ui.components.BrokenImage
-import com.joaoxstone.stoneroyale.ui.components.ExpBadge
-import com.joaoxstone.stoneroyale.ui.components.shadowCustom
+import com.joaoxstone.stoneroyale.ui.components.common.TagBadge
+import com.joaoxstone.stoneroyale.ui.components.player.ExpBadge
+import com.joaoxstone.stoneroyale.ui.components.player.shadowCustom
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState
 import kotlinx.coroutines.Dispatchers
@@ -87,7 +87,6 @@ fun PlayerProfileScreen(
 
     val scope = rememberCoroutineScope()
     var loadingClan by remember { mutableStateOf(false) }
-
 
     val player = playerUiState.player
     val trophies = player.trophies
@@ -466,20 +465,7 @@ fun ProBadge(modifier: Modifier = Modifier) {
     }
 }
 
-@Composable
-fun TagBadge(modifier: Modifier = Modifier, tag: String) {
-    Surface(
-        modifier = modifier,
-        color = Color(0xBF050031),
-        shape = MaterialTheme.shapes.medium
-    ) {
-        Text(
-            fontWeight = FontWeight.ExtraBold,
-            modifier = Modifier
-                .padding(8.dp), text = tag, color = Color.White
-        )
-    }
-}
+
 
 @Composable
 fun ClanContainer(

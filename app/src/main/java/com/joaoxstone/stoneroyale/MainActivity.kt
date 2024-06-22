@@ -119,8 +119,8 @@ class MainActivity : ComponentActivity() {
                             BadgesScreen(
                                 playerUiState = playerUiState,
                                 onClose = {
-                                navController.popBackStack()
-                            })
+                                    navController.popBackStack()
+                                })
                         }
                     }
                 }

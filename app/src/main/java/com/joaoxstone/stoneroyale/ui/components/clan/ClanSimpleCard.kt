@@ -1,4 +1,4 @@
-package com.joaoxstone.stoneroyale.ui.components
+package com.joaoxstone.stoneroyale.ui.components.clan
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateContentSize

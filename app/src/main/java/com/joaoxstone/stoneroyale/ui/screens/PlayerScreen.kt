@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -31,12 +30,12 @@ import androidx.compose.ui.unit.dp
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
 import com.joaoxstone.stoneroyale.data.model.clan.ClanResponse
 import com.joaoxstone.stoneroyale.data.repository.ClanRespository
-import com.joaoxstone.stoneroyale.ui.components.CardHeader
-import com.joaoxstone.stoneroyale.ui.components.CardPlayerContent
+import com.joaoxstone.stoneroyale.ui.components.player.CardHeader
+import com.joaoxstone.stoneroyale.ui.components.player.CardPlayerContent
 import com.joaoxstone.stoneroyale.ui.components.EmptyData
-import com.joaoxstone.stoneroyale.ui.components.ImageArenaLeague
-import com.joaoxstone.stoneroyale.ui.components.PlayerCard
-import com.joaoxstone.stoneroyale.ui.components.ProfileAction
+import com.joaoxstone.stoneroyale.ui.components.player.ImageArenaLeague
+import com.joaoxstone.stoneroyale.ui.components.player.PlayerCard
+import com.joaoxstone.stoneroyale.ui.components.player.ProfileAction
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerUiState

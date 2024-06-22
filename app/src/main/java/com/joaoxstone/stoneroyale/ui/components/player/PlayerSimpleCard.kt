@@ -1,4 +1,4 @@
-package com.joaoxstone.stoneroyale.ui.components
+package com.joaoxstone.stoneroyale.ui.components.player
 
 import android.graphics.BlurMaskFilter
 import androidx.annotation.DrawableRes
@@ -115,7 +115,7 @@ fun PlayerCard(
                     }
 
                     IconButton(
-                        modifier = modifier.graphicsLayer(rotationZ = angle),
+                        modifier = Modifier.graphicsLayer(rotationZ = angle),
                         onClick = { isExpanded = !isExpanded }) {
                         Icon(
                             imageVector = Icons.Default.KeyboardArrowDown,

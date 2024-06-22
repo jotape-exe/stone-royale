@@ -16,7 +16,7 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Shapes
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,8 +34,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.data.constants.ClashConstants
-import com.joaoxstone.stoneroyale.ui.components.Badge
-import com.joaoxstone.stoneroyale.ui.components.ClanSimpleCard
+import com.joaoxstone.stoneroyale.ui.components.player.Badge
+import com.joaoxstone.stoneroyale.ui.components.clan.ClanSimpleCard
 import com.joaoxstone.stoneroyale.ui.components.SearchContainer
 import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanUiState
 import kotlinx.coroutines.CoroutineScope
@@ -159,21 +159,21 @@ fun ClanScreen(
                                     color = Color(0xFFE99A00)
                                 )
                             }
-                            FilledTonalButton(
-                                shape = MaterialTheme.shapes.small,
+                            OutlinedButton(
+                                shape = MaterialTheme.shapes.medium,
                                 onClick = {
                                     onOpenDetails(
                                         clanUiState.clan.badgeId!!,
                                         clanUiState.clan.name!!
                                     )
                                 }) {
-                                Text(
-                                    modifier = modifier.padding(end = 6.dp),
-                                    text = "Ver membros "
-                                )
                                 Icon(
                                     painter = painterResource(id = R.drawable.ic_baseline_groups),
                                     contentDescription = ""
+                                )
+                                Text(
+                                    modifier = modifier.padding(start = 6.dp),
+                                    text = "Membros "
                                 )
                             }
                         }

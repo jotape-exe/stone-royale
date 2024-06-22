@@ -17,6 +17,6 @@ data class ClanResponse(
     @SerializedName("clanChestLevel") var clanChestLevel: Int? = null,
     @SerializedName("clanChestMaxLevel") var clanChestMaxLevel: Int? = null,
     @SerializedName("members") var members: Int? = null,
-    @SerializedName("memberList") var memberList: ArrayList<MemberList> = arrayListOf()
+    @SerializedName("memberList") var memberList: List<MemberList> = arrayListOf()
 
 )
