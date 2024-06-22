@@ -17,15 +17,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.joaoxstone.stoneroyale.app.repository.PlayerRepository
-import com.joaoxstone.stoneroyale.ui.screens.badge.BadgesScreen
-import com.joaoxstone.stoneroyale.ui.screens.clan.ClanDetailsScreen
-import com.joaoxstone.stoneroyale.ui.screens.HomeScreen
-import com.joaoxstone.stoneroyale.ui.screens.player.PlayerProfileScreen
-import com.joaoxstone.stoneroyale.ui.screens.WelcomeScreen
-import com.joaoxstone.stoneroyale.ui.theme.StoneRoyaleTheme
-import com.joaoxstone.stoneroyale.ui.viewmodel.clan.ClanViewModel
-import com.joaoxstone.stoneroyale.ui.viewmodel.player.PlayerViewModel
+import com.joaoxstone.stoneroyale.core.repository.PlayerRepository
+import com.joaoxstone.stoneroyale.app.screens.badge.BadgesScreen
+import com.joaoxstone.stoneroyale.app.screens.clan.ClanDetailsScreen
+import com.joaoxstone.stoneroyale.app.screens.HomeScreen
+import com.joaoxstone.stoneroyale.app.screens.player.PlayerProfileScreen
+import com.joaoxstone.stoneroyale.app.screens.WelcomeScreen
+import com.joaoxstone.stoneroyale.app.theme.StoneRoyaleTheme
+import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanViewModel
+import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerViewModel
 
 
 val api = PlayerRepository()
@@ -46,7 +46,6 @@ class MainActivity : ComponentActivity() {
 
                     val playerUiState by playerViewModel.uiState.collectAsState()
                     val clanUiState by clanViewModel.uiState.collectAsState()
-
 
                     NavHost(navController = navController, startDestination = "welcome") {
                         composable("welcome") {
