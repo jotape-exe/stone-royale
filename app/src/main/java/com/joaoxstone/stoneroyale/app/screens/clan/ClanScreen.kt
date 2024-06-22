@@ -33,9 +33,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
-import com.joaoxstone.stoneroyale.app.components.player.Badge
 import com.joaoxstone.stoneroyale.app.components.clan.ClanSimpleCard
 import com.joaoxstone.stoneroyale.app.components.SearchContainer
+import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

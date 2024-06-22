@@ -57,6 +57,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.joaoxstone.stoneroyale.R
+import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 
 @Composable
@@ -258,39 +259,7 @@ fun ExpBadge(modifier: Modifier = Modifier, exp: Int) {
     }
 }
 
-@Composable
-fun Badge(
-    modifier: Modifier = Modifier,
-    text: String?,
-    @DrawableRes imageResoure: Int,
-    color: Color
-) {
-    Box(modifier, contentAlignment = Alignment.CenterStart) {
-        Surface(
-            color = color,
-            shape = MaterialTheme.shapes.extraLarge,
-            modifier = Modifier.padding(start = 8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(start = 30.dp, top = 6.dp, bottom = 6.dp, end = 6.dp)
-            ) {
-                Text(
-                    text = "$text",
-                    color = Color.White,
-                    fontSize = 18.sp,
-                )
-            }
-        }
-        Image(
-            modifier = Modifier
-                .size(36.dp)
-                .align(Alignment.CenterStart),
-            painter = painterResource(id = imageResoure),
-            contentDescription = "experience icon"
-        )
-    }
-}
+
 
 @Composable
 fun AsyncBadge(

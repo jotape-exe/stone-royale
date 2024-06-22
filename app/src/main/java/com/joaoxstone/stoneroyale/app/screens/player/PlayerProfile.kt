@@ -31,10 +31,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FilledIconButton
-import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -56,18 +56,18 @@ import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.joaoxstone.stoneroyale.R
-import com.joaoxstone.stoneroyale.core.constants.ClashConstants
-import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
-import com.joaoxstone.stoneroyale.core.model.player.CurrentDeck
-import com.joaoxstone.stoneroyale.core.repository.ClanRespository
-import com.joaoxstone.stoneroyale.app.components.player.AsyncBadge
-import com.joaoxstone.stoneroyale.app.components.player.Badge
 import com.joaoxstone.stoneroyale.app.components.BrokenImage
+import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.components.common.TagBadge
+import com.joaoxstone.stoneroyale.app.components.player.AsyncBadge
 import com.joaoxstone.stoneroyale.app.components.player.ExpBadge
 import com.joaoxstone.stoneroyale.app.components.player.shadowCustom
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
+import com.joaoxstone.stoneroyale.core.constants.ClashConstants
+import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
+import com.joaoxstone.stoneroyale.core.model.player.CurrentDeck
+import com.joaoxstone.stoneroyale.core.repository.ClanRespository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -499,7 +499,7 @@ fun ClanContainer(
                 text = clanRole?.uppercase() ?: "",
                 fontWeight = FontWeight.Bold
             )
-            FilledTonalButton(shape = MaterialTheme.shapes.small, onClick = {
+            OutlinedButton(shape = MaterialTheme.shapes.medium, onClick = {
                 onOpenClan()
             }) {
                 Text(text = "Ver membros")

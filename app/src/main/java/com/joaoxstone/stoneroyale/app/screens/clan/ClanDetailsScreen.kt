@@ -49,10 +49,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import com.joaoxstone.stoneroyale.core.model.player.PlayerResponse
 import com.joaoxstone.stoneroyale.core.repository.PlayerRepository
 import com.joaoxstone.stoneroyale.app.components.clan.ClanDetailsHeader
+import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.components.common.TagBadge
 import com.joaoxstone.stoneroyale.app.utils.DateUtils
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
@@ -206,26 +208,27 @@ fun CardClanMember(
                             }
                             Text(text = "#$memberRank", fontWeight = FontWeight.ExtraBold)
                         }
-                        Column(
+                        Row(
                             modifier = Modifier.fillMaxWidth(),
-                            horizontalAlignment = Alignment.End,
-                            verticalArrangement = Arrangement.spacedBy(2.dp)
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
-                            Card(
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                            val timeAgo = DateUtils.timeAgo(lastSeen)
+                            Badge(
+                                text = timeAgo,
+                                color = MaterialTheme.colorScheme.background,
+                                textColor = MaterialTheme.colorScheme.onBackground,
+                                textSize = 14.sp,
                                 shape = MaterialTheme.shapes.small
-                            ) {
-                                Text(
-                                    text = "Visto em: ${DateUtils.convertDate(lastSeen)}",
-                                    Modifier.padding(2.dp)
-                                )
-                            }
-                            Card(
-                                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.background),
+                            )
+                            Badge(
+                                text = "$memberDonations doações",
+                                imageResoure = R.drawable.cr_cards,
+                                color = MaterialTheme.colorScheme.background,
+                                textColor = MaterialTheme.colorScheme.onBackground,
+                                textSize = 14.sp,
                                 shape = MaterialTheme.shapes.small
-                            ) {
-                                Text(text = "Doações: $memberDonations", Modifier.padding(2.dp))
-                            }
+                            )
                         }
                     }
                 }
