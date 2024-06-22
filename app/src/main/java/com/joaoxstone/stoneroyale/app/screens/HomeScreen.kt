@@ -37,8 +37,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.joaoxstone.stoneroyale.R
-import com.joaoxstone.stoneroyale.app.components.BottomNavItem
-import com.joaoxstone.stoneroyale.app.components.BottomNavigation
+import com.joaoxstone.stoneroyale.app.components.common.BottomNavItem
+import com.joaoxstone.stoneroyale.app.components.common.BottomNavigation
 import com.joaoxstone.stoneroyale.app.components.GitHubButton
 import com.joaoxstone.stoneroyale.app.screens.clan.ClanScreen
 import com.joaoxstone.stoneroyale.app.screens.player.PlayerScreen

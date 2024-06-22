@@ -1,4 +1,4 @@
-package com.joaoxstone.stoneroyale.app.components
+package com.joaoxstone.stoneroyale.app.components.player
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.joaoxstone.stoneroyale.R
 
 @Composable
-fun EmptyData(modifier: Modifier = Modifier) {
+fun EmptyPlayerData(modifier: Modifier = Modifier) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = modifier
@@ -26,7 +26,6 @@ fun EmptyData(modifier: Modifier = Modifier) {
             painter = painterResource(id = R.drawable.barb),
             contentDescription = null
         )
-
         Text(
             modifier = Modifier.width(180.dp),
             fontWeight = FontWeight.Medium,

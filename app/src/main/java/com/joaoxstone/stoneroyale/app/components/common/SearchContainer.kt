@@ -1,4 +1,4 @@
-package com.joaoxstone.stoneroyale.app.components
+package com.joaoxstone.stoneroyale.app.components.common
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement

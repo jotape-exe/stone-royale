@@ -32,11 +32,11 @@ import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
 import com.joaoxstone.stoneroyale.core.repository.ClanRespository
 import com.joaoxstone.stoneroyale.app.components.player.CardHeader
 import com.joaoxstone.stoneroyale.app.components.player.CardPlayerContent
-import com.joaoxstone.stoneroyale.app.components.EmptyData
+import com.joaoxstone.stoneroyale.app.components.player.EmptyPlayerData
 import com.joaoxstone.stoneroyale.app.components.player.ImageArenaLeague
 import com.joaoxstone.stoneroyale.app.components.player.PlayerCard
 import com.joaoxstone.stoneroyale.app.components.player.ProfileAction
-import com.joaoxstone.stoneroyale.app.components.SearchContainer
+import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 import kotlinx.coroutines.CoroutineScope
@@ -91,7 +91,7 @@ fun PlayerScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            if (player.name.isNullOrEmpty()) EmptyData()
+            if (player.name.isNullOrEmpty()) EmptyPlayerData()
             AnimatedVisibility(
                 visible = !playerUiState.player.name.isNullOrEmpty(),
             ) {

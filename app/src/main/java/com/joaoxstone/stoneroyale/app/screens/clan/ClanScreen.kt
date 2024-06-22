@@ -6,7 +6,6 @@ import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +16,6 @@ import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,7 +25,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -36,7 +33,8 @@ import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import com.joaoxstone.stoneroyale.app.components.clan.ClanSimpleCard
-import com.joaoxstone.stoneroyale.app.components.SearchContainer
+import com.joaoxstone.stoneroyale.app.components.clan.EmptyClanData
+import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import kotlinx.coroutines.CoroutineScope
@@ -81,135 +79,145 @@ fun ClanScreen(
                     clanTag = it
                 }
             )
-            AnimatedVisibility(
-                modifier = Modifier.padding(8.dp),
-                visible = clanUiState.clan.name != null
-            ) {
-                ClanSimpleCard(
-                    cardContent = {
-                        Column(Modifier.padding(4.dp)) {
-                            Row(
-                                Modifier
-                                    .padding(4.dp)
-                                    .fillMaxWidth(),
-                                horizontalArrangement = Arrangement.End
-                            ) {
-                                AssistChip(
-                                    colors = AssistChipDefaults.assistChipColors(
-                                        labelColor = MaterialTheme.colorScheme.onPrimary,
-                                        containerColor = MaterialTheme.colorScheme.primary
-                                    ),
-                                    shape = MaterialTheme.shapes.small,
-                                    onClick = {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp, start = 10.dp, end = 10.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ){
+                if (clanUiState.clan.tag == null) EmptyClanData()
+                AnimatedVisibility(
+                    modifier = Modifier.padding(8.dp),
+                    visible = clanUiState.clan.name != null
+                ) {
+                    ClanSimpleCard(
+                        cardContent = {
+                            Column(Modifier.padding(4.dp)) {
+                                Row(
+                                    Modifier
+                                        .padding(4.dp)
+                                        .fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.End
+                                ) {
+                                    AssistChip(
+                                        colors = AssistChipDefaults.assistChipColors(
+                                            labelColor = MaterialTheme.colorScheme.onPrimary,
+                                            containerColor = MaterialTheme.colorScheme.primary
+                                        ),
+                                        shape = MaterialTheme.shapes.small,
+                                        onClick = {
 
-                                    },
-                                    enabled = clanUiState.clan.type!!.lowercase() == "open",
-                                    label = {
-                                        Text(text = clanUiState.clan.type!!.uppercase())
-                                    }
+                                        },
+                                        enabled = clanUiState.clan.type!!.lowercase() == "open",
+                                        label = {
+                                            Text(text = clanUiState.clan.type!!.uppercase())
+                                        }
+                                    )
+                                }
+                                Text(
+                                    modifier = modifier.sharedBounds(
+                                        rememberSharedContentState(key = "clanName/${clanUiState.clan.name}"),
+                                        animatedVisibilityScope = animatedContentScope,
+                                        boundsTransform = { _, _ ->
+                                            tween(durationMillis = 700)
+                                        }
+                                    ),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 24.sp,
+                                    text = clanUiState.clan.name ?: "Clã não encontrado"
+                                )
+                                Text(
+                                    modifier = modifier.padding(top = 8.dp),
+                                    fontSize = 18.sp,
+                                    text = clanUiState.clan.tag!!
                                 )
                             }
-                            Text(
+                        },
+                        cardBottom = {
+                            Column(
+                                modifier.padding(4.dp),
+                                verticalArrangement = Arrangement.spacedBy(10.dp)
+                            ) {
+                                Row(
+                                    modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Badge(
+                                        text = "${clanUiState.clan.members!!}/50 MEMBROS",
+                                        textSize = 14.sp,
+                                        textColor = MaterialTheme.colorScheme.onBackground,
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        shape = MaterialTheme.shapes.small
+                                    )
+                                    Badge(
+                                        text = clanUiState.clan.location?.name!!.uppercase(),
+                                        textSize = 14.sp,
+                                        textColor = MaterialTheme.colorScheme.onBackground,
+                                        color = MaterialTheme.colorScheme.primaryContainer,
+                                        shape = MaterialTheme.shapes.small
+                                    )
+                                }
+                                Row(
+                                    modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.Start,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+
+                                    Text(
+                                        text = "Requisitos:  ",
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.SemiBold
+                                    )
+
+                                    Badge(
+                                        text = "${clanUiState.clan.requiredTrophies} troféus",
+                                        imageResoure = R.drawable.trophy,
+                                        color = Color(0xFFE99A00),
+                                        textSize = 14.sp,
+                                        shape = MaterialTheme.shapes.small
+                                    )
+                                }
+                                OutlinedButton(
+                                    shape = MaterialTheme.shapes.medium,
+                                    onClick = {
+                                        onOpenDetails(
+                                            clanUiState.clan.badgeId!!,
+                                            clanUiState.clan.name!!
+                                        )
+                                    }) {
+                                    Icon(
+                                        painter = painterResource(id = R.drawable.ic_baseline_groups),
+                                        contentDescription = ""
+                                    )
+                                    Text(
+                                        modifier = modifier.padding(start = 6.dp),
+                                        text = "Membros "
+                                    )
+                                }
+                            }
+                        },
+                        imageSlot = {
+                            val resource = painterResource(
+                                ClashConstants.getIconClan(
+                                    clanUiState.clan.badgeId
+                                )!!
+                            )
+                            Image(
                                 modifier = modifier.sharedBounds(
-                                    rememberSharedContentState(key = "clanName/${clanUiState.clan.name}"),
+                                    rememberSharedContentState(key = "badgeId/${clanUiState.clan.badgeId}"),
                                     animatedVisibilityScope = animatedContentScope,
                                     boundsTransform = { _, _ ->
                                         tween(durationMillis = 700)
                                     }
                                 ),
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 24.sp,
-                                text = clanUiState.clan.name ?: "Clã não encontrado"
+                                painter = resource, contentDescription = null
                             )
-                            Text(
-                                modifier = modifier.padding(top = 8.dp),
-                                fontSize = 18.sp,
-                                text = clanUiState.clan.tag!!
-                            )
-                        }
-                    },
-                    cardBottom = {
-                        Column(
-                            modifier.padding(4.dp),
-                            verticalArrangement = Arrangement.spacedBy(10.dp)
-                        ) {
-                            Row(
-                                modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(2.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Badge(
-                                    text = "${clanUiState.clan.members!!}/50 MEMBROS",
-                                    textSize = 14.sp,
-                                    textColor = MaterialTheme.colorScheme.onBackground,
-                                    color = MaterialTheme.colorScheme.primaryContainer,
-                                    shape = MaterialTheme.shapes.small
-                                )
-                                Badge(
-                                    text = clanUiState.clan.location?.name!!.uppercase(),
-                                    textSize = 14.sp,
-                                    textColor = MaterialTheme.colorScheme.onBackground,
-                                    color = MaterialTheme.colorScheme.primaryContainer,
-                                    shape = MaterialTheme.shapes.small
-                                )
-                            }
-                            Row(
-                                modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Start,
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-
-                                Text(
-                                    text = "Requisitos:  ",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.SemiBold
-                                )
-
-                                Badge(
-                                    text = "${clanUiState.clan.requiredTrophies} troféus",
-                                    imageResoure = R.drawable.trophy,
-                                    color = Color(0xFFE99A00),
-                                    textSize = 14.sp,
-                                    shape = MaterialTheme.shapes.small
-                                )
-                            }
-                            OutlinedButton(
-                                shape = MaterialTheme.shapes.medium,
-                                onClick = {
-                                    onOpenDetails(
-                                        clanUiState.clan.badgeId!!,
-                                        clanUiState.clan.name!!
-                                    )
-                                }) {
-                                Icon(
-                                    painter = painterResource(id = R.drawable.ic_baseline_groups),
-                                    contentDescription = ""
-                                )
-                                Text(
-                                    modifier = modifier.padding(start = 6.dp),
-                                    text = "Membros "
-                                )
-                            }
-                        }
-                    },
-                    imageSlot = {
-                        val resource = painterResource(
-                            ClashConstants.getIconClan(
-                                clanUiState.clan.badgeId
-                            )!!
-                        )
-                        Image(
-                            modifier = modifier.sharedBounds(
-                                rememberSharedContentState(key = "badgeId/${clanUiState.clan.badgeId}"),
-                                animatedVisibilityScope = animatedContentScope,
-                                boundsTransform = { _, _ ->
-                                    tween(durationMillis = 700)
-                                }
-                            ),
-                            painter = resource, contentDescription = null
-                        )
-                    })
+                        })
+                }
             }
+
         }
     }
 
