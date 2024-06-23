@@ -27,18 +27,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.joaoxstone.stoneroyale.core.constants.ClashConstants
-import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
-import com.joaoxstone.stoneroyale.core.repository.ClanRespository
+import com.joaoxstone.stoneroyale.R
+import com.joaoxstone.stoneroyale.app.components.common.EmptyStateScreen
+import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.app.components.player.CardHeader
 import com.joaoxstone.stoneroyale.app.components.player.CardPlayerContent
-import com.joaoxstone.stoneroyale.app.components.player.EmptyPlayerData
 import com.joaoxstone.stoneroyale.app.components.player.ImageArenaLeague
 import com.joaoxstone.stoneroyale.app.components.player.PlayerCard
 import com.joaoxstone.stoneroyale.app.components.player.ProfileAction
-import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
+import com.joaoxstone.stoneroyale.core.constants.ClashConstants
+import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
+import com.joaoxstone.stoneroyale.core.repository.ClanRespository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -91,7 +92,10 @@ fun PlayerScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Center
         ) {
-            if (player.name.isNullOrEmpty()) EmptyPlayerData()
+            if (player.name.isNullOrEmpty()) EmptyStateScreen(
+                lastText = " para buscar o perfil.",
+                image = R.drawable.barb
+            )
             AnimatedVisibility(
                 visible = !playerUiState.player.name.isNullOrEmpty(),
             ) {

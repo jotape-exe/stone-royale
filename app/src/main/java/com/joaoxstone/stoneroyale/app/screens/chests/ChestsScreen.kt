@@ -27,6 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.joaoxstone.stoneroyale.R
+import com.joaoxstone.stoneroyale.app.components.common.EmptyStateScreen
 import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import com.joaoxstone.stoneroyale.core.model.chest.UpcomingChests
@@ -77,6 +79,11 @@ fun ChestsScreen(
                 onValueChange = {
                     playerTag = it
                 }
+            )
+            if (upcomingChests.items.size == 0) EmptyStateScreen(
+                imageModifier = Modifier.size(210.dp),
+                lastText = " para buscar os próximos baús",
+                image = R.drawable.magic_archer_2
             )
             AnimatedVisibility(visible = upcomingChests.items.size > 0) {
                 LazyVerticalGrid(

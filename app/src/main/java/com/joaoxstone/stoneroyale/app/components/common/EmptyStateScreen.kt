@@ -1,7 +1,9 @@
-package com.joaoxstone.stoneroyale.app.components.player
+package com.joaoxstone.stoneroyale.app.components.common
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -14,16 +16,21 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.joaoxstone.stoneroyale.R
 
 @Composable
-fun EmptyPlayerData(modifier: Modifier = Modifier) {
+fun EmptyStateScreen(
+    modifier: Modifier = Modifier,
+    imageModifier: Modifier = Modifier,
+    lastText: String,
+    @DrawableRes image: Int
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier.fillMaxWidth()
     ) {
         Image(
-            painter = painterResource(id = R.drawable.barb),
+            modifier = imageModifier,
+            painter = painterResource(id = image),
             contentDescription = null
         )
         Text(
@@ -35,7 +42,7 @@ fun EmptyPlayerData(modifier: Modifier = Modifier) {
                 withStyle(style = SpanStyle(fontWeight = FontWeight.Bold)) {
                     append("TAG")
                 }
-                append(" para buscar o perfil.")
+                append(lastText)
             }
         )
     }

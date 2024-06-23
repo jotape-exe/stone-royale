@@ -56,7 +56,8 @@ fun SearchContainer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(
-                        onClick = { onSearch(input) }
+                        onClick = { onSearch(input) },
+                        enabled = !isLoading
                     ),
             ) {
                 Row(

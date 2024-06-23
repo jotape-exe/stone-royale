@@ -46,7 +46,6 @@ fun ClanSimpleCard(
     )
 
     Box(modifier = modifier) {
-        //aumente a altura dinamicamente
         Surface(
             modifier = Modifier
                 .fillMaxHeight(.4f)

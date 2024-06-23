@@ -31,12 +31,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
-import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import com.joaoxstone.stoneroyale.app.components.clan.ClanSimpleCard
-import com.joaoxstone.stoneroyale.app.components.clan.EmptyClanData
-import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.app.components.common.Badge
+import com.joaoxstone.stoneroyale.app.components.common.EmptyStateScreen
+import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
+import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -86,7 +86,10 @@ fun ClanScreen(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ){
-                if (clanUiState.clan.tag == null) EmptyClanData()
+                if (clanUiState.clan.tag == null) EmptyStateScreen(
+                    lastText = " para buscar o clã.",
+                    image = R.drawable.cr_red_prince
+                )
                 AnimatedVisibility(
                     modifier = Modifier.padding(8.dp),
                     visible = clanUiState.clan.name != null
