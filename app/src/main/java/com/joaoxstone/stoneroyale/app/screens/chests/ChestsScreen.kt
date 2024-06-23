@@ -30,6 +30,7 @@ import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.app.components.common.EmptyStateScreen
 import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
+import com.joaoxstone.stoneroyale.app.viewmodel.chest.ChestUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import com.joaoxstone.stoneroyale.core.model.chest.UpcomingChests
 import com.joaoxstone.stoneroyale.core.repository.ChestRepository
@@ -41,14 +42,15 @@ import kotlinx.coroutines.launch
 fun ChestsScreen(
     modifier: Modifier = Modifier,
     scope: CoroutineScope = rememberCoroutineScope(),
+    chestUiState: ChestUiState
 ) {
     val repository = ChestRepository()
     Column(modifier) {
 
         var loading by remember { mutableStateOf(false) }
         var playerTag by remember { mutableStateOf("89G0UYLVV") }
-        var upcomingChests by remember { mutableStateOf(UpcomingChests()) }
         val gridState = rememberLazyGridState()
+        val upcomingChests = chestUiState.upcomingChests
 
         Column {
             SearchContainer(
@@ -63,7 +65,7 @@ fun ChestsScreen(
                                     term.uppercase().replace("O", "0").trim()
                                 }",
                             )
-                            upcomingChests = response
+                            chestUiState.onUpComingChestsChange(response)
                             Log.d("TAG", "ChestsScreen: $response")
                         } catch (e: Exception) {
                             Log.d("TAG", "ChestsScreen: $e")

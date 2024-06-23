@@ -43,9 +43,9 @@ import androidx.compose.ui.unit.sp
 import coil.compose.SubcomposeAsyncImage
 import coil.request.ImageRequest
 import com.joaoxstone.stoneroyale.R
-import com.joaoxstone.stoneroyale.core.model.player.Badges
 import com.joaoxstone.stoneroyale.app.components.BrokenImage
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
+import com.joaoxstone.stoneroyale.core.model.player.Badges
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

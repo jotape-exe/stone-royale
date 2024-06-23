@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LinearProgressIndicator
@@ -50,15 +49,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
-import com.joaoxstone.stoneroyale.core.constants.ClashConstants
-import com.joaoxstone.stoneroyale.core.model.player.PlayerResponse
-import com.joaoxstone.stoneroyale.core.repository.PlayerRepository
 import com.joaoxstone.stoneroyale.app.components.clan.ClanDetailsHeader
 import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.components.common.TagBadge
 import com.joaoxstone.stoneroyale.app.utils.DateUtils
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
+import com.joaoxstone.stoneroyale.core.constants.ClashConstants
+import com.joaoxstone.stoneroyale.core.model.player.PlayerResponse
+import com.joaoxstone.stoneroyale.core.repository.PlayerRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

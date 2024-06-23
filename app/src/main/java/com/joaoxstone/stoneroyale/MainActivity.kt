@@ -24,6 +24,7 @@ import com.joaoxstone.stoneroyale.app.screens.HomeScreen
 import com.joaoxstone.stoneroyale.app.screens.player.PlayerProfileScreen
 import com.joaoxstone.stoneroyale.app.screens.WelcomeScreen
 import com.joaoxstone.stoneroyale.app.theme.StoneRoyaleTheme
+import com.joaoxstone.stoneroyale.app.viewmodel.chest.ChestViewModel
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanViewModel
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerViewModel
 
@@ -43,9 +44,11 @@ class MainActivity : ComponentActivity() {
 
                     val playerViewModel: PlayerViewModel = viewModel()
                     val clanViewModel: ClanViewModel = viewModel()
+                    val chestViewModel: ChestViewModel = viewModel()
 
                     val playerUiState by playerViewModel.uiState.collectAsState()
                     val clanUiState by clanViewModel.uiState.collectAsState()
+                    val chestUiState by chestViewModel.uiState.collectAsState()
 
                     NavHost(navController = navController, startDestination = "welcome") {
                         composable("welcome") {
@@ -104,6 +107,7 @@ class MainActivity : ComponentActivity() {
                             HomeScreen(
                                 playerUiState = playerUiState,
                                 clanUiState = clanUiState,
+                                chestUiState =chestUiState,
                                 playerNavigation = { leagueId, arenaId, playerName ->
                                     navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
                                 },

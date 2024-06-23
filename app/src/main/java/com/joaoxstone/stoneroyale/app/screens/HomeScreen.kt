@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,13 +36,14 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.joaoxstone.stoneroyale.R
+import com.joaoxstone.stoneroyale.app.components.GitHubButton
 import com.joaoxstone.stoneroyale.app.components.common.BottomNavItem
 import com.joaoxstone.stoneroyale.app.components.common.BottomNavigation
-import com.joaoxstone.stoneroyale.app.components.GitHubButton
 import com.joaoxstone.stoneroyale.app.screens.chests.ChestsScreen
 import com.joaoxstone.stoneroyale.app.screens.clan.ClanScreen
 import com.joaoxstone.stoneroyale.app.screens.player.PlayerScreen
 import com.joaoxstone.stoneroyale.app.theme.StoneRoyaleTheme
+import com.joaoxstone.stoneroyale.app.viewmodel.chest.ChestUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 
@@ -54,6 +54,7 @@ import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 fun HomeScreen(
     playerUiState: PlayerUiState,
     clanUiState: ClanUiState,
+    chestUiState: ChestUiState,
     animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
     playerNavigation: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
@@ -160,7 +161,7 @@ fun HomeScreen(
                             )
                         }
                         composable("chests") {
-                            ChestsScreen()
+                            ChestsScreen(chestUiState = chestUiState)
                         }
                         composable("clan") {
                             ClanScreen(
