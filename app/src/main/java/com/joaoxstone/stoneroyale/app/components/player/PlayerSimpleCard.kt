@@ -64,9 +64,9 @@ import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 fun PlayerCard(
     modifier: Modifier = Modifier,
     cardHeader: @Composable () -> Unit,
-    cardContent: @Composable () -> Unit,
     cardBottom: @Composable () -> Unit,
-    imageSlot: @Composable () -> Unit
+    imageSlot: @Composable () -> Unit,
+    cardContent: @Composable () -> Unit
 ) {
     var isExpanded by rememberSaveable {
         mutableStateOf(false)

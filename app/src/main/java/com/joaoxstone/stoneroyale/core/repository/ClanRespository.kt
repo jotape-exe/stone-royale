@@ -8,7 +8,7 @@ class ClanRespository {
     private val service: ClashRoyaleService =
         RetrofitClient.getService(ClashRoyaleService::class.java)
 
-    suspend fun getClan(clanTag: String): ClanResponse {
+    suspend fun getClan(clanTag: String?): ClanResponse {
         return service.getClan(clanTag)
     }
 }

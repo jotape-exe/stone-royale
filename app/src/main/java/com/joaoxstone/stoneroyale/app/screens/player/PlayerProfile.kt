@@ -188,7 +188,7 @@ fun PlayerProfileScreen(
                     scope.launch {
                         loadingClan = true
                         var clan = ClanResponse()
-                        clan = clanRespository.getClan(player.clan!!.tag!!)
+                        clan = clanRespository.getClan(player.clan?.tag)
                         clanUiState.onClanChange(clan)
                         loadingClan = false
                         onOpenClan(

@@ -2,6 +2,7 @@ package com.joaoxstone.stoneroyale
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.addCallback
 import androidx.activity.compose.setContent
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionLayout
@@ -27,6 +28,7 @@ import com.joaoxstone.stoneroyale.app.theme.StoneRoyaleTheme
 import com.joaoxstone.stoneroyale.app.viewmodel.chest.ChestViewModel
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanViewModel
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerViewModel
+import com.joaoxstone.stoneroyale.core.preferences.OnboardingManager
 
 
 val api = PlayerRepository()
@@ -49,6 +51,8 @@ class MainActivity : ComponentActivity() {
                     val playerUiState by playerViewModel.uiState.collectAsState()
                     val clanUiState by clanViewModel.uiState.collectAsState()
                     val chestUiState by chestViewModel.uiState.collectAsState()
+
+                    val onboardingManager = OnboardingManager(this@MainActivity)
 
                     NavHost(navController = navController, startDestination = "welcome") {
                         composable("welcome") {

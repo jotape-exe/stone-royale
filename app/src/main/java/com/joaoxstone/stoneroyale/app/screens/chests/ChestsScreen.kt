@@ -2,16 +2,27 @@ package com.joaoxstone.stoneroyale.app.screens.chests
 
 import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.BasicTooltipBox
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.rememberBasicTooltipState
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.PlainTooltipBox
+import androidx.compose.material3.PlainTooltipState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,6 +49,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
 fun ChestsScreen(
     modifier: Modifier = Modifier,
@@ -51,6 +63,10 @@ fun ChestsScreen(
         var playerTag by remember { mutableStateOf("89G0UYLVV") }
         val gridState = rememberLazyGridState()
         val upcomingChests = chestUiState.upcomingChests
+
+        val plainTooltipState by remember {
+            mutableStateOf(mutableMapOf<Int, PlainTooltipState>())
+        }
 
         Column {
             SearchContainer(
@@ -92,26 +108,46 @@ fun ChestsScreen(
                     columns = GridCells.Fixed(3),
                     state = gridState
                 ) {
-                    itemsIndexed(upcomingChests.items) { _, it ->
-                        Box(contentAlignment = Alignment.Center) {
-                            Image(
-                                modifier = Modifier.size(60.dp),
-                                painter = painterResource(id = ClashConstants.getChestByChestName(it.name)),
-                                contentDescription = it.name
-                            )
-                            Surface(
+                    itemsIndexed(upcomingChests.items) { index, it ->
+                        plainTooltipState[index] = PlainTooltipState()
+                        PlainTooltipBox(
+                            tooltip = { Text(text = it.name) },
+                            tooltipState = plainTooltipState[index]!!,
+                        ) {
+                            Box(
                                 modifier = Modifier
-                                    .align(Alignment.BottomEnd)
-                                    .padding(end = 24.dp, bottom = 6.dp),
-                                color = MaterialTheme.colorScheme.background,
-                                shape = MaterialTheme.shapes.extraSmall
+                                    .clickable {
+                                        scope.launch(Dispatchers.IO) {
+                                            plainTooltipState[index]!!.show()
+                                        }
+                                    }
+                                    .fillMaxSize()
+                                    ,
+                                contentAlignment = Alignment.Center
                             ) {
-                                Text(
-                                    text = if (it.index == 0) "próximo" else "+${it.index}",
-                                    fontSize = 12.sp,
-                                    color = MaterialTheme.colorScheme.onBackground,
-                                    fontWeight = FontWeight.Bold,
+                                Image(
+                                    modifier = Modifier.size(60.dp),
+                                    painter = painterResource(
+                                        id = ClashConstants.getChestByChestName(
+                                            it.name
+                                        )
+                                    ),
+                                    contentDescription = it.name
                                 )
+                                Surface(
+                                    modifier = Modifier
+                                        .align(Alignment.BottomEnd)
+                                        .padding(end = 24.dp, bottom = 6.dp),
+                                    color = MaterialTheme.colorScheme.background,
+                                    shape = MaterialTheme.shapes.extraSmall
+                                ) {
+                                    Text(
+                                        text = if (it.index == 0) "próximo" else "+${it.index}",
+                                        fontSize = 12.sp,
+                                        color = MaterialTheme.colorScheme.onBackground,
+                                        fontWeight = FontWeight.Bold,
+                                    )
+                                }
                             }
                         }
                     }

@@ -53,7 +53,7 @@ fun PlayerScreen(
     sharedTransitionScope: SharedTransitionScope,
     animatedVisibilityScope: AnimatedVisibilityScope,
     onOpenPlayerProfile: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
-    onOpenClan: (badgeId: Int?, clanName: String) -> Unit,
+    onOpenClan: (badgeId: Int?, clanName: String?) -> Unit,
     scope: CoroutineScope = rememberCoroutineScope()
 ) {
     var playerTag by remember { mutableStateOf("89G0UYLVV") }
@@ -126,24 +126,6 @@ fun PlayerScreen(
                             animatedVisibilityScope = animatedVisibilityScope
                         )
                     },
-                    cardContent = {
-                        val classicChallengeWins =
-                            player.badges.find { badge ->
-                                badge.name?.lowercase()
-                                    .equals("classic12wins")
-                            }
-                        val grandChallengeWins =
-                            player.badges.find { badge ->
-                                badge.name?.lowercase()
-                                    .equals("grand12wins")
-                            }
-                        CardPlayerContent(
-                            exp = player.expLevel!!,
-                            classicChallengWins = classicChallengeWins?.progress,
-                            grandChallengWins = grandChallengeWins?.progress,
-                            challengeWins = player.challengeMaxWins
-                        )
-                    },
                     cardBottom = {
                         val clanIcon =
                             ClashConstants.getIconClan(player.clan?.badgeId)
@@ -163,7 +145,6 @@ fun PlayerScreen(
                                 CircularProgressIndicator(modifier = Modifier.size(22.dp))
                             }
                         }
-
                         player.clan?.let { clan ->
                             if (clan.name.isNullOrEmpty()) {
                                 TextButton(onClick = { }, enabled = false) {
@@ -175,13 +156,12 @@ fun PlayerScreen(
                                     onClick = {
                                         scope.launch {
                                             loadingClan = true
-                                            var clan = ClanResponse()
-                                            clan = clanRespository.getClan(player.clan!!.tag!!)
-                                            clanUiState.onClanChange(clan)
+                                            val clanResponse: ClanResponse = clanRespository.getClan(player.clan?.tag)
+                                            clanUiState.onClanChange(clanResponse)
                                             loadingClan = false
                                             onOpenClan(
-                                                clan.badgeId!!,
-                                                clan.name!!
+                                                clanResponse.badgeId,
+                                                clanResponse.name
                                             )
                                         }
 
@@ -190,7 +170,6 @@ fun PlayerScreen(
                                 }
                             }
                         }
-
                         ProfileAction(onclick = {
                             onOpenPlayerProfile(
                                 player.currentPathOfLegendSeasonResult?.leagueNumber,
@@ -199,7 +178,25 @@ fun PlayerScreen(
                             )
                         })
                     }
-                )
+                ) {
+                    val classicChallengeWins =
+                        player.badges.find { badge ->
+                            badge.name?.lowercase()
+                                .equals("classic12wins")
+                        }
+                    val grandChallengeWins =
+                        player.badges.find { badge ->
+                            badge.name?.lowercase()
+                                .equals("grand12wins")
+                        }
+                    CardPlayerContent(
+                        exp = player.expLevel!!,
+                        classicChallengWins = classicChallengeWins?.progress,
+                        grandChallengWins = grandChallengeWins?.progress,
+                        challengeWins = player.challengeMaxWins
+                    )
+
+                }
             }
         }
     }

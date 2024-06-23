@@ -15,5 +15,5 @@ interface ClashRoyaleService {
     suspend fun getUpComingChests(@Path("playerTag") playerTag: String): UpcomingChests
 
     @GET("clans/{clanTag}")
-    suspend fun getClan(@Path("clanTag") clanTag: String): ClanResponse
+    suspend fun getClan(@Path("clanTag") clanTag: String?): ClanResponse
 }

@@ -1,6 +1,9 @@
 package com.joaoxstone.stoneroyale.app.screens
 
 import android.annotation.SuppressLint
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.annotation.DrawableRes
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
@@ -20,8 +23,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -30,6 +36,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.inset
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
@@ -58,11 +65,13 @@ fun HomeScreen(
     animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
     playerNavigation: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
-    clanNavigation: (badgeId: Int?, clanName: String) -> Unit,
+    clanNavigation: (badgeId: Int?, clanName: String?) -> Unit,
     modifier: Modifier = Modifier
 ) {
 
     val navController = rememberNavController()
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+
     var tabIndex by rememberSaveable {
         mutableStateOf("player")
     }
@@ -86,7 +95,8 @@ fun HomeScreen(
     )
 
     val rigthColor by animateColorAsState(
-        bottomNavOptions[tabIndex]?.rightColor ?: Color.Transparent, label = ""
+        bottomNavOptions[tabIndex]?.rightColor ?: Color.Transparent,
+        label = ""
     )
     val leftColor by animateColorAsState(
         bottomNavOptions[tabIndex]?.leftColor ?: Color.Transparent,
@@ -109,6 +119,8 @@ fun HomeScreen(
             imageId = R.drawable.clanicon
         )
     )
+
+    val context = LocalContext.current
 
     StoneRoyaleTheme {
         Box(modifier = modifier
@@ -157,13 +169,45 @@ fun HomeScreen(
                                 animatedVisibilityScope = animatedContentScope,
                                 sharedTransitionScope = sharedTransitionScope,
                                 onOpenPlayerProfile = playerNavigation,
-                                onOpenClan = clanNavigation
+                                onOpenClan = { badgeId, clanName ->
+                                    clanNavigation(badgeId, clanName)
+                                }
                             )
                         }
                         composable("chests") {
+                            BackPressHandler(onBackPressed = {
+                                screenSwitcher(
+                                    route = "clan",
+                                    currentRoute = currentRoute,
+                                    onNavigate = {
+                                        navController.navigate("clan") {
+                                            launchSingleTop = true
+                                            popUpTo(navController.graph.startDestinationId)
+                                        }
+                                    }
+                                ) {
+                                    tabIndex = "clan"
+                                }
+                            })
                             ChestsScreen(chestUiState = chestUiState)
                         }
                         composable("clan") {
+                            BackPressHandler(onBackPressed = {
+                                //println(navController.currentBackStack.value.toString())
+                                screenSwitcher(
+                                    route = "player",
+                                    currentRoute = currentRoute,
+                                    onNavigate = {
+                                        navController.navigate("player") {
+                                            launchSingleTop = true
+                                            popUpTo(navController.graph.startDestinationId)
+                                        }
+                                    }
+                                ) {
+                                    tabIndex = "player"
+                                }
+                            }
+                            )
                             ClanScreen(
                                 clanUiState = clanUiState,
                                 onOpenDetails = { badgeId, clanName ->
@@ -186,14 +230,16 @@ fun HomeScreen(
                             bottomNavOptions.forEach { (route, option) ->
                                 BottomNavItem(
                                     click = {
-                                        tabIndex = route
-                                        val currentRoute =
-                                            navController.currentBackStackEntry?.destination?.route
-                                        if (currentRoute != route) {
-                                            navController.navigate(route) {
-                                                launchSingleTop = true
-                                                popUpTo(navController.graph.startDestinationId)
-                                            }
+                                        screenSwitcher(
+                                            route = route,
+                                            onNavigate = {
+                                                navController.navigate(route) {
+                                                    launchSingleTop = true
+                                                    popUpTo(navController.graph.startDestinationId)
+                                                }
+                                            }, currentRoute = currentRoute
+                                        ) {
+                                            tabIndex = route
                                         }
                                     },
                                     index = route,
@@ -235,4 +281,42 @@ fun SetAnimatedContent(
 
 data class ScreenContent(val leftColor: Color, val rightColor: Color, val imageId: Int)
 data class AnimatedScreeenContent(val route: String, @DrawableRes val imageId: Int)
+
+@Composable
+fun BackPressHandler(
+    backPressedDispatcher: OnBackPressedDispatcher? =
+        LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher,
+    onBackPressed: () -> Unit
+) {
+    val currentOnBackPressed by rememberUpdatedState(newValue = onBackPressed)
+
+    val backCallback = remember {
+        object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                currentOnBackPressed()
+            }
+        }
+    }
+    DisposableEffect(key1 = backPressedDispatcher) {
+        backPressedDispatcher?.addCallback(backCallback)
+        onDispose {
+            backCallback.remove()
+        }
+    }
+}
+
+
+fun screenSwitcher(
+    route: String,
+    currentRoute: String?,
+    onNavigate: () -> Unit,
+    onUpdateIndex: () -> Unit
+) {
+    onUpdateIndex()
+    if (currentRoute != route) {
+        onNavigate()
+    }
+}
+
+
 
