@@ -67,7 +67,7 @@ import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
 import com.joaoxstone.stoneroyale.core.model.player.CurrentDeck
-import com.joaoxstone.stoneroyale.core.repository.ClanRespository
+import com.joaoxstone.stoneroyale.core.repository.ClanRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -83,7 +83,7 @@ fun PlayerProfileScreen(
     onOpenMasteries: () -> Unit
 ) {
 
-    val clanRespository = ClanRespository()
+    val clanRepository = ClanRepository()
 
     val scope = rememberCoroutineScope()
     var loadingClan by remember { mutableStateOf(false) }
@@ -92,20 +92,22 @@ fun PlayerProfileScreen(
     val trophies = player.trophies
     val UCtrophies = player.currentPathOfLegendSeasonResult?.trophies
     val exp = player.expLevel!!
+
     val classicChallengeWins = player.badges.find { badge ->
         badge.name?.lowercase().equals("classic12wins")
     }
 
-
     val grandChallengeWins = player.badges.find { badge ->
         badge.name?.lowercase().equals("grand12wins")
     }
+
     val challengeWins = player.challengeMaxWins
+
     val isPro = player.badges.find { badge ->
-        badge.name!!.lowercase() == "crl20wins2022"
+        badge.name?.lowercase() == "crl20wins2022"
     }
     val isCreator = player.badges.find { badge ->
-        badge.name!!.lowercase() == "creator"
+        badge.name?.lowercase() == "creator"
     }
 
     Column(
@@ -114,17 +116,16 @@ fun PlayerProfileScreen(
             .background(MaterialTheme.colorScheme.surface)
     ) {
         ProfileHeader(
-            playerName = player.name!!,
-            playerTag = player.tag!!,
+            playerName = player.name,
+            playerTag = player.tag,
             isPro = isPro?.name != null,
             leagueId = player.currentPathOfLegendSeasonResult?.leagueNumber,
-            arenaId = player.arena!!.id!!,
+            arenaId = player.arena?.id,
             animatedVisibilityScope = animatedVisibilityScope,
             sharedTransitionScope = sharedTransitionScope,
             isCreator = isCreator?.name != null
         )
         Card(modifier = Modifier.padding(8.dp), shape = MaterialTheme.shapes.large) {
-
             Row(
                 modifier = Modifier
                     .padding(8.dp)
@@ -176,9 +177,9 @@ fun PlayerProfileScreen(
                 }
             }
         }
-        PlayerProfileContent {
+
             DeckContainer(currentDeck = player.currentDeck)
-        }
+
         PlayerProfileBottom(Modifier.fillMaxWidth()) {
             ClanContainer(
                 badgeClan = player.clan?.badgeId,
@@ -187,8 +188,7 @@ fun PlayerProfileScreen(
                 onOpenClan = {
                     scope.launch {
                         loadingClan = true
-                        var clan = ClanResponse()
-                        clan = clanRespository.getClan(player.clan?.tag)
+                        val clan = clanRepository.getClan(player.clan?.tag)
                         clanUiState.onClanChange(clan)
                         loadingClan = false
                         onOpenClan(
@@ -208,10 +208,10 @@ fun PlayerProfileScreen(
 @Composable
 fun ProfileHeader(
     modifier: Modifier = Modifier,
-    playerName: String,
-    playerTag: String,
+    playerName: String?,
+    playerTag: String?,
     leagueId: Int?,
-    arenaId: Int,
+    arenaId: Int?,
     isPro: Boolean,
     animatedVisibilityScope: AnimatedVisibilityScope,
     sharedTransitionScope: SharedTransitionScope,
@@ -242,7 +242,7 @@ fun ProfileHeader(
                     }
                     val resource =
                         if (leagueId != null) ClashConstants.getIconLeague(leagueId) else ClashConstants.getIconArena(
-                            arenaId
+                            arenaId!!
                         )
 
                     Image(
@@ -271,14 +271,14 @@ fun ProfileHeader(
                                     tween(durationMillis = 1000)
                                 }
                             ),
-                        text = playerName,
+                        text = playerName!!,
                         color = Color.White,
                         fontSize = 28.sp,
                         fontWeight = FontWeight.Bold
                     )
                     Spacer(modifier = Modifier.padding(4.dp))
                     Row {
-                        TagBadge(tag = playerTag)
+                        TagBadge(tag = playerTag!!)
                         Spacer(modifier = Modifier.padding(2.dp))
                         if (isPro) {
                             ProBadge()
@@ -299,13 +299,6 @@ fun ProfileHeader(
 }
 
 @Composable
-fun PlayerProfileContent(content: @Composable () -> Unit) {
-    Column {
-        content()
-    }
-}
-
-@Composable
 fun PlayerProfileBottom(modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     Card(modifier = modifier.padding(8.dp), shape = MaterialTheme.shapes.large) {
         Row(
@@ -322,7 +315,10 @@ fun PlayerProfileBottom(modifier: Modifier = Modifier, content: @Composable () -
 
 @Composable
 fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentDeck>) {
-    val evoPositios = listOf(0, 1)
+
+    //A Evolução se caracteriza pelos 2 primeiros itens do array (Regras do próprio game)
+    val evoPositions = listOf(0, 1)
+
     val scope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
     val context = LocalContext.current
@@ -354,6 +350,7 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                         shape = MaterialTheme.shapes.medium,
                         onClick = {
                             scope.launch(Dispatchers.IO) {
+                                // Abre o jogo diretamente ao clicar no link, caso contrário irá abrir o browser padrão
                                 val URI = onCopyDeck(currentDeck)
                                 val intent = Intent(Intent.ACTION_VIEW, URI)
                                 context.startActivity(intent)
@@ -371,16 +368,20 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                 columns = GridCells.Fixed(4),
             ) {
                 itemsIndexed(currentDeck) { _, card ->
-                    if (evoPositios.contains(currentDeck.indexOf(card))) {
-                        //Sensitive
+                    if (evoPositions.contains(currentDeck.indexOf(card))) {
                         SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
+                                //Uma carta pode ou não ter o icone de evolução
+                                //A Evolução se caracteriza pelos primeiros 2 itens do array
+                                //Mas nem todos os primeiros itens são necessáriamente evoluidos
                                 .data(card.iconUrls?.evolutionMedium ?: card.iconUrls!!.medium)
                                 .crossfade(true)
                                 .build(),
                             contentDescription = card.name,
                             contentScale = ContentScale.Crop,
                             error = { _ ->
+                                //Caso a image medium não seja carregada (tem chances por conta da constante adição de recursos)
+                                //Uso o componente e BrokenImage
                                 SubcomposeAsyncImage(
                                     model = ImageRequest.Builder(LocalContext.current)
                                         .data(card.iconUrls!!.medium)
@@ -401,6 +402,8 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                             }
                         )
                     } else {
+                        //O restante dos elementos do array não podem ter um icone de evolução
+                        //Já que é uma regra do jogo, os drois primeiros serem "evoluídos"
                         SubcomposeAsyncImage(
                             model = ImageRequest.Builder(LocalContext.current)
                                 .data(card.iconUrls!!.medium)
@@ -426,18 +429,18 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
 }
 
 fun onCopyDeck(currentDeck: ArrayList<CurrentDeck>): Uri? {
+
     val URL_PATH = "https://link.clashroyale.com/en/?clashroyale://copyDeck?deck="
     val fullDeckPath = StringBuilder(URL_PATH)
 
+    // Ao adicionar os id's das cartas usando este algoritmo ele pode ser copiado diretamente para o jogo
     for ((index, card) in currentDeck.withIndex()) {
         fullDeckPath.append(card.id)
         if (index < currentDeck.size - 1) {
             fullDeckPath.append(";")
         }
     }
-
     val URI = Uri.parse(fullDeckPath.toString())
-
     return URI
 }
 
@@ -464,8 +467,6 @@ fun ProBadge(modifier: Modifier = Modifier) {
         )
     }
 }
-
-
 
 @Composable
 fun ClanContainer(
@@ -506,7 +507,7 @@ fun ClanContainer(
                 Icon(
                     modifier = Modifier.padding(end = 4.dp, start = 4.dp),
                     painter = painterResource(id = R.drawable.ic_baseline_groups),
-                    contentDescription = ""
+                    contentDescription = "Ver membros"
                 )
                 AnimatedVisibility(visible = loadingClan) {
                     CircularProgressIndicator(modifier = Modifier.size(22.dp))

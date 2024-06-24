@@ -4,7 +4,7 @@ import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
 import com.joaoxstone.stoneroyale.core.repository.remote.RetrofitClient
 import com.joaoxstone.stoneroyale.core.repository.remote.network.ClashRoyaleService
 
-class ClanRespository {
+class ClanRepository {
     private val service: ClashRoyaleService =
         RetrofitClient.getService(ClashRoyaleService::class.java)
 

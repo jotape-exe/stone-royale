@@ -35,11 +35,12 @@ import com.joaoxstone.stoneroyale.app.components.player.CardPlayerContent
 import com.joaoxstone.stoneroyale.app.components.player.ImageArenaLeague
 import com.joaoxstone.stoneroyale.app.components.player.PlayerCard
 import com.joaoxstone.stoneroyale.app.components.player.ProfileAction
+import com.joaoxstone.stoneroyale.app.utils.GlobalUtils
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
-import com.joaoxstone.stoneroyale.core.repository.ClanRespository
+import com.joaoxstone.stoneroyale.core.repository.ClanRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,7 +61,7 @@ fun PlayerScreen(
     var loading by remember { mutableStateOf(false) }
     var loadingClan by remember { mutableStateOf(false) }
     val player = playerUiState.player
-    val clanRespository = ClanRespository()
+    val clanRepository = ClanRepository()
 
     Column(modifier) {
         SearchContainer(
@@ -70,9 +71,7 @@ fun PlayerScreen(
                 scope.launch(Dispatchers.IO) {
                     loading = true
                     playerUiState.onGetPlayer(
-                        "#${
-                            term.uppercase().replace("O", "0").trim()
-                        }",
+                        GlobalUtils.formattedTag(term),
                     )
                     loading = false
                 }
@@ -156,7 +155,7 @@ fun PlayerScreen(
                                     onClick = {
                                         scope.launch {
                                             loadingClan = true
-                                            val clanResponse: ClanResponse = clanRespository.getClan(player.clan?.tag)
+                                            val clanResponse: ClanResponse = clanRepository.getClan(player.clan?.tag)
                                             clanUiState.onClanChange(clanResponse)
                                             loadingClan = false
                                             onOpenClan(

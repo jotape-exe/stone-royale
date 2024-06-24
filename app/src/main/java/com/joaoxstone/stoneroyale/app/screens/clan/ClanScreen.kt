@@ -13,9 +13,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,9 +31,9 @@ import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.app.components.clan.CardBottomClan
 import com.joaoxstone.stoneroyale.app.components.clan.ClanSimpleCard
-import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.components.common.EmptyStateScreen
 import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
+import com.joaoxstone.stoneroyale.app.utils.GlobalUtils
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import kotlinx.coroutines.CoroutineScope
@@ -53,6 +51,7 @@ fun ClanScreen(
     sharedTransitionScope: SharedTransitionScope,
 ) {
     with(sharedTransitionScope) {
+
         var loading by remember { mutableStateOf(false) }
         var clanTag by remember { mutableStateOf("LL8J2PQ9") }
 
@@ -64,9 +63,7 @@ fun ClanScreen(
                     scope.launch(Dispatchers.IO) {
                         loading = true
                         clanUiState.onGetClan(
-                            "#${
-                                term.uppercase().replace("O", "0").trim()
-                            }",
+                            GlobalUtils.formattedTag(term),
                         )
                         loading = false
                     }

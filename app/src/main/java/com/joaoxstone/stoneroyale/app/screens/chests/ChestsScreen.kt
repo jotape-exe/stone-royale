@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.app.components.common.EmptyStateScreen
 import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
+import com.joaoxstone.stoneroyale.app.utils.GlobalUtils
 import com.joaoxstone.stoneroyale.app.viewmodel.chest.ChestUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import com.joaoxstone.stoneroyale.core.model.chest.UpcomingChests
@@ -77,9 +78,7 @@ fun ChestsScreen(
                         loading = true
                         try {
                             val response = repository.getUpComingChests(
-                                "#${
-                                    term.uppercase().replace("O", "0").trim()
-                                }",
+                                GlobalUtils.formattedTag(term),
                             )
                             chestUiState.onUpComingChestsChange(response)
                             Log.d("TAG", "ChestsScreen: $response")

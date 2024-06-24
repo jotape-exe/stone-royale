@@ -36,9 +36,9 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.inset
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -53,7 +53,6 @@ import com.joaoxstone.stoneroyale.app.theme.StoneRoyaleTheme
 import com.joaoxstone.stoneroyale.app.viewmodel.chest.ChestUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
-
 
 @SuppressLint("RestrictedApi")
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -120,8 +119,6 @@ fun HomeScreen(
         )
     )
 
-    val context = LocalContext.current
-
     StoneRoyaleTheme {
         Box(modifier = modifier
             .fillMaxSize()
@@ -179,12 +176,7 @@ fun HomeScreen(
                                 screenSwitcher(
                                     route = "clan",
                                     currentRoute = currentRoute,
-                                    onNavigate = {
-                                        navController.navigate("clan") {
-                                            launchSingleTop = true
-                                            popUpTo(navController.graph.startDestinationId)
-                                        }
-                                    }
+                                    navController = navController,
                                 ) {
                                     tabIndex = "clan"
                                 }
@@ -193,16 +185,10 @@ fun HomeScreen(
                         }
                         composable("clan") {
                             BackPressHandler(onBackPressed = {
-                                //println(navController.currentBackStack.value.toString())
                                 screenSwitcher(
                                     route = "player",
                                     currentRoute = currentRoute,
-                                    onNavigate = {
-                                        navController.navigate("player") {
-                                            launchSingleTop = true
-                                            popUpTo(navController.graph.startDestinationId)
-                                        }
-                                    }
+                                    navController = navController,
                                 ) {
                                     tabIndex = "player"
                                 }
@@ -232,12 +218,8 @@ fun HomeScreen(
                                     click = {
                                         screenSwitcher(
                                             route = route,
-                                            onNavigate = {
-                                                navController.navigate(route) {
-                                                    launchSingleTop = true
-                                                    popUpTo(navController.graph.startDestinationId)
-                                                }
-                                            }, currentRoute = currentRoute
+                                            navController = navController,
+                                            currentRoute = currentRoute
                                         ) {
                                             tabIndex = route
                                         }
@@ -279,9 +261,6 @@ fun SetAnimatedContent(
     }
 }
 
-data class ScreenContent(val leftColor: Color, val rightColor: Color, val imageId: Int)
-data class AnimatedScreeenContent(val route: String, @DrawableRes val imageId: Int)
-
 @Composable
 fun BackPressHandler(
     backPressedDispatcher: OnBackPressedDispatcher? =
@@ -305,16 +284,22 @@ fun BackPressHandler(
     }
 }
 
+data class ScreenContent(val leftColor: Color, val rightColor: Color, val imageId: Int)
+data class AnimatedScreeenContent(val route: String, @DrawableRes val imageId: Int)
+
 
 fun screenSwitcher(
     route: String,
     currentRoute: String?,
-    onNavigate: () -> Unit,
-    onUpdateIndex: () -> Unit
+    navController: NavController,
+    onUpdateIndex: () -> Unit,
 ) {
     onUpdateIndex()
     if (currentRoute != route) {
-        onNavigate()
+        navController.navigate(route) {
+            launchSingleTop = true
+            popUpTo(navController.graph.startDestinationId)
+        }
     }
 }
 

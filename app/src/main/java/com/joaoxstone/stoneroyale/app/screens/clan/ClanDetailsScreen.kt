@@ -52,7 +52,7 @@ import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.app.components.clan.ClanDetailsHeader
 import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.components.common.TagBadge
-import com.joaoxstone.stoneroyale.app.utils.DateUtils
+import com.joaoxstone.stoneroyale.app.utils.GlobalUtils
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
@@ -212,7 +212,7 @@ fun CardClanMember(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
-                            val timeAgo = DateUtils.timeAgo(lastSeen)
+                            val timeAgo = GlobalUtils.timeAgo(lastSeen)
                             Badge(
                                 text = timeAgo,
                                 color = MaterialTheme.colorScheme.background,

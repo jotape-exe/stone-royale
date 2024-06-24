@@ -4,8 +4,7 @@ import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
-
-object DateUtils {
+object GlobalUtils {
 
     fun timeAgo(inputDate: String): String {
 
@@ -25,6 +24,10 @@ object DateUtils {
             monthsBetween < 3 -> "$monthsBetween mês${if (monthsBetween > 1) "es" else ""} atrás"
             else -> ">3 meses atrás"
         }
+    }
+
+    fun formattedTag(tag: String): String {
+        return "#${tag.uppercase().replace("O", "0").replace(" ", "")}"
     }
 
 }
