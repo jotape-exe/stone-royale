@@ -14,6 +14,7 @@ import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,11 +31,14 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.PlainTooltipBox
+import androidx.compose.material3.PlainTooltipState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -65,7 +69,6 @@ import com.joaoxstone.stoneroyale.app.components.player.shadowCustom
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
-import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
 import com.joaoxstone.stoneroyale.core.model.player.CurrentDeck
 import com.joaoxstone.stoneroyale.core.repository.ClanRepository
 import kotlinx.coroutines.Dispatchers
@@ -178,12 +181,14 @@ fun PlayerProfileScreen(
             }
         }
 
-            DeckContainer(currentDeck = player.currentDeck)
+        DeckContainer(currentDeck = player.currentDeck)
 
         PlayerProfileBottom(Modifier.fillMaxWidth()) {
+            println(player.clan?.tag == clanUiState.clan.tag)
             ClanContainer(
                 badgeClan = player.clan?.badgeId,
                 clanName = player.clan?.name,
+                isStackedClan = (player.clan?.tag == clanUiState.clan.tag),
                 clanRole = player.role,
                 onOpenClan = {
                     scope.launch {
@@ -313,15 +318,20 @@ fun PlayerProfileBottom(modifier: Modifier = Modifier, content: @Composable () -
 
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentDeck>) {
-
     //A Evolução se caracteriza pelos 2 primeiros itens do array (Regras do próprio game)
     val evoPositions = listOf(0, 1)
 
     val scope = rememberCoroutineScope()
     val gridState = rememberLazyGridState()
     val context = LocalContext.current
+
+
+    val plainTooltipState by remember {
+        mutableStateOf(mutableMapOf<Int, PlainTooltipState>())
+    }
 
     Column(
         modifier
@@ -367,14 +377,30 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                 state = gridState,
                 columns = GridCells.Fixed(4),
             ) {
-                itemsIndexed(currentDeck) { _, card ->
-                    if (evoPositions.contains(currentDeck.indexOf(card))) {
+                itemsIndexed(currentDeck) { index, card ->
+                    plainTooltipState[index] = PlainTooltipState()
+                    PlainTooltipBox(
+                        tooltip = { Text(text = card.name!!) },
+                        tooltipState = plainTooltipState[index]!!,
+                    ) {
                         SubcomposeAsyncImage(
+                            modifier = Modifier.clickable {
+                                scope.launch(Dispatchers.IO) {
+                                    plainTooltipState[index]!!.show()
+                                }
+                            },
                             model = ImageRequest.Builder(LocalContext.current)
                                 //Uma carta pode ou não ter o icone de evolução
                                 //A Evolução se caracteriza pelos primeiros 2 itens do array
                                 //Mas nem todos os primeiros itens são necessáriamente evoluidos
-                                .data(card.iconUrls?.evolutionMedium ?: card.iconUrls!!.medium)
+                                .data(
+                                    if (evoPositions.contains(currentDeck.indexOf(card))) {
+                                        card.iconUrls?.evolutionMedium
+                                            ?: card.iconUrls!!.medium // Prioriza a imagem de evolução
+                                    } else {
+                                        card.iconUrls!!.medium // Imagem normal da carta
+                                    }
+                                )
                                 .crossfade(true)
                                 .build(),
                             contentDescription = card.name,
@@ -388,30 +414,8 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                                         .crossfade(true)
                                         .build(),
                                     contentDescription = card.name,
-                                    error = {
-                                        BrokenImage()
-                                    }
+                                    error = { BrokenImage() }
                                 )
-                            },
-                            loading = {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .padding(24.dp)
-                                )
-                            }
-                        )
-                    } else {
-                        //O restante dos elementos do array não podem ter um icone de evolução
-                        //Já que é uma regra do jogo, os drois primeiros serem "evoluídos"
-                        SubcomposeAsyncImage(
-                            model = ImageRequest.Builder(LocalContext.current)
-                                .data(card.iconUrls!!.medium)
-                                .crossfade(true)
-                                .build(),
-                            contentDescription = card.name,
-                            error = {
-                                BrokenImage()
                             },
                             loading = {
                                 CircularProgressIndicator(
@@ -474,6 +478,7 @@ fun ClanContainer(
     badgeClan: Int?,
     clanName: String?,
     clanRole: String?,
+    isStackedClan: Boolean,
     loadingClan: Boolean = false,
     onOpenClan: () -> Unit
 ) {
@@ -494,7 +499,7 @@ fun ClanContainer(
                 color = MaterialTheme.colorScheme.onSurface
             )
         }
-        if (badgeClan != null) {
+        if (badgeClan != null && !isStackedClan) {
             Text(
                 modifier = Modifier.padding(8.dp),
                 text = clanRole?.uppercase() ?: "",

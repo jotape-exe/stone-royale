@@ -124,7 +124,6 @@ fun BadgesScreen(
             )
         },
     ) { innerPadding ->
-        val gridState = rememberLazyGridState()
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -146,7 +145,6 @@ fun BadgesScreen(
         LazyVerticalGrid(
             modifier = Modifier.padding(innerPadding),
             columns = GridCells.Fixed(3),
-            state = gridState
         ) {
             itemsIndexed(masteryList) { _, badge ->
                 SubcomposeAsyncImage(
@@ -174,8 +172,6 @@ fun BadgesScreen(
 
                 )
             }
-
-
         }
     }
 }
