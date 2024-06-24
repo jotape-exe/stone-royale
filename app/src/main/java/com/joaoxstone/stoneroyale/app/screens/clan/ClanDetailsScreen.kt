@@ -100,7 +100,7 @@ fun ClanDetailsScreen(
                         .clickable { isExpanded = !isExpanded },
                     clanDescription = {
                         ClanDescription(
-                            description = clanUiState.clan.description!!,
+                            description = clanUiState.clan.description ?: "",
                             isExpanded = isExpanded,
                             onToggle = {
                                 isExpanded = !isExpanded
@@ -110,10 +110,11 @@ fun ClanDetailsScreen(
                 ) {
                     clanUiState.clan.apply {
                         ClanContent(
-                            badgeId = badgeId!!,
-                            clanName = name!!,
-                            clanTag = tag!!,
-                            clanType = type!!.uppercase(),
+                            badgeId = badgeId,
+                            clanName = name,
+                            clanTag = tag,
+                            clanType = type?.uppercase(),
+                            clanLocation = location?.name?.uppercase(),
                             animatedContentScope = animatedContentScope,
                             sharedTransitionScope = sharedTransitionScope
                         )
@@ -122,14 +123,15 @@ fun ClanDetailsScreen(
                 }
             }
             items(clanUiState.clan.memberList) { member ->
-                val image = ClashConstants.getIconArena(member.arena!!.id!!)!!
+                val image = member.arena?.id?.let { ClashConstants.getIconArena(it) }!!
+
                 CardClanMember(
                     modifier = Modifier.padding(4.dp),
                     image = image,
                     memberName = member.name!!,
                     memberTag = member.tag!!,
                     memberDonations = member.donations!!,
-                    lastSeen = member.lastSeen!!,
+                    lastSeen = member.lastSeen,
                     memberRank = member.clanRank!!,
                     onGetPlayer = {
                         scope.launch {
@@ -167,7 +169,7 @@ fun CardClanMember(
     memberName: String,
     memberTag: String,
     memberDonations: Int,
-    lastSeen: String,
+    lastSeen: String?,
     memberRank: Int,
     onGetPlayer: () -> Unit,
     loading: Pair<String, Boolean> = "" to false
@@ -212,7 +214,8 @@ fun CardClanMember(
                             verticalAlignment = Alignment.CenterVertically,
                             horizontalArrangement = Arrangement.spacedBy(2.dp)
                         ) {
-                            val timeAgo = GlobalUtils.timeAgo(lastSeen)
+                            val timeAgo =
+                                if (lastSeen != null) GlobalUtils.timeAgo(lastSeen) else "Algum tempo atrás"
                             Badge(
                                 text = timeAgo,
                                 color = MaterialTheme.colorScheme.background,
@@ -297,10 +300,11 @@ fun ClanDescription(
 @Composable
 fun ClanContent(
     modifier: Modifier = Modifier,
-    badgeId: Int,
-    clanName: String,
-    clanTag: String,
-    clanType: String,
+    badgeId: Int?,
+    clanName: String?,
+    clanTag: String?,
+    clanType: String?,
+    clanLocation: String?,
     animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
 ) {
@@ -317,7 +321,7 @@ fun ClanContent(
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Text(
-                    text = clanName,
+                    text = clanName!!,
                     fontWeight = FontWeight.Bold,
                     fontSize = 34.sp,
                     color = MaterialTheme.colorScheme.onBackground,
@@ -329,21 +333,33 @@ fun ClanContent(
                         }
                     )
                 )
-                TagBadge(tag = clanTag)
-                AssistChip(
-                    colors = AssistChipDefaults.assistChipColors(
-                        labelColor = MaterialTheme.colorScheme.onPrimary,
-                        containerColor = MaterialTheme.colorScheme.primary
-                    ),
-                    shape = MaterialTheme.shapes.small,
-                    onClick = {
+                TagBadge(tag = clanTag!!)
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(2.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AssistChip(
+                        colors = AssistChipDefaults.assistChipColors(
+                            labelColor = MaterialTheme.colorScheme.onPrimary,
+                            containerColor = MaterialTheme.colorScheme.primary
+                        ),
+                        shape = MaterialTheme.shapes.small,
+                        onClick = {
 
-                    },
-                    enabled = clanType == "OPEN",
-                    label = {
-                        Text(text = clanType)
-                    }
-                )
+                        },
+                        enabled = clanType == "OPEN",
+                        label = {
+                            Text(text = clanType ?: "")
+                        }
+                    )
+                    Badge(
+                        text = clanLocation?.uppercase(),
+                        textSize = 14.sp,
+                        textColor = MaterialTheme.colorScheme.onBackground,
+                        color = MaterialTheme.colorScheme.primaryContainer,
+                        shape = MaterialTheme.shapes.small
+                    )
+                }
             }
             Image(
                 modifier = Modifier

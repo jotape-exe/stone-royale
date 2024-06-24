@@ -418,11 +418,19 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                                 )
                             },
                             loading = {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .size(10.dp)
-                                        .padding(24.dp)
-                                )
+                                Box(
+                                    modifier = Modifier.fillMaxSize(),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .size(40.dp)
+                                            .padding(
+                                                top = 54.dp,
+                                                start = 6.dp
+                                            )
+                                    )
+                                }
                             }
                         )
                     }
