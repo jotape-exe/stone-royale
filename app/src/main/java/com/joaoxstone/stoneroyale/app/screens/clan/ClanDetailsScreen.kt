@@ -207,7 +207,16 @@ fun CardClanMember(
                                 )
                                 Text(text = memberTag, modifier = Modifier.padding(bottom = 8.dp))
                             }
-                            Text(text = "#$memberRank", fontWeight = FontWeight.ExtraBold)
+                            Surface(
+                                shape = MaterialTheme.shapes.small,
+                                color = MaterialTheme.colorScheme.background
+                            ) {
+                                Text(
+                                    modifier = Modifier.padding(4.dp),
+                                    text = "#$memberRank", fontWeight = FontWeight.ExtraBold,
+                                    color = MaterialTheme.colorScheme.onBackground
+                                )
+                            }
                         }
                         Row(
                             modifier = Modifier.fillMaxWidth(),
