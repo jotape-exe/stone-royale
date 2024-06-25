@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -41,8 +42,8 @@ import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
 import com.joaoxstone.stoneroyale.core.repository.ClanRepository
+import com.joaoxstone.stoneroyale.core.repository.PlayerRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalSharedTransitionApi::class)
@@ -55,8 +56,11 @@ fun PlayerScreen(
     animatedVisibilityScope: AnimatedVisibilityScope,
     onOpenPlayerProfile: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
     onOpenClan: (badgeId: Int?, clanName: String?) -> Unit,
-    scope: CoroutineScope = rememberCoroutineScope()
+    scope: CoroutineScope = rememberCoroutineScope(),
+    snackbarHostState: SnackbarHostState
 ) {
+
+    val repository = PlayerRepository()
     var playerTag by remember { mutableStateOf("89G0UYLVV") }
     var loading by remember { mutableStateOf(false) }
     var loadingClan by remember { mutableStateOf(false) }
@@ -68,12 +72,14 @@ fun PlayerScreen(
             modifier = Modifier
                 .padding(16.dp),
             onSearch = { term ->
-                scope.launch(Dispatchers.IO) {
+                scope.launch {
                     loading = true
-                    playerUiState.onGetPlayer(
-                        GlobalUtils.formattedTag(term),
-                    )
+                    playerUiState.onGetPlayer(GlobalUtils.formattedTag(term))
                     loading = false
+                    //TODO
+                    if (playerUiState.player.name == null) {
+                        snackbarHostState.showSnackbar("Player não encontrado")
+                    }
                 }
             },
             isLoading = loading,
@@ -155,7 +161,11 @@ fun PlayerScreen(
                                     onClick = {
                                         scope.launch {
                                             loadingClan = true
-                                            val clanResponse: ClanResponse = clanRepository.getClan(player.clan?.tag)
+                                            val clanResponse: ClanResponse =
+                                                clanRepository.getClan(player.clan?.tag)
+                                            if (clanResponse.tag == null) {
+                                                snackbarHostState.showSnackbar("Clã não encontrado")
+                                            }
                                             clanUiState.onClanChange(clanResponse)
                                             loadingClan = false
                                             onOpenClan(
@@ -199,4 +209,5 @@ fun PlayerScreen(
             }
         }
     }
+
 }

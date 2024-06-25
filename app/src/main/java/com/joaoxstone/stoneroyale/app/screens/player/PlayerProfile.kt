@@ -39,6 +39,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.PlainTooltipBox
 import androidx.compose.material3.PlainTooltipState
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -90,6 +93,7 @@ fun PlayerProfileScreen(
 
     val scope = rememberCoroutineScope()
     var loadingClan by remember { mutableStateOf(false) }
+    val snackbarHostState = remember { SnackbarHostState() }
 
     val player = playerUiState.player
     val trophies = player.trophies
@@ -113,98 +117,107 @@ fun PlayerProfileScreen(
         badge.name?.lowercase() == "creator"
     }
 
-    Column(
-        modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
-    ) {
-        ProfileHeader(
-            playerName = player.name,
-            playerTag = player.tag,
-            isPro = isPro?.name != null,
-            leagueId = player.currentPathOfLegendSeasonResult?.leagueNumber,
-            arenaId = player.arena?.id,
-            animatedVisibilityScope = animatedVisibilityScope,
-            sharedTransitionScope = sharedTransitionScope,
-            isCreator = isCreator?.name != null
-        )
-        Card(modifier = Modifier.padding(8.dp), shape = MaterialTheme.shapes.large) {
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                ExpBadge(exp = exp)
-                Badge(
-                    text = "$trophies/9000",
-                    imageResoure = R.drawable.trophy,
-                    color = Color(0xFFE99A00)
-                )
-                if (UCtrophies !== null && UCtrophies > 0) {
-                    Badge(
-                        text = "$UCtrophies",
-                        imageResoure = R.drawable.rating,
-                        color = Color(0xFF6B00BE)
-                    )
-                }
-            }
-            Row(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                classicChallengeWins?.let {
-                    Badge(
-                        text = "${it.progress} x ",
-                        imageResoure = R.drawable.cg,
-                        color = Color(0XFF59C931)
-                    )
-                }
-                grandChallengeWins?.let {
-                    Badge(
-                        text = "${it.progress} x ",
-                        imageResoure = R.drawable.gc,
-                        color = Color(0XFFDFAC29)
-                    )
-                }
-                challengeWins?.let {
-                    if (it > 16) {
-                        Badge(
-                            text = "$it x ",
-                            imageResoure = R.drawable.win20,
-                            color = Color(0XFF2946DF)
-                        )
-                    }
-                }
-            }
-        }
-
-        DeckContainer(currentDeck = player.currentDeck)
-
-        PlayerProfileBottom(Modifier.fillMaxWidth()) {
-            println(player.clan?.tag == clanUiState.clan.tag)
-            ClanContainer(
-                badgeClan = player.clan?.badgeId,
-                clanName = player.clan?.name,
-                isStackedClan = (player.clan?.tag == clanUiState.clan.tag),
-                clanRole = player.role,
-                onOpenClan = {
-                    scope.launch {
-                        loadingClan = true
-                        val clan = clanRepository.getClan(player.clan?.tag)
-                        clanUiState.onClanChange(clan)
-                        loadingClan = false
-                        onOpenClan(
-                            clan.badgeId!!,
-                            clan.name!!
-                        )
-                    }
-                },
-                loadingClan = loadingClan
+    Scaffold(modifier,
+        snackbarHost = {
+            SnackbarHost(hostState = snackbarHostState)
+        }) { contentPadding ->
+        Column(
+            Modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+                .background(MaterialTheme.colorScheme.surface)
+        ) {
+            ProfileHeader(
+                playerName = player.name,
+                playerTag = player.tag,
+                isPro = isPro?.name != null,
+                leagueId = player.currentPathOfLegendSeasonResult?.leagueNumber,
+                arenaId = player.arena?.id,
+                animatedVisibilityScope = animatedVisibilityScope,
+                sharedTransitionScope = sharedTransitionScope,
+                isCreator = isCreator?.name != null
             )
-            MasteryContainer(onOpenMasteries = { onOpenMasteries() })
+            Card(modifier = Modifier.padding(8.dp), shape = MaterialTheme.shapes.large) {
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    ExpBadge(exp = exp)
+                    Badge(
+                        text = "$trophies/9000",
+                        imageResoure = R.drawable.trophy,
+                        color = Color(0xFFE99A00)
+                    )
+                    if (UCtrophies !== null && UCtrophies > 0) {
+                        Badge(
+                            text = "$UCtrophies",
+                            imageResoure = R.drawable.rating,
+                            color = Color(0xFF6B00BE)
+                        )
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    classicChallengeWins?.let {
+                        Badge(
+                            text = "${it.progress} x ",
+                            imageResoure = R.drawable.cg,
+                            color = Color(0XFF59C931)
+                        )
+                    }
+                    grandChallengeWins?.let {
+                        Badge(
+                            text = "${it.progress} x ",
+                            imageResoure = R.drawable.gc,
+                            color = Color(0XFFDFAC29)
+                        )
+                    }
+                    challengeWins?.let {
+                        if (it > 16) {
+                            Badge(
+                                text = "$it x ",
+                                imageResoure = R.drawable.win20,
+                                color = Color(0XFF2946DF)
+                            )
+                        }
+                    }
+                }
+            }
+
+            DeckContainer(currentDeck = player.currentDeck)
+
+            PlayerProfileBottom(Modifier.fillMaxWidth()) {
+                println(player.clan?.tag == clanUiState.clan.tag)
+                ClanContainer(
+                    badgeClan = player.clan?.badgeId,
+                    clanName = player.clan?.name,
+                    isStackedClan = (player.clan?.tag == clanUiState.clan.tag),
+                    clanRole = player.role,
+                    onOpenClan = {
+                        scope.launch {
+                            loadingClan = true
+                            val clan = clanRepository.getClan(player.clan?.tag)
+                            clanUiState.onClanChange(clan)
+                            loadingClan = false
+                            if (clan.tag == null) {
+                                snackbarHostState.showSnackbar("Clã não encontrado")
+                            }
+                            onOpenClan(
+                                clan.badgeId!!,
+                                clan.name!!
+                            )
+                        }
+                    },
+                    loadingClan = loadingClan
+                )
+                MasteryContainer(onOpenMasteries = { onOpenMasteries() })
+            }
         }
     }
 }
@@ -359,7 +372,7 @@ fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentD
                     FilledIconButton(
                         shape = MaterialTheme.shapes.medium,
                         onClick = {
-                            scope.launch(Dispatchers.IO) {
+                            scope.launch {
                                 // Abre o jogo diretamente ao clicar no link, caso contrário irá abrir o browser padrão
                                 val URI = onCopyDeck(currentDeck)
                                 val intent = Intent(Intent.ACTION_VIEW, URI)

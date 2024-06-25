@@ -3,15 +3,20 @@ package com.joaoxstone.stoneroyale.app.viewmodel.chest
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.joaoxstone.stoneroyale.core.http.ErrorResponses
+import com.joaoxstone.stoneroyale.core.http.ResponseBuilder
 import com.joaoxstone.stoneroyale.core.model.chest.UpcomingChests
 import com.joaoxstone.stoneroyale.core.repository.ChestRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
-class ChestViewModel : ViewModel() {
-    private val respository: ChestRepository = ChestRepository()
+class ChestViewModel(repository: ChestRepository = ChestRepository()) : ViewModel() {
+
     private val _uiState = MutableStateFlow(ChestUiState())
     val uiState: StateFlow<ChestUiState> = _uiState.asStateFlow()
 
@@ -24,13 +29,30 @@ class ChestViewModel : ViewModel() {
                     }
                 },
                 getUpcomingChests = { term ->
+
+                    var success = false
                     var response = UpcomingChests()
+                    var responseMessage = ""
+
                     try {
-                        response = respository.getUpComingChests(term)
+                        response = repository.getUpComingChests(term)
                         this.uiState.value.onUpComingChestsChange(response)
-                    } catch (error: Exception) {
-                        Log.d("Error: ", error.message.toString())
+                        success = response.items.size > 0
+                    } catch (ex: HttpException) {
+                        responseMessage = ErrorResponses.getStatusCodeMessage(ex.code())
+                    } catch (ex: UnknownHostException) {
+                        responseMessage = ErrorResponses.getStatusCodeMessage(400)
+                    } catch (ex: SocketTimeoutException) {
+                        responseMessage = ErrorResponses.getStatusCodeMessage(408)
+                    } catch (ex: Exception) {
+                        Log.d("Error: ", ex.toString())
                     }
+                    return@copy ResponseBuilder(
+                        message = responseMessage,
+                        success = success,
+                        response = response,
+                    )
+
                 },
             )
         }

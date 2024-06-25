@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -65,7 +66,8 @@ fun HomeScreen(
     sharedTransitionScope: SharedTransitionScope,
     playerNavigation: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
     clanNavigation: (badgeId: Int?, clanName: String?) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    snackbarHostState: SnackbarHostState
 ) {
 
     val navController = rememberNavController()
@@ -168,7 +170,8 @@ fun HomeScreen(
                                 onOpenPlayerProfile = playerNavigation,
                                 onOpenClan = { badgeId, clanName ->
                                     clanNavigation(badgeId, clanName)
-                                }
+                                },
+                                snackbarHostState = snackbarHostState
                             )
                         }
                         composable("chests") {
@@ -181,7 +184,8 @@ fun HomeScreen(
                                     tabIndex = "clan"
                                 }
                             })
-                            ChestsScreen(chestUiState = chestUiState)
+                            ChestsScreen(chestUiState = chestUiState,
+                                )
                         }
                         composable("clan") {
                             BackPressHandler(onBackPressed = {
@@ -201,6 +205,7 @@ fun HomeScreen(
                                 },
                                 animatedContentScope = animatedContentScope,
                                 sharedTransitionScope = sharedTransitionScope,
+                                snackbarHostState = snackbarHostState
                             )
                         }
                     }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -49,15 +50,16 @@ fun ClanScreen(
     onOpenDetails: (Int, String) -> Unit,
     animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
+    snackbarHostState: SnackbarHostState
 ) {
     with(sharedTransitionScope) {
 
         var loading by remember { mutableStateOf(false) }
         var clanTag by remember { mutableStateOf("LL8J2PQ9") }
 
-        Column {
+        Column(modifier) {
             SearchContainer(
-                modifier = modifier
+                modifier = Modifier
                     .padding(16.dp),
                 onSearch = { term ->
                     scope.launch(Dispatchers.IO) {
@@ -66,6 +68,9 @@ fun ClanScreen(
                             GlobalUtils.formattedTag(term),
                         )
                         loading = false
+                        if (clanUiState.clan.tag == null) {
+                            snackbarHostState.showSnackbar("Tag incorreta")
+                        }
                     }
                 },
                 isLoading = loading,
@@ -178,6 +183,8 @@ fun ClanScreen(
             }
 
         }
+
+
     }
 
 }

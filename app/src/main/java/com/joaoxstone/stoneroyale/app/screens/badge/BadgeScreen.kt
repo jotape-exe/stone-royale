@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
@@ -52,7 +51,8 @@ import com.joaoxstone.stoneroyale.core.model.player.Badges
 fun BadgesScreen(
     playerUiState: PlayerUiState,
     onClose: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+
 ) {
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
@@ -124,6 +124,7 @@ fun BadgesScreen(
             )
         },
     ) { innerPadding ->
+
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = {
