@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -11,6 +12,8 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -31,6 +34,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
@@ -53,7 +57,13 @@ fun BadgesScreen(
     onClose: () -> Unit,
     modifier: Modifier = Modifier,
 
-) {
+    ) {
+    var isOrderedByLevel by remember {
+        mutableStateOf(true)
+    }
+    var isOrderedByName by remember {
+        mutableStateOf(true)
+    }
     val scrollBehavior =
         TopAppBarDefaults.exitUntilCollapsedScrollBehavior(rememberTopAppBarState())
 
@@ -105,15 +115,45 @@ fun BadgesScreen(
                             onDismissRequest = { expanded = false }
                         ) {
                             DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        if (isOrderedByLevel) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                                        contentDescription = null
+                                    )
+                                },
                                 text = { Text("Ordenar por nome") },
                                 onClick = {
-                                    playerUiState.onPlayerBagdeChange(playerUiState.player.badges.sortedBy { it.name })
+                                    playerUiState.apply {
+                                        onPlayerBagdeChange(
+                                            if (isOrderedByLevel) {
+                                                player.badges.sortedByDescending { it.name }
+                                            } else {
+                                                player.badges.sortedBy { it.name }
+                                            }
+                                        )
+                                    }
+                                    isOrderedByLevel = !isOrderedByLevel
                                 }
                             )
                             DropdownMenuItem(
+                                leadingIcon = {
+                                    Icon(
+                                        if (isOrderedByName) Icons.Default.KeyboardArrowDown else Icons.Default.KeyboardArrowUp,
+                                        contentDescription = null
+                                    )
+                                },
                                 text = { Text("Ordenar por nível") },
                                 onClick = {
-                                    playerUiState.onPlayerBagdeChange(playerUiState.player.badges.sortedBy { it.level })
+                                    isOrderedByName = !isOrderedByName
+                                    playerUiState.apply {
+                                        onPlayerBagdeChange(
+                                            if (isOrderedByName) {
+                                                playerUiState.player.badges.sortedByDescending { it.level }
+                                            } else {
+                                                playerUiState.player.badges.sortedBy { it.level }
+                                            }
+                                        )
+                                    }
                                 }
                             )
                         }
@@ -123,7 +163,6 @@ fun BadgesScreen(
             )
         },
     ) { innerPadding ->
-
         if (showBottomSheet) {
             ModalBottomSheet(
                 onDismissRequest = {
@@ -131,15 +170,14 @@ fun BadgesScreen(
                 },
                 sheetState = sheetState
             ) {
-                val (name, level, maxLevel, progress, target, iconUrls) = currentBadge.value
-                ModalBadgeContent(
-                    badgeName = name!!,
-                    badgeImage = iconUrls?.large,
-                    badgeLevel = level,
-                    badgeMaxLevel = maxLevel,
-                    badgeProgress = progress,
-                    badgeTarget = target
-                )
+                currentBadge.value.apply {
+                    ModalBadgeContent(
+                        badgeName = name ?: "Não identificado",
+                        badgeImage = iconUrls?.large,
+                        badgeLevel = level,
+                        badgeMaxLevel = maxLevel,
+                    )
+                }
             }
         }
         LazyVerticalGrid(
@@ -163,11 +201,19 @@ fun BadgesScreen(
                         BrokenImage()
                     },
                     loading = {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .size(10.dp)
-                                .padding(18.dp)
-                        )
+                        Box(
+                            modifier = Modifier.fillMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .padding(
+                                        top = 54.dp,
+                                        start = 6.dp
+                                    )
+                            )
+                        }
                     }
 
                 )
@@ -183,8 +229,6 @@ fun ModalBadgeContent(
     badgeImage: String?,
     badgeLevel: Int?,
     badgeMaxLevel: Int?,
-    badgeProgress: Int?,
-    badgeTarget: Int?,
 ) {
 
     Row(modifier = modifier.padding(8.dp)) {

@@ -13,8 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,6 +29,7 @@ fun Badge(
     color: Color = MaterialTheme.colorScheme.background,
     textColor: Color = Color.White,
     textSize: TextUnit = 18.sp,
+    shadows: Dp = 0.dp,
     shape: CornerBasedShape = MaterialTheme.shapes.extraLarge
 ) {
     val hasImage = imageResoure != null
@@ -34,7 +37,7 @@ fun Badge(
         Surface(
             color = color,
             shape = shape,
-            modifier = Modifier.padding(start = 8.dp)
+            modifier = Modifier.padding(start = 8.dp).shadow(shadows)
         ) {
             val paddingStart = if (hasImage) 30.dp else 6.dp
             Row(

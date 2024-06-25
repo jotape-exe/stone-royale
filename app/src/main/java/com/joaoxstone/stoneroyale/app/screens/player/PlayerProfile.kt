@@ -214,7 +214,11 @@ fun PlayerProfileScreen(
                 },
                 loadingClan = loadingClan
             )
-            MasteryContainer(onOpenMasteries = { onOpenMasteries() })
+            MasteryContainer(onOpenMasteries = {
+                scope.launch {
+                    onOpenMasteries()
+                }
+            })
         }
     }
 }

@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -59,7 +60,7 @@ fun PlayerScreen(
     scope: CoroutineScope = rememberCoroutineScope(),
 ) {
 
-    var playerTag by remember { mutableStateOf("") }
+    var playerTag by rememberSaveable { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
     var isError by remember { mutableStateOf(false) }
     var loadingClan by remember { mutableStateOf(false) }
@@ -210,7 +211,6 @@ fun PlayerScreen(
                         grandChallengWins = grandChallengeWins?.progress,
                         challengeWins = player.challengeMaxWins
                     )
-
                 }
             }
         }

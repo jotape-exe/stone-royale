@@ -5,6 +5,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +35,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.joaoxstone.stoneroyale.R
+import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.components.common.EmptyStateScreen
 import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.app.utils.GlobalUtils
@@ -55,8 +58,8 @@ fun ChestsScreen(
     Column(modifier) {
 
         var loading by remember { mutableStateOf(false) }
-        var playerTag by remember { mutableStateOf("") }
-        var isError by remember { mutableStateOf(false) }
+        var playerTag by rememberSaveable { mutableStateOf("") }
+        var isError by rememberSaveable { mutableStateOf(false) }
         val gridState = rememberLazyGridState()
         val upcomingChests = chestUiState.upcomingChests
 
@@ -76,7 +79,7 @@ fun ChestsScreen(
                         val body = chestUiState.getUpcomingChests(GlobalUtils.formattedTag(term))
                         body.apply {
                             isError = !success
-                            if(!success){
+                            if (!success) {
                                 withContext(Dispatchers.Main) {
                                     makeToast(context, message)
                                 }
@@ -97,52 +100,65 @@ fun ChestsScreen(
             )
             if (upcomingChests.items.size == 0) EmptyStateScreen(
                 imageModifier = Modifier.size(210.dp),
-                lastText = " para buscar os próximos baús",
+                lastText = " para ver seu ciclo de baús",
                 image = R.drawable.magic_archer_2
             )
             AnimatedVisibility(visible = upcomingChests.items.size > 0) {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3),
-                    state = gridState
-                ) {
-                    itemsIndexed(upcomingChests.items) { index, it ->
-                        plainTooltipState[index] = PlainTooltipState()
-                        PlainTooltipBox(
-                            tooltip = { Text(text = it.name) },
-                            tooltipState = plainTooltipState[index]!!,
-                        ) {
-                            Box(
-                                modifier = Modifier
-                                    .clickable {
-                                        scope.launch {
-                                            plainTooltipState[index]!!.show()
-                                        }
-                                    }
-                                    .fillMaxSize(),
-                                contentAlignment = Alignment.Center
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    if (playerTag.isNotEmpty() && !isError) {
+                        Badge(
+                            text = "Ciclo de baús de: #$playerTag",
+                            color = MaterialTheme.colorScheme.inverseSurface,
+                            textSize = 12.sp,
+                            textColor = MaterialTheme.colorScheme.inverseOnSurface,
+                            shape = MaterialTheme.shapes.small,
+                            shadows = 8.dp
+                        )
+                        Spacer(modifier = Modifier.padding(4.dp))
+                    }
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        state = gridState
+                    ) {
+                        itemsIndexed(upcomingChests.items) { index, chest ->
+                            plainTooltipState[index] = PlainTooltipState()
+                            PlainTooltipBox(
+                                tooltip = { Text(text = chest.name) },
+                                tooltipState = plainTooltipState[index]!!,
                             ) {
-                                Image(
-                                    modifier = Modifier.size(60.dp),
-                                    painter = painterResource(
-                                        id = ClashConstants.getChestByChestName(
-                                            it.name
-                                        )
-                                    ),
-                                    contentDescription = it.name
-                                )
-                                Surface(
+                                Box(
                                     modifier = Modifier
-                                        .align(Alignment.BottomEnd)
-                                        .padding(end = 24.dp, bottom = 6.dp),
-                                    color = MaterialTheme.colorScheme.background,
-                                    shape = MaterialTheme.shapes.extraSmall
+                                        .clickable {
+                                            scope.launch {
+                                                plainTooltipState[index]!!.show()
+                                            }
+                                        }
+                                        .fillMaxSize(),
+                                    contentAlignment = Alignment.Center
                                 ) {
-                                    Text(
-                                        text = if (it.index == 0) "próximo" else "+${it.index}",
-                                        fontSize = 12.sp,
-                                        color = MaterialTheme.colorScheme.onBackground,
-                                        fontWeight = FontWeight.Bold,
+                                    Image(
+                                        modifier = Modifier.size(60.dp),
+                                        painter = painterResource(
+                                            id = ClashConstants.getChestByChestName(
+                                                chest.name
+                                            )
+                                        ),
+                                        contentDescription = chest.name
                                     )
+                                    Surface(
+                                        modifier = Modifier
+                                            .align(Alignment.BottomEnd)
+                                            .padding(end = 24.dp, bottom = 6.dp),
+                                        color = MaterialTheme.colorScheme.background,
+                                        shape = MaterialTheme.shapes.extraSmall
+                                    ) {
+                                        Text(
+                                            text = if (chest.index == 0) "próximo" else "+${chest.index}",
+                                            fontSize = 12.sp,
+                                            color = MaterialTheme.colorScheme.onBackground,
+                                            fontWeight = FontWeight.Bold,
+                                        )
+                                    }
                                 }
                             }
                         }
