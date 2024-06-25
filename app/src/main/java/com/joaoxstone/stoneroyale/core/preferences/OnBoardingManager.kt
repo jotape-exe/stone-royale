@@ -7,7 +7,8 @@ class OnboardingManager(context: Context) {
         context.getSharedPreferences("onboarding_prefs", Context.MODE_PRIVATE)
 
     fun isFirstTimeLaunch(): Boolean {
-        return !sharedPreferences.getBoolean("is_onboarding_complete", true)
+        val isFirstTime = sharedPreferences.getBoolean("is_onboarding_complete", false)
+        return !isFirstTime
     }
 
     fun setOnboardingComplete() {

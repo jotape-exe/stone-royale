@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -27,10 +28,6 @@ import com.joaoxstone.stoneroyale.app.viewmodel.chest.ChestViewModel
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanViewModel
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerViewModel
 import com.joaoxstone.stoneroyale.core.preferences.OnboardingManager
-import com.joaoxstone.stoneroyale.core.repository.PlayerRepository
-
-
-val api = PlayerRepository()
 
 class MainActivity : ComponentActivity() {
 
@@ -52,12 +49,15 @@ class MainActivity : ComponentActivity() {
                     val clanUiState by clanViewModel.uiState.collectAsState()
                     val chestUiState by chestViewModel.uiState.collectAsState()
 
-                    val onboardingManager = OnboardingManager(this@MainActivity)
+                    val onboardingManager = remember { OnboardingManager(this@MainActivity) }
 
-                    NavHost(navController = navController, startDestination = "welcome") {
+                    val startRoute = if (onboardingManager.isFirstTimeLaunch()) "welcome" else "home"
+
+                    NavHost(navController = navController, startDestination = startRoute) {
                         composable("welcome") {
                             WelcomeScreen(
                                 navigationAction = {
+                                    onboardingManager.setOnboardingComplete()
                                     navController.navigate("home")
                                 },
                             )
@@ -135,5 +135,3 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
-
