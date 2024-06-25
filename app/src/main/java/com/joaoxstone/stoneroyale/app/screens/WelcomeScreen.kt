@@ -65,7 +65,7 @@ fun WelcomeScreen(
                     ) {
                     Text(
                         modifier = Modifier.padding(top = 16.dp, bottom = 16.dp),
-                        text = "HE HE HA!",
+                        text = "HI HI HI HA!",
                         fontSize = 24.sp,
                         fontWeight = FontWeight.ExtraBold,
                     )
