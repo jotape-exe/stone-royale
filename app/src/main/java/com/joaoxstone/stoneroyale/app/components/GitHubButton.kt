@@ -37,7 +37,7 @@ fun GitHubButton(modifier: Modifier = Modifier) {
             Image(
                 modifier = Modifier.padding(4.dp),
                 painter = painterResource(id = R.drawable.github),
-                contentDescription = null,
+                contentDescription = "github",
             )
         }
     }

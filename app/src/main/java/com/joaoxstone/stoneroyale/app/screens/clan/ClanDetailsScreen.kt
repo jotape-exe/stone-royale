@@ -136,7 +136,7 @@ fun ClanDetailsScreen(
                     onGetPlayer = {
                         scope.launch {
                             loading = Pair(member.tag!!, true)
-                            val body = playerUiState.onGetPlayer(GlobalUtils.formattedTag(member.tag!!))
+                            val body = playerUiState.onGetPlayer(member.tag!!)
                             body.apply {
                                 if(!success){
                                     withContext(Dispatchers.Main) {

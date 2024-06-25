@@ -210,8 +210,6 @@ fun PlayerProfileScreen(
                                 }
                             }
                         }
-
-
                     }
                 },
                 loadingClan = loadingClan
