@@ -2,15 +2,20 @@ package com.joaoxstone.stoneroyale.app.viewmodel.player
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import com.joaoxstone.stoneroyale.core.http.ErrorResponses
+import com.joaoxstone.stoneroyale.core.http.ResponseBuilder
 import com.joaoxstone.stoneroyale.core.model.player.PlayerResponse
 import com.joaoxstone.stoneroyale.core.repository.PlayerRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import retrofit2.HttpException
+import java.net.SocketTimeoutException
+import java.net.UnknownHostException
 
-class PlayerViewModel : ViewModel() {
-    private val playerRepository: PlayerRepository = PlayerRepository()
+class PlayerViewModel(repository: PlayerRepository = PlayerRepository()) : ViewModel() {
+
     private val _uiState = MutableStateFlow(PlayerUiState())
     val uiState: StateFlow<PlayerUiState> = _uiState.asStateFlow()
 
@@ -28,14 +33,29 @@ class PlayerViewModel : ViewModel() {
                     }
                 },
                 onGetPlayer = { term ->
+                    var success = false
                     var response = PlayerResponse()
-                    try {
-                        response = playerRepository.getPlayer(term)
-                        this.uiState.value.onPlayerChange(response)
-                    } catch (error: Exception) {
-                        Log.d("Error: ", error.message.toString())
-                    }
+                    var responseMessage = ""
 
+                    try {
+                        response = repository.getPlayer(term)
+                        this.uiState.value.onPlayerChange(response)
+
+                        success = response.name != null
+                    } catch (ex: HttpException) {
+                        responseMessage = ErrorResponses.getStatusCodeMessage(ex.code())
+                    } catch (ex: UnknownHostException) {
+                        responseMessage = ErrorResponses.getStatusCodeMessage(400)
+                    } catch (ex: SocketTimeoutException) {
+                        responseMessage = ErrorResponses.getStatusCodeMessage(408)
+                    } catch (ex: Exception) {
+                        Log.d("Error: ", ex.toString())
+                    }
+                    return@copy ResponseBuilder(
+                        message = responseMessage,
+                        success = success,
+                        response = response,
+                    )
                 },
             )
         }

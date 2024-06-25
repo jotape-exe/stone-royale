@@ -1,5 +1,7 @@
 package com.joaoxstone.stoneroyale.app.utils
 
+import android.content.Context
+import android.widget.Toast
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -28,6 +30,10 @@ object GlobalUtils {
 
     fun formattedTag(tag: String): String {
         return "#${tag.uppercase().replace("O", "0").replace(" ", "")}"
+    }
+
+    fun makeToast(context: Context, message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
 }

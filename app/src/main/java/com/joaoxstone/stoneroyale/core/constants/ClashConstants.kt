@@ -329,6 +329,8 @@ class ClashConstants private constructor() {
 
             return chest[lowerChestName] ?: R.drawable.ic_baseline_broken_image
         }
+
+        const val CREATOR_BADGE = "https://api-assets.clashroyale.com/playerbadges/512/Gx7gSrp4LwTmOnxUQdo8z3kBHpp8sZmHtb1sHMQrqYo.png"
     }
 
 }

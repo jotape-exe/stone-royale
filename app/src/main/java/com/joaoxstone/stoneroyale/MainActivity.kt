@@ -44,107 +44,96 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
 
-            val snackbarHostState = remember {
-                SnackbarHostState()
-            }
-            SnackbarHost(hostState = snackbarHostState)
 
             StoneRoyaleTheme {
-                Scaffold(
-                    snackbarHost = {
-                        SnackbarHost(hostState = snackbarHostState)
-                    }
-                ) { contentPadding ->
-                    SharedTransitionLayout(modifier = Modifier.padding(contentPadding)) {
+                SharedTransitionLayout {
 
-                        val navController = rememberNavController()
+                    val navController = rememberNavController()
 
-                        val playerViewModel: PlayerViewModel = viewModel()
-                        val clanViewModel: ClanViewModel = viewModel()
-                        val chestViewModel: ChestViewModel = viewModel()
+                    val playerViewModel: PlayerViewModel = viewModel()
+                    val clanViewModel: ClanViewModel = viewModel()
+                    val chestViewModel: ChestViewModel = viewModel()
 
-                        val playerUiState by playerViewModel.uiState.collectAsState()
-                        val clanUiState by clanViewModel.uiState.collectAsState()
-                        val chestUiState by chestViewModel.uiState.collectAsState()
+                    val playerUiState by playerViewModel.uiState.collectAsState()
+                    val clanUiState by clanViewModel.uiState.collectAsState()
+                    val chestUiState by chestViewModel.uiState.collectAsState()
 
-                        val onboardingManager = OnboardingManager(this@MainActivity)
+                    val onboardingManager = OnboardingManager(this@MainActivity)
 
-                        NavHost(navController = navController, startDestination = "welcome") {
-                            composable("welcome") {
-                                WelcomeScreen(
-                                    navigationAction = {
-                                        navController.navigate("home")
-                                    },
-                                )
-                            }
-                            composable(route = "profile/{leagueId}/{playerName}",
-                                arguments = listOf(
-                                    navArgument("leagueId") {
-                                        type = NavType.IntType
-                                    },
-                                    navArgument("playerName") {
-                                        type = NavType.StringType
-                                    }
-                                )
-                            ) {
-                                PlayerProfileScreen(
-                                    playerUiState = playerUiState,
-                                    clanUiState = clanUiState,
-                                    animatedVisibilityScope = this@composable,
-                                    sharedTransitionScope = this@SharedTransitionLayout,
-                                    onOpenClan = { badgeId, clanName ->
-                                        navController.navigate("clanDetails/$badgeId/$clanName")
-                                    },
-                                    onOpenMasteries = {
-                                        navController.navigate("badges")
-                                    }
-                                )
-                            }
-                            composable(route = "clanDetails/{badgeId}/{clanName}",
-                                arguments = listOf(
-                                    navArgument("badgeId") {
-                                        type = NavType.IntType
-                                    },
-                                    navArgument("clanName") {
-                                        type = NavType.StringType
-                                    }
-                                )) {
-                                ClanDetailsScreen(
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .background(MaterialTheme.colorScheme.surface),
-                                    playerUiState = playerUiState,
-                                    clanUiState = clanUiState,
-                                    animatedContentScope = this@composable,
-                                    sharedTransitionScope = this@SharedTransitionLayout,
-                                    onOpenPlayerProfile = { leagueId, arenaId, playerName ->
-                                        navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
-                                    }
-                                )
-                            }
-                            composable("home") {
-                                HomeScreen(
-                                    playerUiState = playerUiState,
-                                    clanUiState = clanUiState,
-                                    chestUiState = chestUiState,
-                                    playerNavigation = { leagueId, arenaId, playerName ->
-                                        navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
-                                    },
-                                    clanNavigation = { badgeId, clanName ->
-                                        navController.navigate("clanDetails/$badgeId/$clanName")
-                                    },
-                                    sharedTransitionScope = this@SharedTransitionLayout,
-                                    animatedContentScope = this@composable,
-                                    snackbarHostState = snackbarHostState
-                                )
-                            }
-                            composable("badges") {
-                                BadgesScreen(
-                                    playerUiState = playerUiState,
-                                    onClose = {
-                                        navController.popBackStack()
-                                    })
-                            }
+                    NavHost(navController = navController, startDestination = "welcome") {
+                        composable("welcome") {
+                            WelcomeScreen(
+                                navigationAction = {
+                                    navController.navigate("home")
+                                },
+                            )
+                        }
+                        composable(route = "profile/{leagueId}/{playerName}",
+                            arguments = listOf(
+                                navArgument("leagueId") {
+                                    type = NavType.IntType
+                                },
+                                navArgument("playerName") {
+                                    type = NavType.StringType
+                                }
+                            )
+                        ) {
+                            PlayerProfileScreen(
+                                playerUiState = playerUiState,
+                                clanUiState = clanUiState,
+                                animatedVisibilityScope = this@composable,
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                onOpenClan = { badgeId, clanName ->
+                                    navController.navigate("clanDetails/$badgeId/$clanName")
+                                },
+                                onOpenMasteries = {
+                                    navController.navigate("badges")
+                                }
+                            )
+                        }
+                        composable(route = "clanDetails/{badgeId}/{clanName}",
+                            arguments = listOf(
+                                navArgument("badgeId") {
+                                    type = NavType.IntType
+                                },
+                                navArgument("clanName") {
+                                    type = NavType.StringType
+                                }
+                            )) {
+                            ClanDetailsScreen(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(MaterialTheme.colorScheme.surface),
+                                playerUiState = playerUiState,
+                                clanUiState = clanUiState,
+                                animatedContentScope = this@composable,
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                onOpenPlayerProfile = { leagueId, arenaId, playerName ->
+                                    navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
+                                }
+                            )
+                        }
+                        composable("home") {
+                            HomeScreen(
+                                playerUiState = playerUiState,
+                                clanUiState = clanUiState,
+                                chestUiState = chestUiState,
+                                playerNavigation = { leagueId, arenaId, playerName ->
+                                    navController.navigate("profile/${leagueId ?: arenaId}/$playerName")
+                                },
+                                clanNavigation = { badgeId, clanName ->
+                                    navController.navigate("clanDetails/$badgeId/$clanName")
+                                },
+                                sharedTransitionScope = this@SharedTransitionLayout,
+                                animatedContentScope = this@composable,
+                            )
+                        }
+                        composable("badges") {
+                            BadgesScreen(
+                                playerUiState = playerUiState,
+                                onClose = {
+                                    navController.popBackStack()
+                                })
                         }
                     }
                 }

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -25,6 +24,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -37,14 +37,14 @@ import com.joaoxstone.stoneroyale.app.components.player.ImageArenaLeague
 import com.joaoxstone.stoneroyale.app.components.player.PlayerCard
 import com.joaoxstone.stoneroyale.app.components.player.ProfileAction
 import com.joaoxstone.stoneroyale.app.utils.GlobalUtils
+import com.joaoxstone.stoneroyale.app.utils.GlobalUtils.makeToast
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
-import com.joaoxstone.stoneroyale.core.model.clan.ClanResponse
-import com.joaoxstone.stoneroyale.core.repository.ClanRepository
-import com.joaoxstone.stoneroyale.core.repository.PlayerRepository
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -57,15 +57,16 @@ fun PlayerScreen(
     onOpenPlayerProfile: (leagueId: Int?, arenaId: Int, title: String) -> Unit,
     onOpenClan: (badgeId: Int?, clanName: String?) -> Unit,
     scope: CoroutineScope = rememberCoroutineScope(),
-    snackbarHostState: SnackbarHostState
 ) {
 
-    val repository = PlayerRepository()
-    var playerTag by remember { mutableStateOf("89G0UYLVV") }
+    var playerTag by remember { mutableStateOf("") }
     var loading by remember { mutableStateOf(false) }
+    var isError by remember { mutableStateOf(false) }
     var loadingClan by remember { mutableStateOf(false) }
     val player = playerUiState.player
-    val clanRepository = ClanRepository()
+
+    val context = LocalContext.current
+
 
     Column(modifier) {
         SearchContainer(
@@ -74,12 +75,18 @@ fun PlayerScreen(
             onSearch = { term ->
                 scope.launch {
                     loading = true
-                    playerUiState.onGetPlayer(GlobalUtils.formattedTag(term))
-                    loading = false
-                    //TODO
-                    if (playerUiState.player.name == null) {
-                        snackbarHostState.showSnackbar("Player não encontrado")
+
+                    val body = playerUiState.onGetPlayer(GlobalUtils.formattedTag(term))
+                    body.apply {
+                        isError = !success
+                        if (!success) {
+                            withContext(Dispatchers.Main) {
+                                makeToast(context, message)
+                            }
+                        }
+                        loading = false
                     }
+
                 }
             },
             isLoading = loading,
@@ -88,7 +95,8 @@ fun PlayerScreen(
             input = playerTag,
             onValueChange = {
                 playerTag = it
-            }
+            },
+            isError = isError
         )
         Row(
             modifier = Modifier
@@ -161,17 +169,15 @@ fun PlayerScreen(
                                     onClick = {
                                         scope.launch {
                                             loadingClan = true
-                                            val clanResponse: ClanResponse =
-                                                clanRepository.getClan(player.clan?.tag)
-                                            if (clanResponse.tag == null) {
-                                                snackbarHostState.showSnackbar("Clã não encontrado")
+                                            val body = clanUiState.onGetClan(clan.tag!!)
+                                            body.response?.let { clanResponse ->
+                                                clanUiState.onClanChange(clanResponse)
+                                                onOpenClan(
+                                                    clanResponse.badgeId,
+                                                    clanResponse.name
+                                                )
                                             }
-                                            clanUiState.onClanChange(clanResponse)
                                             loadingClan = false
-                                            onOpenClan(
-                                                clanResponse.badgeId,
-                                                clanResponse.name
-                                            )
                                         }
 
                                     }) {

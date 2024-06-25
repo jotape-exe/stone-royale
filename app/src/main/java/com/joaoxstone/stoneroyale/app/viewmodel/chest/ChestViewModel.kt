@@ -36,8 +36,8 @@ class ChestViewModel(repository: ChestRepository = ChestRepository()) : ViewMode
 
                     try {
                         response = repository.getUpComingChests(term)
-                        this.uiState.value.onUpComingChestsChange(response)
                         success = response.items.size > 0
+                        this.uiState.value.onUpComingChestsChange(response)
                     } catch (ex: HttpException) {
                         responseMessage = ErrorResponses.getStatusCodeMessage(ex.code())
                     } catch (ex: UnknownHostException) {

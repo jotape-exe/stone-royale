@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +24,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -35,11 +35,13 @@ import com.joaoxstone.stoneroyale.app.components.clan.ClanSimpleCard
 import com.joaoxstone.stoneroyale.app.components.common.EmptyStateScreen
 import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.app.utils.GlobalUtils
+import com.joaoxstone.stoneroyale.app.utils.GlobalUtils.makeToast
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -50,27 +52,35 @@ fun ClanScreen(
     onOpenDetails: (Int, String) -> Unit,
     animatedContentScope: AnimatedContentScope,
     sharedTransitionScope: SharedTransitionScope,
-    snackbarHostState: SnackbarHostState
 ) {
     with(sharedTransitionScope) {
 
         var loading by remember { mutableStateOf(false) }
-        var clanTag by remember { mutableStateOf("LL8J2PQ9") }
+        var clanTag by remember { mutableStateOf("") }
+        var isError by remember { mutableStateOf(false) }
+
+        val context = LocalContext.current
 
         Column(modifier) {
+
             SearchContainer(
                 modifier = Modifier
                     .padding(16.dp),
                 onSearch = { term ->
-                    scope.launch(Dispatchers.IO) {
+                    scope.launch {
                         loading = true
-                        clanUiState.onGetClan(
+                        val body = clanUiState.onGetClan(
                             GlobalUtils.formattedTag(term),
                         )
-                        loading = false
-                        if (clanUiState.clan.tag == null) {
-                            snackbarHostState.showSnackbar("Tag incorreta")
+                        body.apply {
+                            isError = !success
+                            if(!success){
+                                withContext(Dispatchers.Main) {
+                                    makeToast(context, message)
+                                }
+                            }
                         }
+                        loading = false
                     }
                 },
                 isLoading = loading,
@@ -80,7 +90,8 @@ fun ClanScreen(
                 input = clanTag,
                 onValueChange = {
                     clanTag = it
-                }
+                },
+                isError = isError
             )
             Row(
                 modifier = Modifier

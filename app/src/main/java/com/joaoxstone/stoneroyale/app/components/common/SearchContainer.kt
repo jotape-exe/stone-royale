@@ -33,6 +33,7 @@ fun SearchContainer(
     supportingText: String,
     input: String,
     onValueChange: (value: String) -> Unit,
+    isError: Boolean = false,
     label: String
 ) {
     Column(modifier = modifier) {
@@ -47,7 +48,8 @@ fun SearchContainer(
             }, modifier = Modifier.fillMaxWidth(),
             shape = MaterialTheme.shapes.medium,
             prefix = { Text(text = "#") },
-            supportingText = { Text(text = supportingText) }
+            supportingText = { Text(text = supportingText) },
+            isError = isError
         )
         Spacer(modifier = Modifier.padding(8.dp))
         Card {

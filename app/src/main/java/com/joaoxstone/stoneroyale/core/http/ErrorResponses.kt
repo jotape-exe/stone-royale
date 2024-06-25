@@ -10,10 +10,10 @@ object ErrorResponses {
     fun getStatusCodeMessage(statusCode: Int): String {
         return when (statusCode) {
             NOT_FOUND -> "Não foi encontrado"
-            INTERNAL_SERVER_ERROR -> "Erro ao acessar recurso, tente novamente mais tarde"
+            INTERNAL_SERVER_ERROR -> "Erro, tente novamente mais tarde"
             BAD_REQUEST -> "Erro ao acessar recurso,verifique a conexão com a internet"
             REQUEST_TIMEOUT -> "Tempo esgotado, tente novamente"
-            else -> "Erro ao acessar recurso, tente novamente mais tarde "
+            else -> "Erro, tente novamente mais tarde "
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.joaoxstone.stoneroyale.app.screens.chests
 
-import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -17,7 +16,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.PlainTooltipBox
 import androidx.compose.material3.PlainTooltipState
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,12 +36,13 @@ import com.joaoxstone.stoneroyale.R
 import com.joaoxstone.stoneroyale.app.components.common.EmptyStateScreen
 import com.joaoxstone.stoneroyale.app.components.common.SearchContainer
 import com.joaoxstone.stoneroyale.app.utils.GlobalUtils
+import com.joaoxstone.stoneroyale.app.utils.GlobalUtils.makeToast
 import com.joaoxstone.stoneroyale.app.viewmodel.chest.ChestUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
-import com.joaoxstone.stoneroyale.core.repository.ChestRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,17 +55,15 @@ fun ChestsScreen(
     Column(modifier) {
 
         var loading by remember { mutableStateOf(false) }
-        val toastState by remember { mutableStateOf(ToastState()) }
-        var playerTag by remember { mutableStateOf("89G0UYLVV") }
+        var playerTag by remember { mutableStateOf("") }
+        var isError by remember { mutableStateOf(false) }
         val gridState = rememberLazyGridState()
         val upcomingChests = chestUiState.upcomingChests
 
+        val context = LocalContext.current
+
         val plainTooltipState by remember {
             mutableStateOf(mutableMapOf<Int, PlainTooltipState>())
-        }
-
-        if (toastState.isOpen) {
-            Toast.makeText(LocalContext.current, toastState.message, Toast.LENGTH_SHORT).show()
         }
 
         Column(modifier) {
@@ -74,11 +71,17 @@ fun ChestsScreen(
                 modifier = modifier
                     .padding(16.dp),
                 onSearch = { term ->
-                    scope.launch(Dispatchers.IO) {
+                    scope.launch {
                         loading = true
                         val body = chestUiState.getUpcomingChests(GlobalUtils.formattedTag(term))
-                        toastState.isOpen = !body.success
-                        toastState.message = body.message
+                        body.apply {
+                            isError = !success
+                            if(!success){
+                                withContext(Dispatchers.Main) {
+                                    makeToast(context, message)
+                                }
+                            }
+                        }
                         loading = false
                     }
                 },
@@ -89,7 +92,8 @@ fun ChestsScreen(
                 input = playerTag,
                 onValueChange = {
                     playerTag = it
-                }
+                },
+                isError = isError
             )
             if (upcomingChests.items.size == 0) EmptyStateScreen(
                 imageModifier = Modifier.size(210.dp),
@@ -110,7 +114,7 @@ fun ChestsScreen(
                             Box(
                                 modifier = Modifier
                                     .clickable {
-                                        scope.launch(Dispatchers.IO) {
+                                        scope.launch {
                                             plainTooltipState[index]!!.show()
                                         }
                                     }
@@ -150,5 +154,3 @@ fun ChestsScreen(
 
     }
 }
-
-data class ToastState(var isOpen: Boolean = false, var message: String = "")

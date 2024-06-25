@@ -1,6 +1,5 @@
 package com.joaoxstone.stoneroyale.app.screens.clan
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.ExperimentalSharedTransitionApi
@@ -44,6 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -53,15 +53,14 @@ import com.joaoxstone.stoneroyale.app.components.clan.ClanDetailsHeader
 import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.components.common.TagBadge
 import com.joaoxstone.stoneroyale.app.utils.GlobalUtils
+import com.joaoxstone.stoneroyale.app.utils.GlobalUtils.makeToast
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
 import com.joaoxstone.stoneroyale.core.constants.ClashConstants
-import com.joaoxstone.stoneroyale.core.model.player.PlayerResponse
-import com.joaoxstone.stoneroyale.core.repository.PlayerRepository
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-
+import kotlinx.coroutines.withContext
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
@@ -75,7 +74,8 @@ fun ClanDetailsScreen(
 ) {
     val scope: CoroutineScope = rememberCoroutineScope()
     var loading by remember { mutableStateOf("" to false) }
-    val playerRepository = PlayerRepository()
+
+    val context = LocalContext.current
 
     Column(
         modifier
@@ -136,20 +136,21 @@ fun ClanDetailsScreen(
                     onGetPlayer = {
                         scope.launch {
                             loading = Pair(member.tag!!, true)
-                            var response = PlayerResponse()
-                            try {
-                                delay(450)
-                                response = playerRepository.getPlayer(member.tag!!)
-                                playerUiState.onPlayerChange(response)
-                                response.apply {
-                                    onOpenPlayerProfile(
-                                        currentPathOfLegendSeasonResult?.leagueNumber,
-                                        arena?.id!!,
-                                        name!!
-                                    )
+                            val body = playerUiState.onGetPlayer(GlobalUtils.formattedTag(member.tag!!))
+                            body.apply {
+                                if(!success){
+                                    withContext(Dispatchers.Main) {
+                                        makeToast(context, message)
+                                    }
+                                } else {
+                                    response?.let {
+                                        onOpenPlayerProfile(
+                                            it.currentPathOfLegendSeasonResult?.leagueNumber,
+                                            it.arena!!.id!!,
+                                            it.name!!
+                                        )
+                                    }
                                 }
-                            } catch (error: Exception) {
-                                Log.d("Error: ", error.message.toString())
                             }
                             loading = Pair(member.tag!!, false)
                         }
