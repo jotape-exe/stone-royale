@@ -150,7 +150,5 @@ fun ChestsScreen(
                 }
             }
         }
-
-
     }
 }

@@ -1,7 +1,6 @@
 package com.joaoxstone.stoneroyale.app.viewmodel.chest
 
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.joaoxstone.stoneroyale.core.http.ErrorResponses
 import com.joaoxstone.stoneroyale.core.http.ResponseBuilder
@@ -45,14 +44,13 @@ class ChestViewModel(repository: ChestRepository = ChestRepository()) : ViewMode
                     } catch (ex: SocketTimeoutException) {
                         responseMessage = ErrorResponses.getStatusCodeMessage(408)
                     } catch (ex: Exception) {
-                        Log.d("Error: ", ex.toString())
+                        responseMessage = ErrorResponses.getStatusCodeMessage(500)
                     }
                     return@copy ResponseBuilder(
                         message = responseMessage,
                         success = success,
                         response = response,
                     )
-
                 },
             )
         }

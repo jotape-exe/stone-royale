@@ -68,8 +68,8 @@ fun HomeScreen(
     modifier: Modifier = Modifier,
 ) {
 
-    val navController = rememberNavController()
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val homeNavController = rememberNavController()
+    val currentRoute = homeNavController.currentBackStackEntry?.destination?.route
 
     var tabIndex by rememberSaveable {
         mutableStateOf("player")
@@ -105,15 +105,15 @@ fun HomeScreen(
     val brush = Brush.horizontalGradient(listOf(leftColor, rigthColor))
 
     val animatedHeaderScreen = listOf(
-        AnimatedScreeenContent(
+        AnimatedScreenContent(
             route = "player",
             imageId = R.drawable.king
         ),
-        AnimatedScreeenContent(
+        AnimatedScreenContent(
             route = "chests",
             imageId = R.drawable.chest_legendary
         ),
-        AnimatedScreeenContent(
+        AnimatedScreenContent(
             route = "clan",
             imageId = R.drawable.clanicon
         )
@@ -156,7 +156,7 @@ fun HomeScreen(
             ) {
                 Column {
                     NavHost(
-                        navController = navController,
+                        navController = homeNavController,
                         startDestination = "player"
                     ) {
                         composable("player") {
@@ -176,7 +176,7 @@ fun HomeScreen(
                                 screenSwitcher(
                                     route = "clan",
                                     currentRoute = currentRoute,
-                                    navController = navController,
+                                    navController = homeNavController,
                                 ) {
                                     tabIndex = "clan"
                                 }
@@ -189,7 +189,7 @@ fun HomeScreen(
                                 screenSwitcher(
                                     route = "player",
                                     currentRoute = currentRoute,
-                                    navController = navController,
+                                    navController = homeNavController,
                                 ) {
                                     tabIndex = "player"
                                 }
@@ -219,7 +219,7 @@ fun HomeScreen(
                                     click = {
                                         screenSwitcher(
                                             route = route,
-                                            navController = navController,
+                                            navController = homeNavController,
                                             currentRoute = currentRoute
                                         ) {
                                             tabIndex = route
@@ -285,10 +285,6 @@ fun BackPressHandler(
     }
 }
 
-data class ScreenContent(val leftColor: Color, val rightColor: Color, val imageId: Int)
-data class AnimatedScreeenContent(val route: String, @DrawableRes val imageId: Int)
-
-
 fun screenSwitcher(
     route: String,
     currentRoute: String?,
@@ -304,5 +300,7 @@ fun screenSwitcher(
     }
 }
 
+data class ScreenContent(val leftColor: Color, val rightColor: Color, val imageId: Int)
+data class AnimatedScreenContent(val route: String, @DrawableRes val imageId: Int)
 
 

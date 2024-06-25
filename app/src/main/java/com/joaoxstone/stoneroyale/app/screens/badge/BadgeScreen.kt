@@ -100,7 +100,6 @@ fun BadgesScreen(
                                 contentDescription = "More"
                             )
                         }
-
                         DropdownMenu(
                             expanded = expanded,
                             onDismissRequest = { expanded = false }
