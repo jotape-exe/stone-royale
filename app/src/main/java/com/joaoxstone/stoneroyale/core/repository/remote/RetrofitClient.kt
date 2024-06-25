@@ -1,6 +1,5 @@
 package com.joaoxstone.stoneroyale.core.repository.remote
 
-
 import com.joaoxstone.stoneroyale.BuildConfig
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -12,6 +11,9 @@ class RetrofitClient private constructor() {
     companion object {
 
         private lateinit var INSTANCE: Retrofit
+        //Voce pode gerar o token de forma gratuita em https://developer.clashroyale.com/
+        //Para gerar o token você de um IP específico, consulte https://docs.royaleapi.com/proxy.html
+        //Configure o token em seu arquivo local.properties com o nome {TOKEN_CR}
         private var token: String = BuildConfig.TOKEN_CR
         private var URL = "https://proxy.royaleapi.dev/v1/"
 
