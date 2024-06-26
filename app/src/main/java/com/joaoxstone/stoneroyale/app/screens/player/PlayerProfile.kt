@@ -1,5 +1,6 @@
 package com.joaoxstone.stoneroyale.app.screens.player
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
@@ -65,7 +66,6 @@ import com.joaoxstone.stoneroyale.app.components.common.Badge
 import com.joaoxstone.stoneroyale.app.components.common.TagBadge
 import com.joaoxstone.stoneroyale.app.components.player.AsyncBadge
 import com.joaoxstone.stoneroyale.app.components.player.ExpBadge
-import com.joaoxstone.stoneroyale.app.components.player.shadowCustom
 import com.joaoxstone.stoneroyale.app.utils.GlobalUtils.makeToast
 import com.joaoxstone.stoneroyale.app.viewmodel.clan.ClanUiState
 import com.joaoxstone.stoneroyale.app.viewmodel.player.PlayerUiState
@@ -248,17 +248,6 @@ fun ProfileHeader(
         ) {
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
                 Box(modifier = Modifier.size(162.dp), contentAlignment = Alignment.Center) {
-                    Surface(
-                        color = Color.Transparent, modifier = Modifier
-                            .size(50.dp)
-                            .shadowCustom(
-                                Color(0x744400FF),
-                                blurRadius = 30.dp,
-                                shapeRadius = 20.dp
-                            )
-                    ) {
-
-                    }
                     val resource =
                         if (leagueId != null) ClashConstants.getIconLeague(leagueId) else ClashConstants.getIconArena(
                             arenaId!!
@@ -332,6 +321,7 @@ fun PlayerProfileBottom(modifier: Modifier = Modifier, content: @Composable () -
 
 }
 
+@SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DeckContainer(modifier: Modifier = Modifier, currentDeck: ArrayList<CurrentDeck>) {
@@ -510,7 +500,7 @@ fun ClanContainer(
             Image(
                 modifier = Modifier
                     .size(30.dp),
-                painter = painterResource(id = clanIcon!!),
+                painter = painterResource(id = clanIcon),
                 contentDescription = "experience icon"
             )
             Text(
