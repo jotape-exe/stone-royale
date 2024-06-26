@@ -119,7 +119,7 @@ class ClashConstants private constructor() {
             return colorsBrush[leageNumber]!!
         }
 
-        fun getIconClan(clanId: Int?): Int? {
+        fun getIconClan(clanId: Int?): Int {
             val clans = mapOf(
                 null to R.drawable.no_clan,
                 16000000 to R.drawable.flame_01,
@@ -304,7 +304,7 @@ class ClashConstants private constructor() {
                 16000179 to R.drawable.a_char_bomb_02
             )
 
-            return clans[clanId]
+            return clans[clanId] ?: R.drawable.no_clan
         }
 
         fun getChestByChestName(chestName: String): Int {

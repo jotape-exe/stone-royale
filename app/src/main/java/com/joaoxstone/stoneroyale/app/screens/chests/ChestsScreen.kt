@@ -124,13 +124,13 @@ fun ChestsScreen(
                             plainTooltipState[index] = PlainTooltipState()
                             PlainTooltipBox(
                                 tooltip = { Text(text = chest.name) },
-                                tooltipState = plainTooltipState[index]!!,
+                                tooltipState = plainTooltipState[index]  ?: PlainTooltipState(),
                             ) {
                                 Box(
                                     modifier = Modifier
                                         .clickable {
                                             scope.launch {
-                                                plainTooltipState[index]!!.show()
+                                                plainTooltipState[index]?.show()
                                             }
                                         }
                                         .fillMaxSize(),

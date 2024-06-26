@@ -321,7 +321,7 @@ fun ClanContent(
     val resource = painterResource(
         ClashConstants.getIconClan(
             badgeId
-        )!!
+        )
     )
     with(sharedTransitionScope) {
         Row(

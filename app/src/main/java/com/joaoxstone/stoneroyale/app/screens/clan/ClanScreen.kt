@@ -131,7 +131,7 @@ fun ClanScreen(
                                 val resource = painterResource(
                                     ClashConstants.getIconClan(
                                         badgeId
-                                    )!!
+                                    )
                                 )
                                 Image(
                                     modifier = modifier.sharedBounds(
