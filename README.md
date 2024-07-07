@@ -2,6 +2,8 @@
 
 <img src="./public/hero.png">
 
+
+
 ### Visão Geral
 
 Aplição contruída em Kotlin, Jetpack Compose e MD3. O app consome a API do [Clash Royale](https://developer.clashroyale.com/#/).
@@ -22,7 +24,11 @@ Explorei alguns endpoints da API e utilizei recursos do como:
    - Coil
    - GSON
 
-### Setup
+### Quero testar
+Basta acessar `/app/release/app-degub.apk` e realizar o download do apk
+
+### Quero modificar
+##### Setup
 
 Antes de começar você precisa adicionar sua chave de API no arquivo `local.properties`.
 
